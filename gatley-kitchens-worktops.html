@@ -405,10 +405,17 @@
     dots.forEach((d, j) => d.addEventListener('click', e => { e.stopPropagation(); setImg(j); }));
 
     // zoom button opens lightbox at current image
-    card.querySelector('.stone-img-wrap')?.addEventListener('click', e => {
-      e.stopPropagation();
-      openLightbox(imgs, cur);
-    });
+    const wrap = card.querySelector('.stone-img-wrap');
+    if (wrap) {
+      wrap.style.cursor = 'zoom-in';
+      wrap.addEventListener('click', e => {
+        if (!e.target.classList.contains('stone-prev') && 
+            !e.target.classList.contains('stone-next') &&
+            !e.target.classList.contains('dot')) {
+          openLightbox(imgs, cur);
+        }
+      });
+    }
   });
 
   // ── Lightbox ───────────────────────────────────────────────────────────
