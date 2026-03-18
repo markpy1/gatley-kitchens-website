@@ -321,7 +321,15 @@ const renderCache = {};
 const renderQueue = {};
 
 async function loadPDF() {
-  pdfDoc = await pdfjsLib.getDocument({url: 'https://pub-4abe95de40804e139893a05fda85f17f.r2.dev/5G_Brochure.pdf', withCredentials: false}).promise;
+  try {
+    const url = 'https://pub-4abe95de40804e139893a05fda85f17f.r2.dev/5G_Brochure.pdf';
+    console.log('Loading PDF from:', url);
+    pdfDoc = await pdfjsLib.getDocument({url: url, withCredentials: false}).promise;
+    console.log('PDF loaded, pages:', pdfDoc.numPages);
+  } catch(e) {
+    console.error('PDF load error:', e);
+    document.getElementById('spread-kitchen').innerHTML = '<p style="color:red;padding:20px;">Error loading brochure: ' + e.message + '</p>';
+  }
 }
 
 const state = {};
