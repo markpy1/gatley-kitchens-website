@@ -48,11 +48,6 @@
   .why-item p { font-size: 0.75rem; color: var(--mid); line-height: 1.6; }
 
   /* FILTER BAR */
-  .filter-bar { max-width: 1200px; margin: 0 auto; padding: 40px 32px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .filter-bar h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; margin-right: 12px; }
-  .filter-btn { padding: 6px 16px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: 1px solid var(--border); border-radius: 20px; color: var(--mid); cursor: pointer; transition: all 0.2s; }
-  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .filter-btn.active { background: var(--dark); border-color: var(--dark); color: var(--white); }
 
   /* STONE GRID */
   .stone-grid { max-width: 1200px; margin: 0 auto; padding: 8px 32px 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
@@ -80,16 +75,6 @@
   .stone-img-wrap:hover .stone-next { opacity: 1; }
   .stone-prev:hover, .stone-next:hover { background: rgba(0,0,0,0.65); }
 
-  /* zoom button */
-  .stone-zoom {
-    position: absolute; top: 10px; right: 10px;
-    background: rgba(0,0,0,0.38); border: none; color: #fff;
-    font-size: 1.1rem; width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: zoom-in; opacity: 0; transition: opacity 0.2s; z-index: 2;
-  }
-  .stone-img-wrap:hover .stone-zoom { opacity: 1; }
-  .stone-zoom:hover { background: rgba(0,0,0,0.65); }
 
   /* dot indicators */
   .dot-row {
@@ -146,9 +131,8 @@
     .why-strip { padding: 28px 20px; gap: 20px; }
     .why-item { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 20px; max-width: 100%; }
     .why-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .filter-bar, .stone-grid { padding-left: 16px; padding-right: 16px; }
-    .stone-grid { grid-template-columns: 1fr; gap: 20px; }
-    .stone-prev, .stone-next, .stone-zoom { opacity: 1; }
+      .stone-grid { grid-template-columns: 1fr; gap: 20px; }
+    .stone-prev, .stone-next { opacity: 1; }
     .hero-stats { gap: 28px; padding: 20px; }
   }
 
@@ -213,14 +197,6 @@
   </div>
 </div>
 
-<div class="filter-bar">
-  <h2>Our Range</h2>
-  <button class="filter-btn active" data-filter="all">All</button>
-  <button class="filter-btn" data-filter="white">White & Light</button>
-  <button class="filter-btn" data-filter="veined">Veined</button>
-  <button class="filter-btn" data-filter="dark">Dark & Bold</button>
-</div>
-
 <div class="stone-grid" id="stone-grid">
   
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20002-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20003-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20004-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20005-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20006-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20007-500x500h.jpg"]' data-current="0">
@@ -230,36 +206,28 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span><span class="dot" data-idx="3"></span><span class="dot" data-idx="4"></span><span class="dot" data-idx="5"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Arctic Carrara</h3>
         <p>A crisp white base with delicate grey veining — one of our most popular choices.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Shimmer%20Install%20-%20Adam%20Southern/Arctic%20Shimmer%20001-480x750h.jpg"]' data-current="0">
       <div class="stone-img-wrap">
         <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Shimmer%20Install%20-%20Adam%20Southern/Arctic%20Shimmer%20001-480x750h.jpg" alt="Arctic Shimmer" loading="lazy">
-        
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Arctic Shimmer</h3>
         <p>White with a subtle shimmer — clean, bright and contemporary.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/INSTALL%20IMAGES/IMG_0905-480x750h.jpg"]' data-current="0">
       <div class="stone-img-wrap">
         <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/INSTALL%20IMAGES/IMG_0905-480x750h.jpg" alt="C.S Calacatta Nuvo" loading="lazy">
-        
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>C.S Calacatta Nuvo</h3>
         <p>Bold Calacatta-inspired veining — a dramatic statement for any kitchen.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Gold%20-%20Cundle/Calacatta%20Gold%20002-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Gold%20-%20Cundle/Calacatta%20Gold%20003-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Gold%20Install%20-%20Adam%20Southern/Calacatta%20Gold%201-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Gold%20Install%20-%20Adam%20Southern/Calacatta%20Gold%202-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Gold%20Install%20-%20Adam%20Southern/Calacatta%20Gold%203-500x500h.jpg"]' data-current="0">
@@ -269,24 +237,19 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span><span class="dot" data-idx="3"></span><span class="dot" data-idx="4"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Calacatta Gold</h3>
         <p>White with warm gold veining — luxurious and timeless.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Oro%20Ligero%20-%20W.F.D/Calacatta%20Oro%20Ligero-480x750h.jpg"]' data-current="0">
       <div class="stone-img-wrap">
         <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Oro%20Ligero%20-%20W.F.D/Calacatta%20Oro%20Ligero-480x750h.jpg" alt="Calacatta Oro Ligero" loading="lazy">
-        
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Calacatta Oro Ligero</h3>
         <p>A lighter take on the Calacatta Oro — refined and elegant.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Platinum%20-%20Seddon%20Homes/Calacatta%20Platinum%20003-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Platinum%20-%20Seddon%20Homes/Calacatta%20Platinum%20004-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Platinum%20-%20Seddon%20Homes/Calacatta%20Platinum%20005-500x500h.jpg"]' data-current="0">
@@ -296,24 +259,19 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Calacatta Platinum</h3>
         <p>Cool white with platinum-toned veining — modern and sophisticated.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Reale%20-%20Creative/Calacatta%20Reale-480x750h.jpg"]' data-current="0">
       <div class="stone-img-wrap">
         <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Calacatta%20Reale%20-%20Creative/Calacatta%20Reale-480x750h.jpg" alt="Calacatta Reale" loading="lazy">
-        
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Calacatta Reale</h3>
         <p>Rich, flowing veining on a pure white background — a showstopper.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Carrara%20White%20Install%20-%20Matt%20Singleton/002-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Carrara%20White%20Install%20-%20Matt%20Singleton/003-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Carrara%20White%20Install%20-%20Matt%20Singleton/004-500x500h.jpg"]' data-current="0">
@@ -323,12 +281,10 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Carrara White</h3>
         <p>Classic Carrara marble look — white with fine grey veining.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Fugen%20Amber%20Install%20-%20Adam%20Southern/Fugen%20Amber%201-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Fugen%20Amber%20Install%20-%20Adam%20Southern/Fugen%20Amber%202-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Fugen%20Amber%20Install%20-%20Adam%20Southern/Fugen%20Amber%203-500x500h.jpg"]' data-current="0">
@@ -338,12 +294,10 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Fugen Amber</h3>
         <p>Warm amber tones with natural movement — rich and characterful.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Fugen%20Florence%20Install%20-%20Adam%20Southern/Fugen%20Florence%201-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Fugen%20Florence%20Install%20-%20Adam%20Southern/Fugen%20Florence%202-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Fugen%20Florence%20Install%20-%20Adam%20Southern/Fugen%20Florence%203-500x500h.jpg"]' data-current="0">
@@ -353,12 +307,10 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Fugen Florence</h3>
         <p>Soft grey tones with flowing veins — understated and elegant.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Massa%20Install%20-%20Joanne%20Couseins/LRG_DSC06531-500x500h.JPG", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Massa%20Install%20-%20Joanne%20Couseins/LRG_DSC06535-500x500h.JPG", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Massa%20Install%20-%20Louise%20Hussey/001-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Massa%20Install%20-%20Louise%20Hussey/002-500x500h.jpg"]' data-current="0">
@@ -368,12 +320,10 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span><span class="dot" data-idx="3"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Massa</h3>
         <p>Dark, dramatic stone with natural movement — bold and striking.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Neve%20Topaz%20-%20Panorama/Neve%20Topaz%20001-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Neve%20Topaz%20-%20Panorama/Neve%20Topaz%20002-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Neve%20Topaz%20-%20Panorama/Neve%20Topaz%20003-500x500h.jpg"]' data-current="0">
@@ -383,12 +333,10 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Neve Topaz</h3>
         <p>Soft white with gentle topaz-hued veining — serene and refined.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Ocean%20White%20Install%20-%20Richard/001-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Ocean%20White%20Install%20-%20Richard/002-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Ocean%20White%20Install%20-%20Richard/003-500x500h.jpg"]' data-current="0">
@@ -398,24 +346,19 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Ocean White</h3>
         <p>Fresh white with soft ocean-blue tones — clean and calming.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Pure%20White%20-%20Panorama/IMG_6552-480x750h.jpeg"]' data-current="0">
       <div class="stone-img-wrap">
         <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Pure%20White%20-%20Panorama/IMG_6552-480x750h.jpeg" alt="Pure White" loading="lazy">
-        
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Pure White</h3>
         <p>Brilliant, uniform white — crisp and classic in any setting.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Verona%20Install%20-%20Trade%20Sale/Verona%20001-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Verona%20Install%20-%20Trade%20Sale/Verona%20002-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Verona%20Install%20-%20Trade%20Sale/Verona%20003-500x500h.jpg"]' data-current="0">
@@ -425,12 +368,10 @@
           <button class="stone-prev" aria-label="prev">&#8249;</button>
           <button class="stone-next" aria-label="next">&#8250;</button>
           <div class="dot-row"><span class="dot  active" data-idx="0"></span><span class="dot" data-idx="1"></span><span class="dot" data-idx="2"></span></div>
-        <button class="stone-zoom" aria-label="Zoom">&#43;</button>
       </div>
       <div class="stone-info">
         <h3>Verona</h3>
         <p>Warm beige-grey tones with soft veining — natural and versatile.</p>
-        <a href="gatley-kitchens-quote.html" class="stone-cta">Request a Sample</a>
       </div>
     </div>
 </div>
@@ -500,6 +441,7 @@
 
     const wrap = card.querySelector('.stone-img-wrap');
     if (wrap) {
+      wrap.style.cursor = 'zoom-in';
       wrap.addEventListener('click', e => {
         if (!e.target.classList.contains('stone-prev') &&
             !e.target.classList.contains('stone-next') &&
