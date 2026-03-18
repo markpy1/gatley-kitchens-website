@@ -293,7 +293,7 @@
   <img id="lb-img" src="" alt="">
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Mobile nav burger
   const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
@@ -321,7 +321,7 @@ const renderCache = {};
 const renderQueue = {};
 
 async function loadPDF() {
-  pdfDoc = await pdfjsLib.getDocument('5G_Brochure.pdf').promise;
+  pdfDoc = await pdfjsLib.getDocument({url: 'https://pub-4abe95de40804e139893a05fda85f17f.r2.dev/5G_Brochure.pdf', withCredentials: false}).promise;
 }
 
 const state = {};
