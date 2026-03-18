@@ -293,7 +293,7 @@
   <img id="lb-img" src="" alt="">
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Mobile nav burger
   const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
@@ -461,4 +461,14 @@ document.getElementById('lb-close')?.addEventListener('click', () => {
   document.getElementById('lightbox').style.display = 'none';
 });
 document.getElementById('lightbox')?.addEventListener('click', e => {
-  if (e.target === 
+  if (e.target ===
+
+loadPDF().then(() => {
+  initViewer('kitchen', 0, 118);
+}).catch(e => {
+  console.error('Failed to load PDF:', e);
+  document.getElementById('spread-kitchen').innerHTML = '<p style="color:red;padding:20px;text-align:center;">Failed to load brochure: ' + e.message + '</p>';
+});
+</script>
+</body>
+</html>
