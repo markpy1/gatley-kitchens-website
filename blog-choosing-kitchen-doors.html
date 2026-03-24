@@ -49,7 +49,7 @@
 <body>
 <nav>
   <a href="index.html" class="nav-logo">Gatley <span>Kitchens</span> & Bedrooms</a>
-  <ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="gatley-kitchens-our-work.html">Our Work</a></li><li><a href="gatley-kitchens-doors.html">Door Styles</a></li><li><a href="gatley-kitchens-worktops.html">Worktops</a></li><li><a href="gatley-kitchens-blog.html">Blog</a></li><li><a href="gatley-kitchens-about.html">About</a></li><li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Quote</a></li></ul>
+  <ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="gatley-kitchens-our-work.html">Our Work</a></li><li><a href="gatley-kitchens-doors.html">Door Styles</a></li><li><a href="gatley-kitchens-worktops.html">Worktops</a></li><li><a href="gatley-kitchens-blog.html">Blog</a></li><li><a href="gatley-kitchens-about.html">About</a></li><li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Free Quote</a></li></ul>
   <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
@@ -99,12 +99,9 @@
 </div>
 
 <section class="cta-bar"><span class="section-label">Ready to get started?</span><h2>Got a project in mind?</h2><p>We'll visit your home, measure up and give you an honest, no-pressure quote.</p><div><a href="gatley-kitchens-quote.html" class="btn btn-light">Get a Free Quote</a><a href="gatley-kitchens-our-work.html" class="btn btn-outline-light">See Our Work</a></div></section>
-<div class="contact-bar"><span>📞 <a href="tel:01614378899">0161 437 8899</a></span><span>✉️ <a href="mailto:mark@gatleykitchens.co.uk">Email us</a></span><span>💬 <a href="https://wa.me/447871643157" target="_blank">WhatsApp</a></span></div>
+<div class="contact-bar"><span>📞 <a href="tel:01614378899">0161 437 8899</a></span><span>✉️ <a href="/cdn-cgi/l/email-protection#cba6aab9a08bacaabfa7aeb2a0a2bfa8a3aea5b8e5a8a4e5bea0">Email us</a></span><span>💬 <a href="https://wa.me/447871643157" target="_blank">WhatsApp</a></span></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const burger = document.getElementById('navBurger'); const navLinks = document.querySelector('.nav-links');
   if (burger && navLinks) { burger.addEventListener('click', () => { burger.classList.toggle('open'); navLinks.classList.toggle('open'); }); navLinks.querySelectorAll('a').forEach(a => { a.addEventListener('click', () => { burger.classList.remove('open'); navLinks.classList.remove('open'); }); }); }
-  document.getElementById('blogContactForm').addEventListener('submit', async function(e) { e.preventDefault(); const btn = document.getElementById('blogSubmitBtn'); btn.textContent = 'Sending…'; btn.disabled = true; const data = new FormData(this); try { const res = await fetch('https://formspree.io/f/xojkwner', { method: 'POST', body: data, headers: { 'Accept': 'application/json' } }); if (res.ok) { this.style.display = 'none'; document.getElementById('blogFormSuccess').style.display = 'block'; } else { btn.textContent = 'Send Message'; btn.disabled = false; alert('Something went wrong — please try again or call us on 0161 437 8899.'); } } catch(err) { btn.textContent = 'Send Message'; btn.disabled = false; alert('Something went wrong — please try again or call us on 0161 437 8899.'); } });
-</script>
-</body>
-</html>
+  document.getElementById('blogContactForm').addEventListener('submit', async function(e) { e.preventDefault(); const btn = document.getElementById('blogSubmitBtn'); btn.textContent = 'Sending…'; btn.disabled = true; const data = new FormData(this); try { const res = await fetch('https://formspree.io/f/xojkwner', { method: 'POST', body: data, headers: { 'Accept': 'application/json' } }); if (res.ok) { this.style.display = 'none'; document.getElementById('blogFormSuccess').style.display = 'block'; } else { btn.textContent = 'Send Message'; btn.disabled = false; alert('Something went wrong — please try again or call us on 0161 437 8899.'); } } catch(err) { btn.textConte

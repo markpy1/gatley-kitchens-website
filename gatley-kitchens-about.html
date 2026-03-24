@@ -188,7 +188,7 @@
     <li><a href="gatley-kitchens-worktops.html">Worktops</a></li>
     <li><a href="gatley-kitchens-blog.html">Blog</a></li>
     <li><a href="gatley-kitchens-about.html" style="color:var(--accent);font-weight:600;">About</a></li>
-    <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Quote</a></li>
+    <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Free Quote</a></li>
   </ul>
   <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
@@ -395,11 +395,11 @@
 
 <div class="contact-bar">
   <span>📞 <a href="tel:01614378899">0161 437 8899</a></span>
-  <span>✉️ <a href="mailto:mark@gatleykitchens.co.uk">Email us</a></span>
+  <span>✉️ <a href="/cdn-cgi/l/email-protection#aac7cbd8c1eacdcbdec6cfd3c1c3dec9c2cfc4d984c9c584dfc1">Email us</a></span>
   <span>💬 <a href="https://wa.me/447871643157" target="_blank">WhatsApp</a></span>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Mobile nav burger
   const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
@@ -409,12 +409,4 @@
       navLinks.classList.toggle('open');
     });
     navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        burger.classList.remove('open');
-        navLinks.classList.remove('open');
-      });
-    });
-  }
-</script>
-</body>
-</html>
+      a.addEventL
