@@ -563,7 +563,7 @@
   @media (max-width: 800px) {
     .nav-burger { display: flex; }
     .nav-links { display: none !important; flex-direction: column; gap: 0; position: absolute; top: 70px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 99; }
-    .nav-links.open { display: flex !important; }
+    .nav-links.open { display: flex !important; }   .nav-links li { width: 100%; } .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; } .nav-dropdown .dropdown-menu { position: static; box-shadow: none; border: none; background: var(--cream); margin: 0; padding: 4px 0; } .nav-dropdown > a::after { content: ''; } .nav-dropdown:hover .dropdown-menu { display: none; } .nav-dropdown.mobile-open .dropdown-menu { display: block; }
     .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; }
     .nav-cta { margin: 8px 24px 12px !important; display: block; text-align: center; }
   }
@@ -577,7 +577,14 @@
   <ul class="nav-links">
     <li><a href="index.html" style="color:var(--accent);font-weight:600;">Home</a></li>
     <li><a href="gatley-kitchens-our-work.html">Our Work</a></li>
-    <li><a href="gatley-kitchens-doors.html">Door Styles</a></li>
+    <li class="nav-dropdown">
+      <a href="#doors">Doors</a>
+      <div class="dropdown-menu">
+        <a href="gatley-kitchens-doors.html">Kitchen Doors</a>
+        <a href="gatley-kitchens-bedroom-doors.html">Bedroom Doors</a>
+        <a href="gatley-kitchens-sliding-wardrobes.html">Sliding Wardrobes</a>
+      </div>
+    </li>
     <li><a href="gatley-kitchens-worktops.html">Worktops</a></li>
     <li><a href="gatley-kitchens-blog.html">Blog</a></li>
     <li><a href="gatley-kitchens-about.html">About</a></li>
@@ -793,6 +800,14 @@
         navLinks.classList.remove('open');
       });
     });
+    // Mobile dropdown toggle
+    const dropdown = document.querySelector('.nav-dropdown');
+    if (dropdown && window.innerWidth <= 800) {
+      dropdown.querySelector('a').addEventListener('click', (e) => {
+        e.preventDefault();
+        dropdown.classList.toggle('mobile-open');
+      });
+    }
   }
 
     document.getElementById('homeContactForm').addEventListener('submit', async function(e) {
