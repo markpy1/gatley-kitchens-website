@@ -468,4 +468,8 @@ loadPDF().then(() => {
   initViewer('kitchen', 0, 118);
 }).catch(e => {
   console.error('Failed to load PDF:', e);
-  document.getElementById('sprea
+  document.getElementById('spread1').innerHTML = '<div class="pdf-loading">Failed to load brochure.</div>';
+});
+</script>
+</body>
+</html>

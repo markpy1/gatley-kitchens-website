@@ -476,4 +476,9 @@
   document.addEventListener('keydown', e => {
     if (!document.getElementById('lightbox').classList.contains('open')) return;
     if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft' 
+    if (e.key === 'ArrowLeft' && lbIdx > 0) { lbIdx--; renderLb(); }
+    if (e.key === 'ArrowRight' && lbIdx < lbImgs.length - 1) { lbIdx++; renderLb(); }
+  });
+</script>
+</body>
+</html>
