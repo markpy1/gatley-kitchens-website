@@ -222,6 +222,12 @@
     .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; }
     .nav-cta { margin: 8px 24px 12px !important; display: block; text-align: center; }
   }
+
+  /* Mobile: show download button, hide PDF viewer */
+  @media (max-width: 800px) {
+    .download-section { display: block !important; }
+    .content { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -251,6 +257,19 @@
   <h1>Kitchen &amp; Wardrobe<br>Door Styles</h1>
   <p>Browse the full 5G Vinyl Collection — over 100 door styles suitable for both kitchens and fitted wardrobes, available in a wide range of finishes. We also offer <strong>painted</strong> and <strong>timber</strong> doors — ask us in the showroom.</p>
 </section>
+
+<!-- Download Button (Mobile-Friendly) -->
+<section class="download-section" style="background: var(--cream); padding: 40px 20px; text-align: center; display: none;">
+  <div class="container" style="max-width: 600px; margin: 0 auto;">
+    <span class="section-label">Browse Our Range</span>
+    <h2>Kitchen & Wardrobe Doors Brochure</h2>
+    <p style="margin: 20px 0; color: var(--mid);">Browse over 100 door styles from the 5G Vinyl Collection, plus painted and timber options.</p>
+    <a href="5G_Brochure.pdf" download class="btn btn-primary" style="display: inline-block; padding: 14px 32px; background: var(--accent); color: white; text-decoration: none; border-radius: 2px; font-size: 0.9rem;">
+      📄 Download Brochure (PDF)
+    </a>
+  </div>
+</section>
+
 
 
 
