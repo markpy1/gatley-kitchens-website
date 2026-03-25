@@ -300,14 +300,13 @@
   
   pageNumInput.addEventListener('change', function() {
     let num = parseInt(this.value);
-    if (num < <script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
-<script type="module">
-// Import PDF.js
-import * as pdfjsLib from 'https://mozilla.github.io/pdf.js/build/pdf.mjs';
-
-// Wait for DOM
+    if (num < <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Page loaded - initializing...');
+  
+  // Set PDF.js worker
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
   
   // Mobile nav toggle
   const burger = document.getElementById('navBurger');
