@@ -89,8 +89,8 @@
   .pdf-controls button { background: var(--dark); color: var(--white); border: none; padding: 10px 20px; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.05em; border-radius: 2px; cursor: pointer; transition: background 0.2s; } .pdf-controls button:hover { background: var(--accent); } .pdf-controls button:disabled { opacity: 0.4; cursor: not-allowed; }
   .pdf-controls input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 2px; font-family: 'Jost', sans-serif; font-size: 0.82rem; width: 60px; text-align: center; }
   .pdf-controls span { font-size: 0.82rem; color: var(--mid); }
-  .pdf-canvas-container { border: 1px solid var(--border); border-radius: 3px; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 600px; position: relative; overflow: auto; }
-  #pdfCanvas { display: block; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .pdf-canvas-container { border: 1px solid var(--border); border-radius: 3px; background: #f5f5f5; display: flex; justify-content: center; align-items: flex-start; max-height: 75vh; position: relative; overflow: auto; }
+  #pdfCanvas { display: block; box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-height: 75vh; }
   .pdf-loading { position: absolute; font-size: 0.88rem; color: var(--mid); }
   .cta-bar { background: var(--dark); color: var(--white); padding: 56px 40px; text-align: center; }
   .cta-bar .section-label { color: var(--light-accent); }
