@@ -191,16 +191,8 @@
   <span>💬 <a href="https://wa.me/447871643157" target="_blank">WhatsApp</a></span>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Sliding wardrobes page - DOM loaded');
-  
 
-  
-  console.log('Sliding wardrobes - initialization complete');
-});
-</script>
+
 <script>
   // Mobile nav toggle
   const burger = document.getElementById('navBurger');
@@ -308,4 +300,126 @@ document.addEventListener('DOMContentLoaded', function() {
   
   pageNumInput.addEventListener('change', function() {
     let num = parseInt(this.value);
-    if (num < 1
+    if (num < <script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
+<script type="module">
+// Import PDF.js
+import * as pdfjsLib from 'https://mozilla.github.io/pdf.js/build/pdf.mjs';
+
+// Wait for DOM
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Page loaded - initializing...');
+  
+  // Mobile nav toggle
+  const burger = document.getElementById('navBurger');
+  const navLinks = document.querySelector('.nav-links');
+  if (burger && navLinks) {
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        if (!a.parentElement.classList.contains('nav-dropdown')) {
+          burger.classList.remove('open');
+          navLinks.classList.remove('open');
+        }
+      });
+    });
+  }
+  
+  // Mobile dropdown toggle
+  const dropdown = document.querySelector('.nav-dropdown');
+  if (dropdown && window.innerWidth <= 800) {
+    dropdown.querySelector('a').addEventListener('click', (e) => {
+      e.preventDefault();
+      dropdown.classList.toggle('mobile-open');
+    });
+  }
+  
+  // PDF.js viewer
+  const url = 'Gatley_Kitchens_Sliding_Doors_Brochure.pdf';
+  let pdfDoc = null;
+  let pageNum = 1;
+  let pageRendering = false;
+  let pageNumPending = null;
+  const scale = 1.5;
+  const canvas = document.getElementById('pdfCanvas');
+  const ctx = canvas.getContext('2d');
+  const pageNumInput = document.getElementById('pageNum');
+  const pageCountSpan = document.getElementById('pageCount');
+  const loadingDiv = document.getElementById('pdfLoading');
+
+  function renderPage(num) {
+    pageRendering = true;
+    pdfDoc.getPage(num).then(function(page) {
+      const viewport = page.getViewport({ scale: scale });
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport
+      };
+      
+      const renderTask = page.render(renderContext);
+      renderTask.promise.then(function() {
+        pageRendering = false;
+        loadingDiv.style.display = 'none';
+        if (pageNumPending !== null) {
+          renderPage(pageNumPending);
+          pageNumPending = null;
+        }
+      });
+    });
+
+    pageNumInput.value = num;
+  }
+
+  function queueRenderPage(num) {
+    if (pageRendering) {
+      pageNumPending = num;
+    } else {
+      renderPage(num);
+    }
+  }
+
+  function onPrevPage() {
+    if (pageNum <= 1) return;
+    pageNum--;
+    queueRenderPage(pageNum);
+  }
+
+  function onNextPage() {
+    if (pageNum >= pdfDoc.numPages) return;
+    pageNum++;
+    queueRenderPage(pageNum);
+  }
+
+  console.log('Loading PDF from:', url);
+  pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+    console.log('PDF loaded successfully, pages:', pdfDoc_.numPages);
+    pdfDoc = pdfDoc_;
+    pageCountSpan.textContent = pdfDoc.numPages;
+    pageNumInput.max = pdfDoc.numPages;
+    renderPage(pageNum);
+  }).catch(function(error) {
+    console.error('PDF loading error:', error);
+    loadingDiv.textContent = 'Error loading brochure. Make sure Gatley_Kitchens_Sliding_Doors_Brochure.pdf is in the same folder as this HTML file.';
+    loadingDiv.style.color = 'var(--mid)';
+  });
+
+  document.getElementById('prevPage').addEventListener('click', onPrevPage);
+  document.getElementById('nextPage').addEventListener('click', onNextPage);
+  
+  pageNumInput.addEventListener('change', function() {
+    let num = parseInt(this.value);
+    if (num < 1) num = 1;
+    if (pdfDoc && num > pdfDoc.numPages) num = pdfDoc.numPages;
+    pageNum = num;
+    queueRenderPage(pageNum);
+  });
+  
+  console.log('Initialization complete');
+});
+</script>
+1
