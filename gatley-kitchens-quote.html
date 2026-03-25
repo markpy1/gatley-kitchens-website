@@ -435,7 +435,10 @@
 </div>
 
 <script>
-  // Mobile nav burger
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing...');
+  
+// Mobile nav burger
   const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
   if (burger && navLinks) {
@@ -502,6 +505,9 @@
       success.style.display = 'block';
     }
   });
+  
+  console.log('Initialization complete');
+});
 </script>
 </body>
 </html>
