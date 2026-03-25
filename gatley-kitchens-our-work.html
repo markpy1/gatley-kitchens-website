@@ -781,7 +781,6 @@
 </div>
 
 <script>
-  // Mobile nav burger
   const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
   if (burger && navLinks) {
@@ -795,6 +794,7 @@
         navLinks.classList.remove('open');
       });
     });
+    
     // Mobile dropdown toggle
     const dropdown = document.querySelector('.nav-dropdown');
     if (dropdown && window.innerWidth <= 800) {
@@ -803,70 +803,7 @@
         dropdown.classList.toggle('mobile-open');
       });
     }
-
   }
-
-  // ── FILTER ──
-  const items = document.querySelectorAll('.masonry-item');
-
-  // ── LIGHTBOX ──
-  const lightbox = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lbImg');
-  const lbCounter = document.getElementById('lbCounter');
-  let currentIndex = 0;
-
-  function getVisible() {
-    return [...items].filter(i => i.style.display !== 'none');
-  }
-
-  function openLightbox(index) {
-    const visible = getVisible();
-    currentIndex = index;
-    const src = visible[currentIndex].querySelector('img').src;
-    lbImg.src = src;
-    lbCounter.textContent = (currentIndex + 1) + ' / ' + visible.length;
-    lightbox.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeLightbox() {
-    lightbox.classList.remove('open');
-    document.body.style.overflow = '';
-    lbImg.src = '';
-  }
-
-  function navigate(dir) {
-    const visible = getVisible();
-    currentIndex = (currentIndex + dir + visible.length) % visible.length;
-    lbImg.style.animation = 'none';
-    lbImg.offsetHeight; // reflow
-    lbImg.style.animation = '';
-    lbImg.src = visible[currentIndex].querySelector('img').src;
-    lbCounter.textContent = (currentIndex + 1) + ' / ' + visible.length;
-  }
-
-  items.forEach((item, i) => {
-    item.addEventListener('click', () => {
-      const visible = getVisible();
-      const visIdx = visible.indexOf(item);
-      openLightbox(visIdx);
-    });
-  });
-
-  document.getElementById('lbClose').addEventListener('click', closeLightbox);
-  document.getElementById('lbPrev').addEventListener('click', () => navigate(-1));
-  document.getElementById('lbNext').addEventListener('click', () => navigate(1));
-
-  lightbox.addEventListener('click', e => {
-    if (e.target === lightbox) closeLightbox();
-  });
-
-  document.addEventListener('keydown', e => {
-    if (!lightbox.classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') navigate(-1);
-    if (e.key === 'ArrowRight') navigate(1);
-  });
 </script>
 </body>
 </html>
