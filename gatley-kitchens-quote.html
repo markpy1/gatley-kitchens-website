@@ -439,74 +439,34 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM loaded, initializing...');
   
 // Mobile nav burger
-  const burger = document.getElementById('navBurger');
+    const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
   if (burger && navLinks) {
     burger.addEventListener('click', () => {
       burger.classList.toggle('open');
       navLinks.classList.toggle('open');
     });
+    
+    // Close menu when clicking non-dropdown links
     navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        burger.classList.remove('open');
-        navLinks.classList.remove('open');
-      });
-    });
-  }
-
-      // Mobile dropdown toggle
-    const dropdown = document.querySelector('.nav-dropdown');
-    if (dropdown && window.innerWidth <= 800) {
-      const dropdownLink = dropdown.querySelector('a');
-      let clickCount = 0;
-      let clickTimer = null;
-      
-      dropdownLink.addEventListener('click', (e) => {
-        clickCount++;
-        
-        if (clickCount === 1) {
-          // First click - open dropdown
-          e.preventDefault();
-          dropdown.classList.add('mobile-open');
-          
-          // Reset after 500ms
-          clickTimer = setTimeout(() => {
-            clickCount = 0;
-          }, 500);
-        } else {
-          // Second click - allow navigation
-          dropdown.classList.remove('mobile-open');
+      a.addEventListener('click', (e) => {
+        // Don't close if this is the dropdown toggle
+        if (!a.parentElement.classList.contains('nav-dropdown')) {
+          burger.classList.remove('open');
+          navLinks.classList.remove('open');
         }
       });
-    }
-
-  // Budget slider
-  const slider = document.getElementById('budgetSlider');
-  const display = document.getElementById('budgetVal');
-  if (slider && display) {
-    // Set initial value
-    const initialVal = parseInt(slider.value);
-    display.textContent = initialVal >= 50000 ? '50,000+' : initialVal.toLocaleString();
-    
-    // Update on input
-    slider.addEventListener('input', () => {
-      const val = parseInt(slider.value);
-      display.textContent = val >= 50000 ? '50,000+' : val.toLocaleString();
     });
-  }
-
-  // Form submission — show success state
-  const form = document.getElementById('quoteForm');
-  const success = document.getElementById('successMsg');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-    try {
-      const res = await fetch('https://formspree.io/f/xojkwner', {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json' }
+    
+    // Mobile dropdown toggle
+    const dropdown = document.querySelector('.nav-dropdown');
+    if (dropdown && window.innerWidth <= 800) {
+      dropdown.querySelector('a').addEventListener('click', (e) => {
+        e.preventDefault();
+        dropdown.classList.toggle('mobile-open');
       });
+    }
+  });
       if (res.ok) {
         form.style.display = 'none';
         success.style.display = 'block';

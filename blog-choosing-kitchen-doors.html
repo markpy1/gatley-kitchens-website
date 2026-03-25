@@ -161,9 +161,26 @@
 <div class="contact-bar"><span>📞 <a href="tel:01614378899">0161 437 8899</a></span><span>✉️ <a href="/cdn-cgi/l/email-protection#cba6aab9a08bacaabfa7aeb2a0a2bfa8a3aea5b8e5a8a4e5bea0">Email us</a></span><span>💬 <a href="https://wa.me/447871643157" target="_blank">WhatsApp</a></span></div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  const burger = document.getElementById('navBurger'); const navLinks = document.querySelector('.nav-links');
-  if (burger && navLinks) { burger.addEventListener('click', () => { burger.classList.toggle('open'); navLinks.classList.toggle('open'); }); navLinks.querySelectorAll('a').forEach(a => { a.addEventListener('click', () => { burger.classList.remove('open'); navLinks.classList.remove('open'); }); });
-            // Mobile dropdown toggle
+    const burger = document.getElementById('navBurger');
+  const navLinks = document.querySelector('.nav-links');
+  if (burger && navLinks) {
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+    
+    // Close menu when clicking non-dropdown links
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        // Don't close if this is the dropdown toggle
+        if (!a.parentElement.classList.contains('nav-dropdown')) {
+          burger.classList.remove('open');
+          navLinks.classList.remove('open');
+        }
+      });
+    });
+    
+    // Mobile dropdown toggle
     const dropdown = document.querySelector('.nav-dropdown');
     if (dropdown && window.innerWidth <= 800) {
       dropdown.querySelector('a').addEventListener('click', (e) => {

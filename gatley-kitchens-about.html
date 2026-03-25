@@ -433,21 +433,26 @@
 </div>
 
 <script>
-  const burger = document.getElementById('navBurger');
+    const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
   if (burger && navLinks) {
     burger.addEventListener('click', () => {
       burger.classList.toggle('open');
       navLinks.classList.toggle('open');
     });
+    
+    // Close menu when clicking non-dropdown links
     navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        burger.classList.remove('open');
-        navLinks.classList.remove('open');
+      a.addEventListener('click', (e) => {
+        // Don't close if this is the dropdown toggle
+        if (!a.parentElement.classList.contains('nav-dropdown')) {
+          burger.classList.remove('open');
+          navLinks.classList.remove('open');
+        }
       });
     });
     
-            // Mobile dropdown toggle
+    // Mobile dropdown toggle
     const dropdown = document.querySelector('.nav-dropdown');
     if (dropdown && window.innerWidth <= 800) {
       dropdown.querySelector('a').addEventListener('click', (e) => {
