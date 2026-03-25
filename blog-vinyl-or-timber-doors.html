@@ -166,4 +166,32 @@
         dropdown.classList.toggle('mobile-open');
       });
     } }
-  document.getElementById('blogContactForm').addEventListener('submit', async function(e) { e.preventDefault(); const btn = document.getElementById('blogSubmitBtn'); btn.textContent = 'Sending…'; btn.disabled = true; const data = new FormData(this); try { const res = await fetch('https://formspree.io/f/xojkwner', { method: 'POST', body: data, headers: { 'Accept': 'application/json' } }); if (res.ok) { this.style.display = 'none'; document.getElementById('blogFormSuccess').style.display = 'block'; } else { btn.textContent = 'Send Message'; btn.disabled = false; alert('Something went wrong — please try again or call us on 0161 437 8899.'); } } catch(err) { btn.textConte
+    document.getElementById('blogContactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('blogSubmitBtn');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    const data = new FormData(this);
+    try {
+      const res = await fetch('https://formspree.io/f/xojkwner', {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        this.style.display = 'none';
+        document.getElementById('blogFormSuccess').style.display = 'block';
+      } else {
+        btn.textContent = 'Send Message';
+        btn.disabled = false;
+        alert('Something went wrong — please try again or call us on 0161 437 8899.');
+      }
+    } catch(err) {
+      btn.textContent = 'Send Message';
+      btn.disabled = false;
+      alert('Network error — please try again or call us on 0161 437 8899.');
+    }
+  });
+</script>
+</body>
+</html>
