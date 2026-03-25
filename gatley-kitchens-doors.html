@@ -345,7 +345,7 @@
   <img id="lb-img" src="" alt="">
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Mobile nav burger
   const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
@@ -354,12 +354,26 @@
       burger.classList.toggle('open');
       navLinks.classList.toggle('open');
     });
+    
+    // Close menu when clicking non-dropdown links
     navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        burger.classList.remove('open');
-        navLinks.classList.remove('open');
+      a.addEventListener('click', (e) => {
+        // Don't close if this is the dropdown toggle
+        if (!a.parentElement.classList.contains('nav-dropdown')) {
+          burger.classList.remove('open');
+          navLinks.classList.remove('open');
+        }
       });
     });
+    
+    // Mobile dropdown toggle
+    const dropdown = document.querySelector('.nav-dropdown');
+    if (dropdown && window.innerWidth <= 800) {
+      dropdown.querySelector('a').addEventListener('click', (e) => {
+        e.preventDefault();
+        dropdown.classList.toggle('mobile-open');
+      });
+    }
   }
 
 </script>

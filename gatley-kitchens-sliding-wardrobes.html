@@ -207,7 +207,6 @@
 
 
 
-
 <script>
 // Mobile nav
 const burger = document.getElementById('navBurger');
@@ -225,7 +224,17 @@ if (burger && navLinks) {
       }
     });
   });
+  
+  // Mobile dropdown toggle
+  const dropdown = document.querySelector('.nav-dropdown');
+  if (dropdown && window.innerWidth <= 800) {
+    dropdown.querySelector('a').addEventListener('click', (e) => {
+      e.preventDefault();
+      dropdown.classList.toggle('mobile-open');
+    });
+  }
 }
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
