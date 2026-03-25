@@ -19,33 +19,10 @@
   nav { position: sticky; top: 0; z-index: 100; background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 70px; }
   .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--dark); text-decoration: none; }
   .nav-logo span { color: var(--accent); }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-    align-items: center;
-  }
-
-  .nav-links a {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--mid);
-    transition: color 0.2s;
-  }
-
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--mid); transition: color 0.2s; }
   .nav-links a:hover { color: var(--accent); }
-
-  .nav-cta {
-    background: var(--dark);
-    color: var(--white) !important;
-    padding: 8px 20px;
-    border-radius: 2px;
-  }
-
+  .nav-cta { background: var(--dark); color: var(--white) !important; padding: 8px 20px; border-radius: 2px; }
   .nav-cta:hover { background: var(--accent) !important; }
 
   /* Dropdown menu */
@@ -73,7 +50,7 @@
     letter-spacing: 0.05em; 
   }
   .dropdown-menu a:hover { background: var(--cream); color: var(--accent); }
-  
+
 
   /* PAGE LAYOUT — split */
   .page { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 70px); }
@@ -283,7 +260,7 @@
   @media (max-width: 800px) {
     .nav-burger { display: flex; }
     .nav-links { display: none !important; flex-direction: column; gap: 0; position: absolute; top: 70px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 99; }
-    .nav-links.open { display: flex !important; }   .nav-links li { width: 100%; } .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; } .nav-dropdown .dropdown-menu { position: static; box-shadow: none; border: none; background: var(--cream); margin: 0; padding: 4px 0; } .nav-dropdown > a::after { content: ''; } .nav-dropdown:hover .dropdown-menu { display: none; } .nav-dropdown.mobile-open .dropdown-menu { display: block; }
+    .nav-links.open { display: flex !important; }
     .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; }
     .nav-cta { margin: 8px 24px 12px !important; display: block; text-align: center; }
   }
@@ -472,31 +449,31 @@
         navLinks.classList.remove('open');
       });
     });
-    // Mobile dropdown toggle
-    const dropdown = document.querySelector('.nav-dropdown');
-    if (dropdown && window.innerWidth <= 800) {
-      dropdown.querySelector('a').addEventListener('click', (e) => {
-        e.preventDefault();
-        dropdown.classList.toggle('mobile-open');
-      });
-    }
   }
 
-  // Budget slider - Initialize when DOM is ready
-  document.addEventListener('DOMContentLoaded', function() {
-    const slider = document.getElementById('budgetSlider');
-    const display = document.getElementById('budgetVal');
-    if (slider && display) {
-      // Set initial value
-      display.textContent = parseInt(slider.value).toLocaleString();
-      
-      // Update on input
-      slider.addEventListener('input', () => {
-        const val = parseInt(slider.value);
-        display.textContent = val >= 50000 ? '50,000+' : val.toLocaleString();
-      });
-    }
-  });
+  // Mobile dropdown toggle
+  const dropdown = document.querySelector('.nav-dropdown');
+  if (dropdown && window.innerWidth <= 800) {
+    dropdown.querySelector('a').addEventListener('click', (e) => {
+      e.preventDefault();
+      dropdown.classList.toggle('mobile-open');
+    });
+  }
+
+  // Budget slider
+  const slider = document.getElementById('budgetSlider');
+  const display = document.getElementById('budgetVal');
+  if (slider && display) {
+    // Set initial value
+    const initialVal = parseInt(slider.value);
+    display.textContent = initialVal >= 50000 ? '50,000+' : initialVal.toLocaleString();
+    
+    // Update on input
+    slider.addEventListener('input', () => {
+      const val = parseInt(slider.value);
+      display.textContent = val >= 50000 ? '50,000+' : val.toLocaleString();
+    });
+  }
 
   // Form submission — show success state
   const form = document.getElementById('quoteForm');
@@ -518,4 +495,13 @@
         // Fallback — still show success so user isn't left hanging
         form.style.display = 'none';
         success.style.display = 'block';
-        document.que
+        document.que        document.querySelector('.form-header').style.display = 'none';
+      }
+    } catch(err) {
+      form.style.display = 'none';
+      success.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
