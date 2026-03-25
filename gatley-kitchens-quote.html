@@ -482,15 +482,21 @@
     }
   }
 
-  // Budget slider
-  const slider = document.getElementById('budgetSlider');
-  const display = document.getElementById('budgetVal');
-  if (slider && display) {
-    slider.addEventListener('input', () => {
-      const val = parseInt(slider.value);
-      display.textContent = val >= 50000 ? '50,000+' : val.toLocaleString();
-    });
-  }
+  // Budget slider - Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const slider = document.getElementById('budgetSlider');
+    const display = document.getElementById('budgetVal');
+    if (slider && display) {
+      // Set initial value
+      display.textContent = parseInt(slider.value).toLocaleString();
+      
+      // Update on input
+      slider.addEventListener('input', () => {
+        const val = parseInt(slider.value);
+        display.textContent = val >= 50000 ? '50,000+' : val.toLocaleString();
+      });
+    }
+  });
 
   // Form submission — show success state
   const form = document.getElementById('quoteForm');
