@@ -377,8 +377,6 @@ async function renderSinglePage(pageNum) {
   const canvas = document.createElement('canvas');
   canvas.width = viewport.width;
   canvas.height = viewport.height;
-  canvas.style.maxWidth = '100%';
-  canvas.style.height = 'auto';
   const ctx = canvas.getContext('2d');
   await page.render({ canvasContext: ctx, viewport }).promise;
   renderCache[pageNum] = canvas;
@@ -402,9 +400,7 @@ async function renderPage(id) {
     spreadEl.innerHTML = '';
     canvases.forEach((canvas, idx) => {
       canvas.style.cursor = 'zoom-in';
-      canvas.style.maxWidth = '100%';
-      canvas.style.height = 'auto';
-      canvas.style.display = 'block';
+              canvas.style.display = 'block';
       canvas.addEventListener('click', () => openLightbox(canvas.toDataURL()));
       spreadEl.appendChild(canvas);
     });
