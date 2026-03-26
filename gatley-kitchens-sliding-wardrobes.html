@@ -326,7 +326,7 @@ function goToPage(id, pageIdx) {
 async function renderSinglePage(pageNum) {
   if (renderCache[pageNum]) return renderCache[pageNum];
   const page = await pdfDoc.getPage(pageNum);
-  const viewport = page.getViewport({ scale: 1.6 });
+  const viewport = page.getViewport({ scale: 1.2 });
   const canvas = document.createElement('canvas');
   canvas.width = viewport.width;
   canvas.height = viewport.height;
