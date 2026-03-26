@@ -223,6 +223,11 @@
     .nav-cta { margin: 8px 24px 12px !important; display: block; text-align: center; }
   }
 
+  /* Download section - hidden by default (desktop), shown on mobile */
+  .download-section { 
+    display: none !important; 
+  }
+  
   /* Mobile: show download button, hide PDF viewer */
   @media (max-width: 800px) {
     .download-section { display: block !important; }
@@ -259,7 +264,7 @@
 </section>
 
 <!-- Download Button (Mobile-Friendly) -->
-<section class="download-section" style="background: var(--cream); padding: 40px 20px; text-align: center; display: none;">
+<section class="download-section" style="background: var(--cream); padding: 40px 20px; text-align: center;">
   <div class="container" style="max-width: 600px; margin: 0 auto;">
     <span class="section-label">Browse Our Range</span>
     <h2>Kitchen & Wardrobe Doors Brochure</h2>

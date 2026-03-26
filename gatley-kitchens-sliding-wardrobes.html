@@ -104,7 +104,11 @@
   .nav-burger span { display: block; width: 24px; height: 2px; background: var(--dark); border-radius: 2px; transition: all 0.25s; }
   .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); } .nav-burger.open span:nth-child(2) { opacity: 0; } .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
   @media (max-width: 800px) { nav { padding: 0 20px; } .nav-burger { display: flex; } .nav-links { display: none !important; flex-direction: column; gap: 0; position: absolute; top: 70px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 99; } .nav-links.open { display: flex !important; } .nav-links li { width: 100%; } .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; } .nav-dropdown .dropdown-menu { position: static; box-shadow: none; border: none; background: var(--cream); margin: 0; padding: 4px 0; } .nav-dropdown > a::after { content: ''; } .nav-dropdown:hover .dropdown-menu { display: none; } .nav-dropdown.mobile-open .dropdown-menu { display: block; } .nav-cta { margin: 8px 24px 12px !important; display: block; text-align: center; } .hero { padding: 52px 24px; } .section { padding: 48px 24px; } .pdf-viewer-section { padding: 48px 24px; } .pdf-canvas-container { min-height: 400px; } .cta-bar { padding: 48px 24px; } .btn-outline-light { margin-left: 0; margin-top: 10px; } }
-
+  /* Download section - hidden by default (desktop), shown on mobile */
+  .download-section { 
+    display: none !important; 
+  }
+  
   /* Mobile: show download button, hide PDF viewer */
   @media (max-width: 800px) {
     .download-section { display: block !important; }
@@ -142,7 +146,7 @@
 </section>
 
 <!-- Download Button (Mobile-Friendly) -->
-<section class="download-section" style="background: var(--cream); padding: 40px 20px; text-align: center; display: none;">
+<section class="download-section" style="background: var(--cream); padding: 40px 20px; text-align: center;">
   <div class="container" style="max-width: 600px; margin: 0 auto;">
     <span class="section-label">Browse Our Range</span>
     <h2>Sliding Wardrobes Brochure</h2>
