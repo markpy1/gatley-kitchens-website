@@ -1,29 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kitchen Door Care Guide – Gatley Kitchens & Bedrooms</title>
-<meta name="description" content="How to care for your kitchen doors - cleaning and maintenance tips for vinyl wrapped and timber doors from Gatley Kitchens.">
-<meta http-equiv="refresh" content="0; url=https://www.gatleykitchens.co.uk/blog-vinyl-or-timber-doors.html">
-<link rel="canonical" href="https://www.gatleykitchens.co.uk/blog-vinyl-or-timber-doors.html">
-<style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-align: center; padding: 50px; background: #f9f6f1; color: #1c1a17; }
-.container { max-width: 600px; margin: 0 auto; }
-h1 { font-size: 1.8rem; margin-bottom: 20px; }
-p { font-size: 1rem; margin-bottom: 30px; color: #4a4540; }
-a { display: inline-block; padding: 12px 32px; background: #1c1a17; color: white; text-decoration: none; border-radius: 2px; font-size: 0.9rem; }
-a:hover { background: #8b6f47; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Door Care Guide - Gatley Kitchens</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background-color: #faf8f5;
+            color: #2c2c2c;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #3d3d3d;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #d4a574;
+        }
+
+        .phone {
+            color: #d4a574;
+            font-size: 0.95rem;
+            margin-left: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .intro p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            color: #4a4a4a;
+        }
+
+        .intro .highlight {
+            background-color: #fff4e6;
+            padding: 1rem 1.5rem;
+            border-left: 4px solid #d4a574;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+
+        .care-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .care-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .care-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+        }
+
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .care-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            color: #3d3d3d;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .care-card p {
+            color: #5a5a5a;
+            line-height: 1.7;
+            font-size: 0.98rem;
+        }
+
+        .cleaning-section {
+            background: white;
+            border-radius: 8px;
+            padding: 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .cleaning-section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: #3d3d3d;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .dos-donts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .do-list, .dont-list {
+            background: #faf8f5;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .do-list h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: #2d7a3e;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dont-list h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: #b94444;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .do-list ul, .dont-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .do-list li, .dont-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.8rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .do-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2d7a3e;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .dont-list li:before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            color: #b94444;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .footer-note {
+            background: #fff4e6;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 3rem;
+            text-align: center;
+            border-left: 4px solid #d4a574;
+        }
+
+        .footer-note p {
+            font-size: 1.05rem;
+            color: #4a4a4a;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-note .small {
+            font-size: 0.9rem;
+            color: #6a6a6a;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .care-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .dos-donts {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .cleaning-section {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <h1>Kitchen Door Care Guide</h1>
-  <p>This page has moved. You'll be redirected automatically, or click below:</p>
-  <a href="https://www.gatleykitchens.co.uk/blog-vinyl-or-timber-doors.html">View Door Care Guide →</a>
-</div>
-<script>
-window.location.href = 'https://www.gatleykitchens.co.uk/blog-vinyl-or-timber-doors.html';
-</script>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">Gatley <span>Kitchens & Bedrooms</span></a>
+            <div class="phone">0161 437 8899</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Customer Care Information for Vinyl Wrapped Doors</h1>
+        
+        <div class="intro">
+            <p>Our doors come with an average of 6 years warranty so you can rest assured that they are of the highest quality.</p>
+            <p>Not a lot of people are aware of how to care and maintain them, so we put together this guide with some do's and don'ts.</p>
+            <div class="highlight">
+                This is the same for any vinyl door from any supplier<br>
+                (yes even those expensive ones that cost 4x the price!)<br>
+                <strong>The difference is... we tell you about it!</strong>
+            </div>
+        </div>
+
+        <div class="care-grid">
+            <div class="care-card">
+                <div class="icon-container">🔥</div>
+                <h3>Oven</h3>
+                <p>Modern ovens are fitted with heat deflectors, however we can also fit heat deflection strips if required.</p>
+            </div>
+
+            <div class="care-card">
+                <div class="icon-container">🍽️</div>
+                <h3>Dishwasher</h3>
+                <p>For new installations, always fit a heat & moisture shield above dishwashers to prevent doors coming into contact with concentrated steam.</p>
+            </div>
+
+            <div class="care-card">
+                <div class="icon-container">☕</div>
+                <h3>Kettle</h3>
+                <p>Never allow concentrated steam (e.g. from a kettle) to be released directly underneath a vinyl wrapped door.</p>
+            </div>
+
+            <div class="care-card">
+                <div class="icon-container">💨</div>
+                <h3>Extractor / Integrated Hood</h3>
+                <p>Doors must not be fitted any less than 750mm above a hob and extraction doors must always be opened whilst the hob is in use.</p>
+            </div>
+
+            <div class="care-card">
+                <div class="icon-container">🍞</div>
+                <h3>Toaster</h3>
+                <p>Never use appliances that generate heat, such as a toaster, directly underneath a vinyl wrapped door.</p>
+            </div>
+
+            <div class="care-card">
+                <div class="icon-container">💧</div>
+                <h3>Water</h3>
+                <p>Never allow a vinyl wrapped door to become saturated with water.</p>
+            </div>
+        </div>
+
+        <div class="cleaning-section">
+            <h2>Cleaning Instructions</h2>
+            <p style="text-align: center; margin-bottom: 2rem; font-size: 1.05rem;">We recommend the following door cleaning instructions for all of our doors:</p>
+
+            <div class="dos-donts">
+                <div class="do-list">
+                    <h3><span style="font-size: 1.8rem;">✓</span> DO</h3>
+                    <ul>
+                        <li>Clean the doors using only a solution of 95% lukewarm water with no more than 5% soap</li>
+                        <li>Use a clean damp (not wet) cloth</li>
+                        <li>Wipe any cooking marks immediately</li>
+                        <li>Dry with a soft, clean cloth</li>
+                        <li>Wipe any spillages immediately, especially at door joints</li>
+                    </ul>
+                </div>
+
+                <div class="dont-list">
+                    <h3><span style="font-size: 1.8rem;">✗</span> DON'T</h3>
+                    <ul>
+                        <li>Spray anything directly onto your doors (this includes the cleaning solution recommended)</li>
+                        <li>Allow liquids to seep into joints of doors</li>
+                        <li>Use wax furniture polish</li>
+                        <li>Use bleach or chlorine-based cleaning products</li>
+                        <li>Use abrasive cleaners or scouring pads</li>
+                        <li>Use solvents or multi-purpose cleaners</li>
+                        <li>Use alcohol-based cleaners</li>
+                        <li>Use ammonia or any other similar product</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            <p><strong>With the correct care, your doors will give you many years of trouble-free service.</strong></p>
+            <p class="small">This customer care information does not affect your statutory rights.</p>
+        </div>
+    </div>
 </body>
 </html>
