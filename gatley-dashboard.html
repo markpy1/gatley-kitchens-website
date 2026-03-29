@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gatley Kitchens — Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1714; font-family: 'Jost', sans-serif; color: #faf6f0; }
+button { cursor: pointer; }
+select option { background: #2a2520; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+const STORAGE_KEY = 'gatley-dashboard-v2';
+
+const INITIAL_LEADS = [
+  { id:1, name:'Heather', date:'2026-01-06', source:'Unknown', status:'lost', value:2900, prequalified:'No', lostReason:'', notes:"Tricky job - don't really want it." },
+  { id:2, name:'Blunt', date:'2026-01-07', source:'Unknown', status:'lost', value:8800, prequalified:'No', lostReason:'Roof first', notes:'Pretty much dead for now.' },
+  { id:3, name:'Morris', date:'2026-01-07', source:'Google', status:'won', value:8000, prequalified:'No', lostReason:'', notes:'' },
+  { id:4, name:'Jason', date:'2026-01-13', source:'Unknown', status:'lost', value:4800, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
+  { id:5, name:'Donna Early', date:'2026-01-14', source:'Local', status:'lost', value:4700, prequalified:'No', lostReason:'Too expensive', notes:'' },
+  { id:6, name:'Alexandra Patteson', date:'2026-01-05', source:'Referral', status:'pending', value:3200, prequalified:'No', lostReason:'', notes:"Don't chase - said will come back." },
+  { id:7, name:'Evans', date:'2026-01-16', source:'Previous customer', status:'lost', value:4200, prequalified:'No', lostReason:'', notes:"Don't chase - think too pricey now." },
+  { id:8, name:'George', date:'2026-01-13', source:'Google', status:'lost', value:2200, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
+  { id:9, name:'Platt', date:'2026-11-20', source:'Facebook', status:'lost', value:9600, prequalified:'No', lostReason:'', notes:'On hold - pipe work. Reminder in a couple months.' },
+  { id:10, name:'Grimes', date:'2026-01-27', source:'Our fitter', status:'lost', value:7000, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
+  { id:11, name:'Tague', date:'2026-02-05', source:'Local', status:'pending', value:2000, prequalified:'No', lostReason:'', notes:'Lives across street. Said yes then put on hold.' },
+  { id:12, name:'Caroline', date:'2026-02-06', source:'Local', status:'lost', value:7000, prequalified:'Yes', lostReason:'Unknown - likely price', notes:'' },
+  { id:13, name:'Weiner', date:'2026-02-11', source:'Unknown', status:'lost', value:11000, prequalified:'No', lostReason:'', notes:'Bought new car - on hold. Likely dead.' },
+  { id:14, name:'Edge', date:'2026-02-06', source:'Unknown', status:'won', value:7300, prequalified:'Yes', lostReason:'', notes:'' },
+  { id:15, name:'Howard', date:'2026-01-12', source:'Unknown', status:'pending', value:3100, prequalified:'Yes', lostReason:'', notes:"Not quick decision makers. Don't chase." },
+  { id:16, name:'Alton', date:'2026-01-19', source:'Unknown', status:'pending', value:6500, prequalified:'Yes', lostReason:'', notes:'Showroom visit booked.' },
+  { id:17, name:'Martha', date:'2026-02-23', source:'Unknown', status:'lost', value:5500, prequalified:'Yes', lostReason:'Unknown - likely price', notes:'' },
+  { id:18, name:'Crompton', date:'2026-02-24', source:'Unknown', status:'won', value:1600, prequalified:'Yes', lostReason:'', notes:'' },
+  { id:19, name:'Lloyd', date:'2026-02-26', source:'Unknown', status:'won', value:3500, prequalified:'No', lostReason:'', notes:'' },
+  { id:20, name:'Sharron', date:'2026-02-27', source:'Unknown', status:'pending', value:3600, prequalified:'No', lostReason:'', notes:"Liked quote, said will be in touch. Don't chase." },
+  { id:21, name:'Hancock', date:'2026-03-02', source:'Referral', status:'won', value:2900, prequalified:'No', lostReason:'', notes:'' },
+  { id:22, name:'Manisha Natha', date:'2026-03-05', source:'Unknown', status:'lost', value:9300, prequalified:'Yes', lostReason:'Unknown - likely price', notes:'' },
+  { id:23, name:'Zoe', date:'2026-03-09', source:'Unknown', status:'pending', value:8800, prequalified:'Yes', lostReason:'', notes:"Didn't know what she wanted. Unlikely." },
+  { id:24, name:'Hughes', date:'2026-03-11', source:'Unknown', status:'won', value:3300, prequalified:'No', lostReason:'', notes:'' },
+  { id:25, name:'Newby', date:'2026-03-16', source:'Unknown', status:'pending', value:6700, prequalified:'No', lostReason:'', notes:'Showroom visit booked.' },
+  { id:26, name:'Godfrey', date:'2026-03-16', source:'Referral', status:'lost', value:1000, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
+  { id:27, name:'Jackie', date:'2026-03-18', source:'Referral', status:'pending', value:1650, prequalified:'Yes', lostReason:'', notes:'Remeasure booked to finalise.' },
+  { id:28, name:'Steve Laiker', date:'2026-03-22', source:'Website', status:'lost', value:0, prequalified:'Yes', lostReason:'No reply', notes:'' },
+  { id:29, name:'Grace', date:'2026-03-23', source:'Facebook', status:'pending', value:9000, prequalified:'No', lostReason:'', notes:'Price sensitive. Showroom visit booked.' },
+  { id:30, name:'Anne-Marie Bentley', date:'2026-03-23', source:'Website', status:'pending', value:0, prequalified:'Yes', lostReason:'', notes:'Appointment booked.' },
+  { id:31, name:'Louise', date:'2026-03-23', source:'Google', status:'pending', value:0, prequalified:'Yes', lostReason:'', notes:'Clueless husband on visit.' },
+  { id:32, name:'Alan Bates', date:'2026-03-23', source:'Referral', status:'pending', value:0, prequalified:'Yes', lostReason:'', notes:'£25k budget. Considering Ikea.' },
+  { id:33, name:'Ann', date:'2026-03-24', source:'Local', status:'not_started', value:7000, prequalified:'Yes', lostReason:'', notes:'£6-8k all in. Appointment booked.' },
+  { id:34, name:'Paul Johnson', date:'2026-03-24', source:'Previous customer', status:'pending', value:0, prequalified:'No', lostReason:'', notes:'Appointment booked.' },
+  { id:35, name:'Slater', date:'2026-03-27', source:'Local', status:'pending', value:9300, prequalified:'Yes', lostReason:'', notes:'Been going on for years.' },
+];
+
+const SOURCES = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
+const P_STATUSES = ['pending','not_started','won','lost'];
+const S_LABELS  = { pending:'Pending', not_started:'Not Started', won:'Won', lost:'Lost' };
+const S_COLORS  = { pending:'#e8b96a', not_started:'#7ab8e8', won:'#6ec87a', lost:'#e07070' };
+const S_BG      = { pending:'#2d2418', not_started:'#1a2230', won:'#1a2d1e', lost:'#2d1a1a' };
+const S_BORDER  = { pending:'#8b6a2e', not_started:'#2e5a8b', won:'#2e7a3a', lost:'#8b2e2e' };
+const J_COLS    = ['quotes','orders','snagging','invoices'];
+const J_LABELS  = { quotes:'Quotes to Do', orders:'Orders to Do', snagging:'Snagging', invoices:'Invoices' };
+const J_COLORS  = { quotes:'#e8b96a', orders:'#7ab8e8', snagging:'#e07070', invoices:'#6ec87a' };
+const J_BG      = { quotes:'#2d2418', orders:'#1a2230', snagging:'#2d1a1a', invoices:'#1a2d1e' };
+const J_BORDER  = { quotes:'#8b6a2e', orders:'#2e5a8b', snagging:'#8b2e2e', invoices:'#2e7a3a' };
+
+const fmt = v => v ? '£' + Number(v).toLocaleString() : '—';
+const fmtD = d => { try { return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); } catch { return d; }};
+const EL = { name:'', date:new Date().toISOString().split('T')[0], source:'Unknown', status:'pending', value:'', prequalified:'No', lostReason:'', notes:'' };
+const EJ = { name:'', column:'snagging', priority:'Normal', dueDate:'', value:'', notes:'' };
+
+function App() {
+  const [tab, setTab] = useState('pipeline');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [sync, setSync] = useState('');
+  const [nlid, setNlid] = useState(36);
+  const [njid, setNjid] = useState(1);
+  const [lFilter, setLFilter] = useState('all');
+  const [lSearch, setLSearch] = useState('');
+  const [expL, setExpL] = useState(null);
+  const [expJ, setExpJ] = useState(null);
+  const [lModal, setLModal] = useState(null);
+  const [jModal, setJModal] = useState(null);
+  const [lForm, setLForm] = useState(EL);
+  const [jForm, setJForm] = useState(EJ);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const d = JSON.parse(stored);
+        setData(d); setNlid(d.nextLeadId||36); setNjid(d.nextJobId||1);
+      } catch { setData({ leads:INITIAL_LEADS, manualJobs:[], nextLeadId:36, nextJobId:1 }); }
+    } else {
+      setData({ leads:INITIAL_LEADS, manualJobs:[], nextLeadId:36, nextJobId:1 });
+    }
+    setLoading(false);
+  }, []);
+
+  const save = useCallback((d) => {
+    setData(d);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); setSync('saved ✓'); setTimeout(()=>setSync(''),1500); }
+    catch { setSync('error'); }
+  }, []);
+
+  if (loading||!data) return React.createElement('div', { style:{background:'#1a1714',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Georgia,serif',color:'#c8922a',fontSize:18} }, 'Loading...');
+
+  const { leads, manualJobs } = data;
+  const pinnedIds = new Set(manualJobs.filter(j=>j.leadId).map(j=>j.leadId));
+  const autoQ = leads.filter(l=>l.status==='not_started'&&!pinnedIds.has(l.id));
+  const autoO = leads.filter(l=>l.status==='won'&&!pinnedIds.has(l.id));
+
+  const itemsFor = col => {
+    const m = manualJobs.filter(j=>j.column===col);
+    if (col==='quotes') return [...autoQ.map(l=>({...l,_auto:true})), ...m];
+    if (col==='orders') return [...autoO.map(l=>({...l,_auto:true})), ...m];
+    return m;
+  };
+
+  const pinTo = (lead, col, e) => {
+    e&&e.stopPropagation();
+    const nj = { id:njid, leadId:lead.id, name:lead.name, column:col, priority:'Normal', dueDate:'', value:lead.value||0, notes:lead.notes||'' };
+    save({...data, manualJobs:[...manualJobs,nj], nextJobId:njid+1});
+    setNjid(njid+1); setExpJ(null);
+  };
+
+  const moveM = (id, col, e) => { e&&e.stopPropagation(); save({...data, manualJobs:manualJobs.map(j=>j.id===id?{...j,column:col}:j)}); };
+
+  const pSt = { pending:0,not_started:0,won:0,lost:0,activeVal:0 };
+  leads.forEach(l=>{ pSt[l.status]=(pSt[l.status]||0)+1; if(l.status==='pending'||l.status==='not_started') pSt.activeVal+=(Number(l.value)||0); });
+
+  const filtered = leads.filter(l => (lFilter==='all'||l.status===lFilter) && (!lSearch||l.name.toLowerCase().includes(lSearch.toLowerCase())));
+
+  const openAL = (s='pending') => { setLForm({...EL,status:s}); setLModal({mode:'add'}); };
+  const openEL = (l,e) => { e&&e.stopPropagation(); setLForm({...l,value:l.value||''}); setLModal({mode:'edit',lead:l}); };
+  const savL = () => {
+    const d={...lForm,value:parseFloat(lForm.value)||0}; let nl,nid=nlid;
+    if(lModal.mode==='edit'){nl=leads.map(l=>l.id===lModal.lead.id?{...l,...d}:l);}
+    else{nl=[...leads,{...d,id:nlid}];nid=nlid+1;setNlid(nid);}
+    save({...data,leads:nl,nextLeadId:nid}); setLModal(null);
+  };
+  const delL = () => { if(!confirm('Delete?'))return; save({...data,leads:leads.filter(l=>l.id!==lModal.lead.id)}); setLModal(null); };
+  const qSt = (id,st,e) => { e&&e.stopPropagation(); save({...data,leads:leads.map(l=>l.id===id?{...l,status:st}:l)}); setExpL(null); };
+
+  const openAJ = (col='snagging') => { setJForm({...EJ,column:col}); setJModal({mode:'add'}); };
+  const openEJ = (j,e) => { e&&e.stopPropagation(); setJForm({...j,value:j.value||''}); setJModal({mode:'edit',job:j}); };
+  const savJ = () => {
+    const d={...jForm,value:parseFloat(jForm.value)||0}; let nj,nid=njid;
+    if(jModal.mode==='edit'){nj=manualJobs.map(j=>j.id===jModal.job.id?{...j,...d}:j);}
+    else{nj=[...manualJobs,{...d,id:njid}];nid=njid+1;setNjid(nid);}
+    save({...data,manualJobs:nj,nextJobId:nid}); setJModal(null);
+  };
+  const delJ = () => { if(!confirm('Delete?'))return; save({...data,manualJobs:manualJobs.filter(j=>j.id!==jModal.job.id)}); setJModal(null); };
+
+  const lf=(k,v)=>setLForm(p=>({...p,[k]:v}));
+  const jf=(k,v)=>setJForm(p=>({...p,[k]:v}));
+
+  const ab = (bc,tc) => ({ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:500,letterSpacing:'0.11em',textTransform:'uppercase',padding:'3px 9px',border:`1px solid ${bc}`,background:'transparent',color:tc||bc,cursor:'pointer' });
+  const inp = { width:'100%',fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,padding:'6px 9px',border:'1px solid #3a3430',background:'#1a1714',color:'#faf6f0',outline:'none' };
+  const tagA = { fontSize:9,fontWeight:500,letterSpacing:'0.1em',textTransform:'uppercase',padding:'2px 5px',border:'1px solid #c8922a',color:'#e8b96a' };
+  const tagM = { fontSize:9,fontWeight:400,letterSpacing:'0.1em',textTransform:'uppercase',padding:'2px 5px',border:'1px solid #3a3430',color:'#8a7d72' };
+  const addBtn = { width:'100%',padding:'7px',border:'1px dashed #3a3430',background:'transparent',color:'#8a7d72',fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:'0.14em',textTransform:'uppercase',cursor:'pointer',marginTop:4 };
+
+  return (
+    <div style={{ background:'#1a1714', minHeight:'100vh' }}>
+
+      {/* TOPBAR */}
+      <div style={{ background:'#221f1b', borderBottom:'1px solid #3a3430', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
+        <div>
+          <span style={{ fontFamily:'Georgia,serif', fontSize:19, color:'#faf6f0' }}>Gatley <span style={{ color:'#e8b96a', fontStyle:'italic' }}>Kitchens</span></span>
+          {sync && <span style={{ marginLeft:10, fontSize:10, color:'#6ec87a' }}>{sync}</span>}
+        </div>
+        <div style={{ display:'flex', gap:5 }}>
+          {[['pipeline','Pipeline'],['jobs','Jobs']].map(([t,l])=>(
+            <button key={t} onClick={()=>setTab(t)} style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:'0.13em',textTransform:'uppercase',padding:'5px 12px',border:'1px solid',borderColor:tab===t?'#c8922a':'#3a3430',background:tab===t?'#c8922a':'transparent',color:tab===t?'#1a1714':'#8a7d72' }}>{l}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* PIPELINE */}
+      {tab==='pipeline' && (
+        <div style={{ padding:'16px 12px' }}>
+          <div style={{ display:'flex', gap:7, flexWrap:'wrap', marginBottom:16 }}>
+            {[['Pending',pSt.pending,'#e8b96a'],['Not Started',pSt.not_started,'#7ab8e8'],['Won',pSt.won,'#6ec87a'],['Lost',pSt.lost,'#e07070'],['Active £','£'+pSt.activeVal.toLocaleString(),'#e8b96a']].map(([l,v,c])=>(
+              <div key={l} style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'6px 12px',textAlign:'center',minWidth:60 }}>
+                <div style={{ fontFamily:'Georgia,serif',fontSize:typeof v==='string'?14:19,color:c,lineHeight:1 }}>{v}</div>
+                <div style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8a7d72',marginTop:2 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:14, alignItems:'center' }}>
+            {[['all','All'],['pending','Pending'],['not_started','Not Started'],['won','Won'],['lost','Lost']].map(([f,l])=>(
+              <button key={f} onClick={()=>setLFilter(f)} style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:'0.11em',textTransform:'uppercase',padding:'4px 10px',border:'1px solid',borderColor:lFilter===f?(S_BORDER[f]||'#c8922a'):'#3a3430',background:lFilter===f?(S_BORDER[f]||'#c8922a'):'transparent',color:lFilter===f?'#faf6f0':'#8a7d72' }}>{l}</button>
+            ))}
+            <input value={lSearch} onChange={e=>setLSearch(e.target.value)} placeholder="Search..." style={{ marginLeft:'auto',fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,padding:'4px 10px',border:'1px solid #3a3430',background:'#221f1b',color:'#faf6f0',outline:'none',width:110 }} />
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, alignItems:'start' }}>
+            {P_STATUSES.map(col=>{
+              const tc=S_COLORS[col],bc=S_BORDER[col],bg=S_BG[col];
+              const cl=filtered.filter(l=>l.status===col);
+              return (
+                <div key={col}>
+                  <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:`2px solid ${bc}`,paddingBottom:6,marginBottom:10 }}>
+                    <span style={{ fontSize:9,fontWeight:600,letterSpacing:'0.15em',textTransform:'uppercase',color:tc }}>{S_LABELS[col]}</span>
+                    <span style={{ fontFamily:'Georgia,serif',fontSize:16,color:tc }}>{cl.length}</span>
+                  </div>
+                  {cl.length===0&&<div style={{ fontSize:10,color:'#8a7d72',fontStyle:'italic',textAlign:'center',padding:'12px 0' }}>None</div>}
+                  {cl.map(l=>{
+                    const isE=expL===l.id;
+                    return (
+                      <div key={l.id} onClick={()=>setExpL(isE?null:l.id)} style={{ background:bg,border:`1px solid ${bc}`,padding:9,marginBottom:7,cursor:'pointer' }}>
+                        <div style={{ display:'flex',justifyContent:'space-between',gap:4,marginBottom:4 }}>
+                          <div style={{ fontFamily:'Georgia,serif',fontSize:13,color:'#faf6f0',lineHeight:1.2 }}>{l.name}</div>
+                          <div style={{ textAlign:'right',flexShrink:0 }}>
+                            <div style={{ fontSize:11,fontWeight:600,color:tc }}>{fmt(l.value)}</div>
+                            {l.value>0&&<div style={{ fontSize:8,color:'#8a7d72' }}>~{fmt(Math.round(l.value*0.5))}</div>}
+                          </div>
+                        </div>
+                        <div style={{ display:'flex',gap:3,marginBottom:3 }}>
+                          <span style={tagA}>{l.source}</span>
+                          <span style={tagM}>PQ:{l.prequalified}</span>
+                        </div>
+                        <div style={{ fontSize:9,color:'#8a7d72' }}>{fmtD(l.date)}</div>
+                        {l.lostReason&&<div style={{ fontSize:9,color:tc,opacity:0.8,marginTop:2 }}>↳ {l.lostReason}</div>}
+                        {isE&&l.notes&&<div style={{ fontSize:10,color:'#8a7d72',lineHeight:1.5,fontStyle:'italic',borderLeft:'2px solid #3a3430',paddingLeft:6,margin:'5px 0' }}>{l.notes}</div>}
+                        {isE&&(
+                          <div style={{ display:'flex',gap:3,flexWrap:'wrap',marginTop:6 }}>
+                            <button onClick={e=>openEL(l,e)} style={ab('#c8922a')}>Edit</button>
+                            {P_STATUSES.filter(s=>s!==col).map(s=>(
+                              <button key={s} onClick={e=>qSt(l.id,s,e)} style={ab(S_BORDER[s],S_COLORS[s])}>→{S_LABELS[s]}</button>
+                            ))}
+                          </div>
+                        )}
+                        {!isE&&<div style={{ fontSize:8,color:'#8a7d72',opacity:0.4,marginTop:2,letterSpacing:'0.1em',textTransform:'uppercase' }}>tap</div>}
+                      </div>
+                    );
+                  })}
+                  <button onClick={()=>openAL(col)} style={addBtn}>+ Add</button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* JOBS */}
+      {tab==='jobs' && (
+        <div style={{ padding:'16px 12px' }}>
+          <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'8px 12px',marginBottom:16,fontSize:10,color:'#8a7d72',lineHeight:1.7 }}>
+            <span style={{ color:'#7ab8e8' }}>Not Started</span> → <span style={{ color:J_COLORS.quotes }}>Quotes</span> &nbsp;·&nbsp; <span style={{ color:'#6ec87a' }}>Won</span> → <span style={{ color:J_COLORS.orders }}>Orders</span> &nbsp;·&nbsp; Tap card to move to <span style={{ color:J_COLORS.snagging }}>Snagging</span> or <span style={{ color:J_COLORS.invoices }}>Invoices</span>
+          </div>
+          <div style={{ display:'flex',gap:7,flexWrap:'wrap',marginBottom:16 }}>
+            {J_COLS.map(col=>(
+              <div key={col} style={{ background:'#221f1b',border:`1px solid ${J_BORDER[col]}`,padding:'6px 12px',minWidth:80,textAlign:'center' }}>
+                <div style={{ fontFamily:'Georgia,serif',fontSize:19,color:J_COLORS[col],lineHeight:1 }}>{itemsFor(col).length}</div>
+                <div style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8a7d72',marginTop:2 }}>{J_LABELS[col]}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, alignItems:'start' }}>
+            {J_COLS.map(col=>{
+              const items=itemsFor(col);
+              return (
+                <div key={col}>
+                  <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:`2px solid ${J_BORDER[col]}`,paddingBottom:6,marginBottom:10 }}>
+                    <span style={{ fontSize:9,fontWeight:600,letterSpacing:'0.13em',textTransform:'uppercase',color:J_COLORS[col] }}>{J_LABELS[col]}</span>
+                    <span style={{ fontFamily:'Georgia,serif',fontSize:16,color:J_COLORS[col] }}>{items.length}</span>
+                  </div>
+                  {items.length===0&&<div style={{ fontSize:10,color:'#8a7d72',fontStyle:'italic',textAlign:'center',padding:'12px 0' }}>Nothing</div>}
+                  {items.map(item=>{
+                    const isA=item._auto;
+                    const cid=isA?`a${item.id}`:`j${item.id}`;
+                    const isE=expJ===cid;
+                    const od=item.dueDate&&new Date(item.dueDate)<new Date();
+                    return (
+                      <div key={cid} onClick={()=>setExpJ(isE?null:cid)} style={{ background:J_BG[col],border:`1px solid ${J_BORDER[col]}`,padding:9,marginBottom:7,cursor:'pointer' }}>
+                        <div style={{ display:'flex',justifyContent:'space-between',gap:4,marginBottom:3 }}>
+                          <div style={{ fontFamily:'Georgia,serif',fontSize:13,color:'#faf6f0',lineHeight:1.2 }}>{item.name}</div>
+                          {isA&&<span style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:J_COLORS[col],opacity:0.6,flexShrink:0 }}>auto</span>}
+                        </div>
+                        {item.value>0&&<div style={{ fontSize:11,color:J_COLORS[col],fontWeight:500,marginBottom:3 }}>{fmt(item.value)}</div>}
+                        {!isA&&item.priority&&<span style={{ fontSize:8,padding:'2px 4px',border:`1px solid ${item.priority==='High'?'#e07070':item.priority==='Low'?'#3a3430':'#8b6a2e'}`,color:item.priority==='High'?'#e07070':item.priority==='Low'?'#8a7d72':'#e8b96a',display:'inline-block',marginBottom:3 }}>{item.priority}</span>}
+                        {item.dueDate&&<div style={{ fontSize:9,color:od?'#e07070':'#8a7d72',marginTop:2 }}>Due:{fmtD(item.dueDate)}{od?' ⚠':''}</div>}
+                        {isE&&item.notes&&<div style={{ fontSize:10,color:'#8a7d72',lineHeight:1.5,fontStyle:'italic',borderLeft:'2px solid #3a3430',paddingLeft:6,margin:'5px 0' }}>{item.notes}</div>}
+                        {isE&&(
+                          <div style={{ display:'flex',gap:3,flexWrap:'wrap',marginTop:6 }}>
+                            {isA?(
+                              <>
+                                <button onClick={e=>pinTo(item,'snagging',e)} style={ab(J_BORDER.snagging,J_COLORS.snagging)}>→ Snag</button>
+                                <button onClick={e=>pinTo(item,'invoices',e)} style={ab(J_BORDER.invoices,J_COLORS.invoices)}>→ Invoice</button>
+                              </>
+                            ):(
+                              <>
+                                <button onClick={e=>openEJ(item,e)} style={ab('#c8922a')}>Edit</button>
+                                {J_COLS.filter(c=>c!==col).map(c=>(
+                                  <button key={c} onClick={e=>moveM(item.id,c,e)} style={ab(J_BORDER[c],J_COLORS[c])}>→{J_LABELS[c].split(' ')[0]}</button>
+                                ))}
+                              </>
+                            )}
+                          </div>
+                        )}
+                        {!isE&&<div style={{ fontSize:8,color:'#8a7d72',opacity:0.4,marginTop:2,letterSpacing:'0.1em',textTransform:'uppercase' }}>tap</div>}
+                      </div>
+                    );
+                  })}
+                  {(col==='snagging'||col==='invoices')&&<button onClick={()=>openAJ(col)} style={addBtn}>+ Add</button>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* LEAD MODAL */}
+      {lModal&&(
+        <div onClick={e=>{if(e.target===e.currentTarget)setLModal(null);}} style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:14 }}>
+          <div style={{ background:'#2a2520',border:'1px solid #3a3430',width:'100%',maxWidth:440,maxHeight:'90vh',overflowY:'auto',padding:20 }}>
+            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginBottom:14 }}>{lModal.mode==='edit'?`Edit — ${lModal.lead.name}`:'Add Lead'}</div>
+            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:9 }}>
+              {[['Name','name','text'],['Date','date','date']].map(([l,k,t])=>(
+                <div key={k}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>{l}</div><input type={t} value={lForm[k]} onChange={e=>lf(k,e.target.value)} style={inp}/></div>
+              ))}
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Source</div><select value={lForm.source} onChange={e=>lf('source',e.target.value)} style={inp}>{SOURCES.map(s=><option key={s}>{s}</option>)}</select></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Status</div><select value={lForm.status} onChange={e=>lf('status',e.target.value)} style={inp}>{P_STATUSES.map(s=><option key={s} value={s}>{S_LABELS[s]}</option>)}</select></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Value £</div><input type="number" value={lForm.value} onChange={e=>lf('value',e.target.value)} style={inp}/></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Pre-qual?</div><select value={lForm.prequalified} onChange={e=>lf('prequalified',e.target.value)} style={inp}><option>No</option><option>Yes</option><option>Partial</option></select></div>
+            </div>
+            <div style={{ marginTop:9 }}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Lost Reason</div><input value={lForm.lostReason} onChange={e=>lf('lostReason',e.target.value)} style={inp}/></div>
+            <div style={{ marginTop:9 }}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Notes</div><textarea value={lForm.notes} onChange={e=>lf('notes',e.target.value)} rows={3} style={{...inp,resize:'vertical'}}/></div>
+            <div style={{ display:'flex',gap:7,marginTop:14,justifyContent:'flex-end' }}>
+              {lModal.mode==='edit'&&<button onClick={delL} style={ab('#8b2e2e','#e07070')}>Delete</button>}
+              <button onClick={()=>setLModal(null)} style={ab('#3a3430','#8a7d72')}>Cancel</button>
+              <button onClick={savL} style={{...ab('#c8922a'),background:'#c8922a',color:'#1a1714',padding:'5px 14px'}}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* JOB MODAL */}
+      {jModal&&(
+        <div onClick={e=>{if(e.target===e.currentTarget)setJModal(null);}} style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:14 }}>
+          <div style={{ background:'#2a2520',border:'1px solid #3a3430',width:'100%',maxWidth:440,maxHeight:'90vh',overflowY:'auto',padding:20 }}>
+            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginBottom:14 }}>{jModal.mode==='edit'?`Edit — ${jModal.job.name}`:'Add Task'}</div>
+            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:9 }}>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Job / Customer</div><input value={jForm.name} onChange={e=>jf('name',e.target.value)} style={inp}/></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Column</div><select value={jForm.column} onChange={e=>jf('column',e.target.value)} style={inp}>{J_COLS.map(c=><option key={c} value={c}>{J_LABELS[c]}</option>)}</select></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Priority</div><select value={jForm.priority} onChange={e=>jf('priority',e.target.value)} style={inp}><option>High</option><option>Normal</option><option>Low</option></select></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Due Date</div><input type="date" value={jForm.dueDate} onChange={e=>jf('dueDate',e.target.value)} style={inp}/></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Value £</div><input type="number" value={jForm.value} onChange={e=>jf('value',e.target.value)} style={inp}/></div>
+            </div>
+            <div style={{ marginTop:9 }}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Notes</div><textarea value={jForm.notes} onChange={e=>jf('notes',e.target.value)} rows={3} style={{...inp,resize:'vertical'}}/></div>
+            <div style={{ display:'flex',gap:7,marginTop:14,justifyContent:'flex-end' }}>
+              {jModal.mode==='edit'&&<button onClick={delJ} style={ab('#8b2e2e','#e07070')}>Delete</button>}
+              <button onClick={()=>setJModal(null)} style={ab('#3a3430','#8a7d72')}>Cancel</button>
+              <button onClick={savJ} style={{...ab('#c8922a'),background:'#c8922a',color:'#1a1714',padding:'5px 14px'}}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.render(React.createElement(App), document.getElementById('root'));
+</script>
+</body>
+</html>
