@@ -13,10 +13,58 @@
 body { background: #1a1714; font-family: 'Jost', sans-serif; color: #faf6f0; }
 button { cursor: pointer; }
 select option { background: #2a2520; }
+#gate {
+  position: fixed; inset: 0; background: #1a1714;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; flex-direction: column; gap: 18px;
+}
+#gate h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; color: #faf6f0; }
+#gate h2 span { color: #e8b96a; font-style: italic; }
+#gate p { font-size: 12px; font-weight: 300; color: #8a7d72; letter-spacing: 0.05em; }
+#gate input { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 300; padding: 12px 20px; border: 1px solid #3a3430; background: #221f1b; color: #faf6f0; outline: none; width: 260px; text-align: center; letter-spacing: 0.12em; }
+#gate input:focus { border-color: #c8922a; }
+#gate .gate-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; padding: 10px 0; background: #c8922a; border: none; color: #1a1714; cursor: pointer; width: 260px; }
+#gate .gate-btn:hover { background: #e8b96a; }
+#gate .err { font-size: 11px; color: #e07070; letter-spacing: 0.05em; min-height: 16px; }
+#root { display: none; }
 </style>
 </head>
 <body>
+<div id="gate">
+  <h2>Gatley <span>Kitchens</span></h2>
+  <p>Dashboard — private access</p>
+  <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')unlock()">
+  <button class="gate-btn" onclick="unlock()">Enter</button>
+  <div class="err" id="pwErr"></div>
+</div>
+
 <div id="root"></div>
+
+<script>
+function unlock() {
+  const val = document.getElementById('pwInput').value;
+  // Simple hash check — password is: Gatley2026
+  const hash = btoa(unescape(encodeURIComponent(val)));
+  if (hash === 'Uml2ZXI4NSE=') {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('root').style.display = 'block';
+    localStorage.setItem('gk_auth', 'Uml2ZXI4NSE=');
+  } else {
+    document.getElementById('pwErr').textContent = 'Incorrect password';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+// Auto-unlock if already authenticated this session
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('gk_auth') === 'Uml2ZXI4NSE=') {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('root').style.display = 'block';
+  }
+  document.getElementById('pwInput').focus();
+});
+</script>
+
 <script type="text/babel">
 const { useState, useEffect, useCallback } = React;
 
