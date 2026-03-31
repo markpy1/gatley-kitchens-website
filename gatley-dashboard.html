@@ -4,578 +4,836 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gatley Kitchens — Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #1a1714; font-family: 'Jost', sans-serif; color: #faf6f0; }
-button { cursor: pointer; }
-select option { background: #2a2520; }
-#gate {
-  position: fixed; inset: 0; background: #1a1714;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 9999; flex-direction: column; gap: 18px;
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1714;font-family:'Jost',sans-serif;color:#faf6f0;font-size:13px}
+button{cursor:pointer;font-family:'Jost',sans-serif}
+input,select,textarea{font-family:'Jost',sans-serif}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:#1a1714;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:9999}
+#gate h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:#faf6f0}
+#gate h2 span{color:#e8b96a;font-style:italic}
+#gate p{font-size:11px;color:#8a7d72;letter-spacing:0.05em}
+#gate input{padding:11px 18px;border:1px solid #3a3430;background:#221f1b;color:#faf6f0;outline:none;width:250px;text-align:center;letter-spacing:0.1em;font-size:14px}
+#gate input:focus{border-color:#c8922a}
+#gate .gbtn{padding:10px 0;background:#c8922a;border:none;color:#1a1714;width:250px;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase}
+#gate .gbtn:hover{background:#e8b96a}
+#gate .gerr{font-size:10px;color:#e07070;min-height:14px}
+
+/* APP */
+#app{display:none;min-height:100vh}
+
+/* TOPBAR */
+#topbar{background:#221f1b;border-bottom:1px solid #3a3430;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:50}
+#topbar .logo{font-family:'Cormorant Garamond',serif;font-size:18px;color:#faf6f0}
+#topbar .logo em{color:#e8b96a;font-style:italic}
+#topbar .tabs{display:flex;gap:5px}
+.tab-btn{font-size:10px;font-weight:600;letter-spacing:0.13em;text-transform:uppercase;padding:5px 12px;border:1px solid #3a3430;background:transparent;color:#8a7d72}
+.tab-btn.active{background:#c8922a;border-color:#c8922a;color:#1a1714}
+#syncMsg{font-size:10px;color:#6ec87a;margin-left:8px}
+
+/* CONTENT */
+.pane{display:none;padding:14px 12px}
+.pane.active{display:block}
+
+/* STAT TILES */
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tile{background:#221f1b;border:1px solid #3a3430;padding:7px 12px;text-align:center;min-width:70px}
+.tile .tv{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1;margin-bottom:2px}
+.tile .tl{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:#8a7d72}
+
+/* FILTER BAR */
+.filterbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.flt-btn{font-size:9px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;padding:4px 9px;border:1px solid #3a3430;background:transparent;color:#8a7d72}
+.flt-btn.active{color:#faf6f0}
+#lSearch{margin-left:auto;padding:4px 9px;border:1px solid #3a3430;background:#221f1b;color:#faf6f0;outline:none;font-size:11px;width:110px}
+
+/* KANBAN GRID */
+.kboard{display:grid;gap:10px;align-items:start}
+.kboard.cols4{grid-template-columns:repeat(4,1fr)}
+.kboard.cols5{grid-template-columns:repeat(5,1fr)}
+.kcol-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;margin-bottom:10px;border-bottom:2px solid}
+.kcol-head .khl{font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase}
+.kcol-head .khc{font-family:'Cormorant Garamond',serif;font-size:17px}
+.kempty{font-size:10px;color:#8a7d72;font-style:italic;text-align:center;padding:12px 0}
+
+/* CARDS */
+.card{padding:9px;margin-bottom:7px;cursor:pointer;border:1px solid}
+.card .cname{font-family:'Cormorant Garamond',serif;font-size:13px;color:#faf6f0;line-height:1.2;margin-bottom:3px}
+.card .cval{font-size:11px;font-weight:600;margin-bottom:2px}
+.card .cprofit{font-size:10px;color:#6ec87a;font-weight:500;margin-bottom:2px}
+.card .cinv{font-size:9px;color:#8a7d72;margin-bottom:2px}
+.card .ctags{display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap}
+.tag-a{font-size:8px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:2px 5px;border:1px solid #c8922a;color:#e8b96a}
+.tag-m{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 5px;border:1px solid #3a3430;color:#8a7d72}
+.tag-auto{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:inherit;opacity:0.6}
+.card .cdate{font-size:9px;color:#8a7d72}
+.card .clost{font-size:9px;opacity:0.8}
+.card .cnotes{font-size:10px;color:#8a7d72;line-height:1.5;font-style:italic;border-left:2px solid #3a3430;padding-left:6px;margin:5px 0}
+.card .cactions{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
+.card .ctap{font-size:7px;color:#8a7d72;opacity:0.4;margin-top:2px;letter-spacing:0.1em;text-transform:uppercase}
+.card .cpri{font-size:8px;padding:2px 4px;border:1px solid;display:inline-block;margin-bottom:3px}
+.card .cdue{font-size:9px;margin-top:2px}
+
+.act-btn{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border:1px solid;background:transparent;cursor:pointer}
+.add-btn{width:100%;padding:7px;border:1px dashed #3a3430;background:transparent;color:#8a7d72;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;margin-top:4px}
+.add-btn:hover{border-color:#8a7d72}
+
+/* INFO BAR */
+.infobar{background:#221f1b;border:1px solid #3a3430;padding:8px 12px;margin-bottom:14px;font-size:10px;color:#8a7d72;line-height:1.7}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:200;display:flex;align-items:center;justify-content:center;padding:14px}
+.modal{background:#2a2520;border:1px solid #3a3430;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:20px}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:18px;color:#faf6f0;margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+.form-field label{display:block;font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:4px}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:6px 9px;border:1px solid #3a3430;background:#1a1714;color:#faf6f0;outline:none;font-size:12px;font-weight:300}
+.form-field textarea{resize:vertical}
+.modal-footer{display:flex;gap:7px;margin-top:14px;justify-content:flex-end}
+.rev-section{margin-top:14px;padding:12px;background:#1f1c19;border:1px solid #2e7a3a}
+.rev-section .rev-label{font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6ec87a;margin-bottom:10px}
+.rev-hint{font-size:9px;color:#8a7d72;margin-top:8px;line-height:1.5}
+
+/* REVENUE TAB */
+.rev-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.rev-top h2{font-family:'Cormorant Garamond',serif;font-size:18px;color:#faf6f0}
+.yr-btn{font-size:10px;font-weight:600;letter-spacing:0.12em;padding:4px 11px;border:1px solid #3a3430;background:transparent;color:#8a7d72;cursor:pointer}
+.yr-btn.active{background:#6ec87a;border-color:#6ec87a;color:#1a1714}
+.rev-hint-top{margin-left:auto;font-size:9px;color:#8a7d72}
+
+.rev-tiles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.rev-tile{background:#221f1b;border:1px solid #3a3430;padding:10px 14px;flex:1;min-width:100px}
+.rev-tile .rtv{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1;margin-bottom:3px}
+.rev-tile .rtl{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:#8a7d72}
+
+.chart-wrap{background:#221f1b;border:1px solid #3a3430;padding:14px;margin-bottom:16px}
+.chart-label{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:12px}
+.bars{display:flex;gap:3px;align-items:flex-end;height:120px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar-val{font-size:7px;color:#6ec87a;text-align:center;line-height:1.2;min-height:12px}
+.bar-fill{width:100%;border-radius:2px;min-height:2px;transition:height 0.3s}
+.bar-mon{font-size:8px;letter-spacing:0.04em}
+
+.rev-split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rev-box{background:#221f1b;border:1px solid #3a3430;padding:14px}
+.rev-box h4{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:12px}
+.rev-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #2a2520}
+.rev-row .rn{font-size:11px;color:#faf6f0}
+.rev-row .rn small{display:block;font-size:9px;color:#8a7d72}
+.rev-row .rp{font-size:12px;color:#6ec87a;font-weight:500}
+.rev-row .rv{font-size:10px;color:#8a7d72}
+.rev-total{display:flex;justify-content:space-between;padding:10px 0 0;margin-top:4px}
+.rev-total span{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#8a7d72}
+.rev-total strong{font-family:'Cormorant Garamond',serif;font-size:15px;color:#6ec87a}
+.rev-empty{font-size:11px;color:#8a7d72;font-style:italic}
+
+@media(max-width:700px){
+  .kboard.cols4{grid-template-columns:repeat(2,1fr)}
+  .kboard.cols5{grid-template-columns:repeat(2,1fr)}
+  .rev-split{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
 }
-#gate h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; color: #faf6f0; }
-#gate h2 span { color: #e8b96a; font-style: italic; }
-#gate p { font-size: 12px; font-weight: 300; color: #8a7d72; letter-spacing: 0.05em; }
-#gate input { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 300; padding: 12px 20px; border: 1px solid #3a3430; background: #221f1b; color: #faf6f0; outline: none; width: 260px; text-align: center; letter-spacing: 0.12em; }
-#gate input:focus { border-color: #c8922a; }
-#gate .gate-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; padding: 10px 0; background: #c8922a; border: none; color: #1a1714; cursor: pointer; width: 260px; }
-#gate .gate-btn:hover { background: #e8b96a; }
-#gate .err { font-size: 11px; color: #e07070; letter-spacing: 0.05em; min-height: 16px; }
-#root { display: none; }
+@media(max-width:420px){
+  .kboard.cols4,.kboard.cols5{grid-template-columns:1fr}
+  .rev-tiles{flex-direction:column}
+}
 </style>
 </head>
 <body>
 
+<!-- GATE -->
 <div id="gate">
   <h2>Gatley <span>Kitchens</span></h2>
   <p>Dashboard — private access</p>
-  <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')unlock()">
-  <button class="gate-btn" onclick="unlock()">Enter</button>
-  <div class="err" id="pwErr"></div>
+  <input type="password" id="pwInput" placeholder="Password" />
+  <button class="gbtn" id="unlockBtn">Enter</button>
+  <div class="gerr" id="pwErr"></div>
 </div>
 
-<div id="root"></div>
+<!-- APP -->
+<div id="app">
+  <div id="topbar">
+    <div>
+      <span class="logo">Gatley <em>Kitchens</em></span>
+      <span id="syncMsg"></span>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="pipeline">Pipeline</button>
+      <button class="tab-btn" data-tab="jobs">Jobs</button>
+      <button class="tab-btn" data-tab="revenue">Revenue</button>
+    </div>
+  </div>
+
+  <!-- PIPELINE PANE -->
+  <div class="pane active" id="pane-pipeline">
+    <div class="tiles" id="pipelineTiles"></div>
+    <div class="filterbar" id="filterBar"></div>
+    <div class="kboard cols4" id="pipelineBoard"></div>
+  </div>
+
+  <!-- JOBS PANE -->
+  <div class="pane" id="pane-jobs">
+    <div class="infobar" id="jobsInfo"></div>
+    <div class="tiles" id="jobsTiles"></div>
+    <div class="kboard cols5" id="jobsBoard"></div>
+  </div>
+
+  <!-- REVENUE PANE -->
+  <div class="pane" id="pane-revenue">
+    <div class="rev-top">
+      <h2>Monthly Profit Tracker</h2>
+      <div id="yearBtns"></div>
+      <span class="rev-hint-top">Edit a job card → add Final Profit + Invoice Date</span>
+    </div>
+    <div class="rev-tiles" id="revTiles"></div>
+    <div class="chart-wrap">
+      <div class="chart-label" id="chartLabel">Monthly Profit</div>
+      <div class="bars" id="barChart"></div>
+    </div>
+    <div class="rev-split">
+      <div class="rev-box">
+        <h4 id="cumLabel">Cumulative</h4>
+        <div id="cumList"></div>
+      </div>
+      <div class="rev-box">
+        <h4 id="jobsLogLabel">Logged Jobs</h4>
+        <div id="jobsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEAD MODAL -->
+<div class="modal-bg" id="leadModal" style="display:none">
+  <div class="modal">
+    <h3 id="leadModalTitle">Lead</h3>
+    <div class="form-grid">
+      <div class="form-field"><label>Name</label><input id="lf_name" type="text"></div>
+      <div class="form-field"><label>Date</label><input id="lf_date" type="date"></div>
+      <div class="form-field"><label>Source</label><select id="lf_source"></select></div>
+      <div class="form-field"><label>Status</label><select id="lf_status"></select></div>
+      <div class="form-field"><label>Value £</label><input id="lf_value" type="number"></div>
+      <div class="form-field"><label>Pre-qualified?</label><select id="lf_pq"><option>No</option><option>Yes</option><option>Partial</option></select></div>
+    </div>
+    <div class="form-field" style="margin-bottom:9px"><label>Lost Reason</label><input id="lf_lost" type="text"></div>
+    <div class="form-field"><label>Notes</label><textarea id="lf_notes" rows="3"></textarea></div>
+    <div class="modal-footer">
+      <button class="act-btn" id="delLeadBtn" style="border-color:#8b2e2e;color:#e07070;display:none">Delete</button>
+      <button class="act-btn" style="border-color:#3a3430;color:#8a7d72" onclick="closeLeadModal()">Cancel</button>
+      <button class="act-btn" style="border-color:#c8922a;background:#c8922a;color:#1a1714;padding:5px 14px" onclick="saveLeadModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- JOB MODAL -->
+<div class="modal-bg" id="jobModal" style="display:none">
+  <div class="modal">
+    <h3 id="jobModalTitle">Job</h3>
+    <div class="form-grid">
+      <div class="form-field"><label>Job / Customer</label><input id="jf_name" type="text"></div>
+      <div class="form-field"><label>Column</label><select id="jf_col"></select></div>
+      <div class="form-field"><label>Priority</label><select id="jf_pri"><option>High</option><option>Normal</option><option>Low</option></select></div>
+      <div class="form-field"><label>Due Date</label><input id="jf_due" type="date"></div>
+      <div class="form-field"><label>Job Value £</label><input id="jf_val" type="number"></div>
+    </div>
+    <div class="rev-section">
+      <div class="rev-label">Revenue Tracking</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Final Profit £</label><input id="jf_profit" type="number" placeholder="e.g. 3200"></div>
+        <div class="form-field"><label>Job Invoiced Date</label><input id="jf_invdate" type="date"></div>
+      </div>
+      <div class="rev-hint">Fill both fields to include this job in the Revenue tab.</div>
+    </div>
+    <div class="form-field" style="margin-top:9px"><label>Notes</label><textarea id="jf_notes" rows="3"></textarea></div>
+    <div class="modal-footer">
+      <button class="act-btn" id="delJobBtn" style="border-color:#8b2e2e;color:#e07070;display:none">Delete</button>
+      <button class="act-btn" style="border-color:#3a3430;color:#8a7d72" onclick="closeJobModal()">Cancel</button>
+      <button class="act-btn" style="border-color:#c8922a;background:#c8922a;color:#1a1714;padding:5px 14px" onclick="saveJobModal()">Save</button>
+    </div>
+  </div>
+</div>
 
 <script>
-function unlock() {
-  const val = document.getElementById('pwInput').value;
-  const hash = btoa(unescape(encodeURIComponent(val)));
-  if (hash === 'Uml2ZXI4NSE=') {
+// ============================================================
+// CONFIG
+// ============================================================
+var SK = 'gatley-dash-v4';
+var AUTH_HASH = 'Uml2ZXI4NSE=';
+
+var SOURCES = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
+var P_ST    = ['pending','not_started','won','lost'];
+var P_LBL   = {pending:'Pending',not_started:'Not Started',won:'Won',lost:'Lost'};
+var P_COL   = {pending:'#e8b96a',not_started:'#7ab8e8',won:'#6ec87a',lost:'#e07070'};
+var P_BG    = {pending:'#2d2418',not_started:'#1a2230',won:'#1a2d1e',lost:'#2d1a1a'};
+var P_BDR   = {pending:'#8b6a2e',not_started:'#2e5a8b',won:'#2e7a3a',lost:'#8b2e2e'};
+
+var J_COLS  = ['quotes','orders','upcoming','snagging','invoices'];
+var J_LBL   = {quotes:'Quotes to Do',orders:'Orders to Do',upcoming:'Upcoming Jobs',snagging:'Snagging',invoices:'Invoices'};
+var J_COL   = {quotes:'#e8b96a',orders:'#7ab8e8',upcoming:'#b88de8',snagging:'#e07070',invoices:'#6ec87a'};
+var J_BG    = {quotes:'#2d2418',orders:'#1a2230',upcoming:'#221a2d',snagging:'#2d1a1a',invoices:'#1a2d1e'};
+var J_BDR   = {quotes:'#8b6a2e',orders:'#2e5a8b',upcoming:'#6a2e8b',snagging:'#8b2e2e',invoices:'#2e7a3a'};
+var MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var TARGET  = 102000;
+
+var INIT_LEADS = [
+  {id:1,name:'Heather',date:'2026-01-06',source:'Unknown',status:'lost',value:2900,pq:'No',lostReason:'',notes:"Tricky job - don't really want it."},
+  {id:2,name:'Blunt',date:'2026-01-07',source:'Unknown',status:'lost',value:8800,pq:'No',lostReason:'Roof first',notes:'Pretty much dead for now.'},
+  {id:3,name:'Morris',date:'2026-01-07',source:'Google',status:'won',value:8000,pq:'No',lostReason:'',notes:''},
+  {id:4,name:'Jason',date:'2026-01-13',source:'Unknown',status:'lost',value:4800,pq:'No',lostReason:'Unknown - likely price',notes:''},
+  {id:5,name:'Donna Early',date:'2026-01-14',source:'Local',status:'lost',value:4700,pq:'No',lostReason:'Too expensive',notes:''},
+  {id:6,name:'Alexandra Patteson',date:'2026-01-05',source:'Referral',status:'pending',value:3200,pq:'No',lostReason:'',notes:"Don't chase - said will come back."},
+  {id:7,name:'Evans',date:'2026-01-16',source:'Previous customer',status:'lost',value:4200,pq:'No',lostReason:'',notes:"Don't chase - think too pricey now."},
+  {id:8,name:'George',date:'2026-01-13',source:'Google',status:'lost',value:2200,pq:'No',lostReason:'Unknown - likely price',notes:''},
+  {id:9,name:'Platt',date:'2026-11-20',source:'Facebook',status:'lost',value:9600,pq:'No',lostReason:'',notes:'On hold - pipe work. Reminder in a couple months.'},
+  {id:10,name:'Grimes',date:'2026-01-27',source:'Our fitter',status:'lost',value:7000,pq:'No',lostReason:'Unknown - likely price',notes:''},
+  {id:11,name:'Tague',date:'2026-02-05',source:'Local',status:'pending',value:2000,pq:'No',lostReason:'',notes:'Lives across street. Said yes then put on hold.'},
+  {id:12,name:'Caroline',date:'2026-02-06',source:'Local',status:'lost',value:7000,pq:'Yes',lostReason:'Unknown - likely price',notes:''},
+  {id:13,name:'Weiner',date:'2026-02-11',source:'Unknown',status:'lost',value:11000,pq:'No',lostReason:'',notes:'Bought new car - on hold. Likely dead.'},
+  {id:14,name:'Edge',date:'2026-02-06',source:'Unknown',status:'won',value:7300,pq:'Yes',lostReason:'',notes:''},
+  {id:15,name:'Howard',date:'2026-01-12',source:'Unknown',status:'pending',value:3100,pq:'Yes',lostReason:'',notes:"Not quick decision makers. Don't chase."},
+  {id:16,name:'Alton',date:'2026-01-19',source:'Unknown',status:'pending',value:6500,pq:'Yes',lostReason:'',notes:'Showroom visit booked.'},
+  {id:17,name:'Martha',date:'2026-02-23',source:'Unknown',status:'lost',value:5500,pq:'Yes',lostReason:'Unknown - likely price',notes:''},
+  {id:18,name:'Crompton',date:'2026-02-24',source:'Unknown',status:'won',value:1600,pq:'Yes',lostReason:'',notes:''},
+  {id:19,name:'Lloyd',date:'2026-02-26',source:'Unknown',status:'won',value:3500,pq:'No',lostReason:'',notes:''},
+  {id:20,name:'Sharron',date:'2026-02-27',source:'Unknown',status:'pending',value:3600,pq:'No',lostReason:'',notes:"Liked quote, said will be in touch. Don't chase."},
+  {id:21,name:'Hancock',date:'2026-03-02',source:'Referral',status:'won',value:2900,pq:'No',lostReason:'',notes:''},
+  {id:22,name:'Manisha Natha',date:'2026-03-05',source:'Unknown',status:'lost',value:9300,pq:'Yes',lostReason:'Unknown - likely price',notes:''},
+  {id:23,name:'Zoe',date:'2026-03-09',source:'Unknown',status:'pending',value:8800,pq:'Yes',lostReason:'',notes:"Didn't know what she wanted. Unlikely."},
+  {id:24,name:'Hughes',date:'2026-03-11',source:'Unknown',status:'won',value:3300,pq:'No',lostReason:'',notes:''},
+  {id:25,name:'Newby',date:'2026-03-16',source:'Unknown',status:'pending',value:6700,pq:'No',lostReason:'',notes:'Showroom visit booked.'},
+  {id:26,name:'Godfrey',date:'2026-03-16',source:'Referral',status:'lost',value:1000,pq:'No',lostReason:'Unknown - likely price',notes:''},
+  {id:27,name:'Jackie',date:'2026-03-18',source:'Referral',status:'pending',value:1650,pq:'Yes',lostReason:'',notes:'Remeasure booked to finalise.'},
+  {id:28,name:'Steve Laiker',date:'2026-03-22',source:'Website',status:'lost',value:0,pq:'Yes',lostReason:'No reply',notes:''},
+  {id:29,name:'Grace',date:'2026-03-23',source:'Facebook',status:'pending',value:9000,pq:'No',lostReason:'',notes:'Price sensitive. Showroom visit booked.'},
+  {id:30,name:'Anne-Marie Bentley',date:'2026-03-23',source:'Website',status:'pending',value:0,pq:'Yes',lostReason:'',notes:'Appointment booked.'},
+  {id:31,name:'Louise',date:'2026-03-23',source:'Google',status:'pending',value:0,pq:'Yes',lostReason:'',notes:'Clueless husband on visit.'},
+  {id:32,name:'Alan Bates',date:'2026-03-23',source:'Referral',status:'pending',value:0,pq:'Yes',lostReason:'',notes:'£25k budget. Considering Ikea.'},
+  {id:33,name:'Ann',date:'2026-03-24',source:'Local',status:'not_started',value:7000,pq:'Yes',lostReason:'',notes:'£6-8k all in. Appointment booked.'},
+  {id:34,name:'Paul Johnson',date:'2026-03-24',source:'Previous customer',status:'pending',value:0,pq:'No',lostReason:'',notes:'Appointment booked.'},
+  {id:35,name:'Slater',date:'2026-03-27',source:'Local',status:'pending',value:9300,pq:'Yes',lostReason:'',notes:'Been going on for years.'}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+var db = {leads:[], manualJobs:[], nextLeadId:36, nextJobId:1};
+var activeTab = 'pipeline';
+var lFilter = 'all', lSearch = '';
+var expandedL = null, expandedJ = null;
+var editingLead = null, editingJob = null;
+var revYear = new Date().getFullYear();
+
+// ============================================================
+// UTILS
+// ============================================================
+function fmtMoney(v){ return v ? '£'+Number(v).toLocaleString() : '—'; }
+function fmtDate(d){ try{ return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); } catch(e){ return d||''; } }
+function saveDB(){
+  try{ localStorage.setItem(SK, JSON.stringify(db)); showSync('saved ✓'); }
+  catch(e){ showSync('error'); }
+}
+function showSync(m){ var el=document.getElementById('syncMsg'); el.textContent=m; setTimeout(function(){ el.textContent=''; },1500); }
+function h(str){ return str ? String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+
+// ============================================================
+// AUTH
+// ============================================================
+document.getElementById('unlockBtn').onclick = tryUnlock;
+document.getElementById('pwInput').onkeydown = function(e){ if(e.key==='Enter') tryUnlock(); };
+
+function tryUnlock(){
+  var val = document.getElementById('pwInput').value;
+  var hash = btoa(unescape(encodeURIComponent(val)));
+  if(hash === AUTH_HASH){
+    localStorage.setItem('gk_auth', AUTH_HASH);
     document.getElementById('gate').style.display = 'none';
-    document.getElementById('root').style.display = 'block';
-    localStorage.setItem('gk_auth', 'Uml2ZXI4NSE=');
+    document.getElementById('app').style.display = 'block';
+    initApp();
   } else {
     document.getElementById('pwErr').textContent = 'Incorrect password';
     document.getElementById('pwInput').value = '';
-    document.getElementById('pwInput').focus();
   }
 }
-window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('gk_auth') === 'Uml2ZXI4NSE=') {
+
+window.addEventListener('DOMContentLoaded', function(){
+  if(localStorage.getItem('gk_auth') === AUTH_HASH){
     document.getElementById('gate').style.display = 'none';
-    document.getElementById('root').style.display = 'block';
+    document.getElementById('app').style.display = 'block';
+    initApp();
   }
   document.getElementById('pwInput').focus();
 });
-</script>
 
-<script type="text/babel">
-const { useState, useEffect, useCallback } = React;
+// ============================================================
+// INIT
+// ============================================================
+function initApp(){
+  var stored = localStorage.getItem(SK);
+  if(stored){
+    try{
+      var d = JSON.parse(stored);
+      db.leads      = d.leads      || INIT_LEADS;
+      db.manualJobs = d.manualJobs || [];
+      db.nextLeadId = d.nextLeadId || 36;
+      db.nextJobId  = d.nextJobId  || 1;
+    } catch(e){ db.leads = INIT_LEADS; }
+  } else {
+    db.leads = INIT_LEADS;
+  }
 
-const STORAGE_KEY = 'gatley-dashboard-v3';
+  // Populate selects
+  var srcSel = document.getElementById('lf_source');
+  SOURCES.forEach(function(s){ var o=document.createElement('option'); o.value=s; o.textContent=s; srcSel.appendChild(o); });
+  var stSel = document.getElementById('lf_status');
+  P_ST.forEach(function(s){ var o=document.createElement('option'); o.value=s; o.textContent=P_LBL[s]; stSel.appendChild(o); });
+  var jcSel = document.getElementById('jf_col');
+  J_COLS.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=J_LBL[c]; jcSel.appendChild(o); });
 
-const INITIAL_LEADS = [
-  { id:1,  name:'Heather',         date:'2026-01-06', source:'Unknown',           status:'lost',        value:2900,  prequalified:'No',      lostReason:'',                     notes:"Tricky job - don't really want it." },
-  { id:2,  name:'Blunt',           date:'2026-01-07', source:'Unknown',           status:'lost',        value:8800,  prequalified:'No',      lostReason:'Roof first',           notes:'Pretty much dead for now.' },
-  { id:3,  name:'Morris',          date:'2026-01-07', source:'Google',            status:'won',         value:8000,  prequalified:'No',      lostReason:'',                     notes:'' },
-  { id:4,  name:'Jason',           date:'2026-01-13', source:'Unknown',           status:'lost',        value:4800,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
-  { id:5,  name:'Donna Early',     date:'2026-01-14', source:'Local',             status:'lost',        value:4700,  prequalified:'No',      lostReason:'Too expensive',        notes:'' },
-  { id:6,  name:'Alexandra Patteson',date:'2026-01-05',source:'Referral',         status:'pending',     value:3200,  prequalified:'No',      lostReason:'',                     notes:"Don't chase - said will come back." },
-  { id:7,  name:'Evans',           date:'2026-01-16', source:'Previous customer', status:'lost',        value:4200,  prequalified:'No',      lostReason:'',                     notes:"Don't chase - think too pricey now." },
-  { id:8,  name:'George',          date:'2026-01-13', source:'Google',            status:'lost',        value:2200,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
-  { id:9,  name:'Platt',           date:'2026-11-20', source:'Facebook',          status:'lost',        value:9600,  prequalified:'No',      lostReason:'',                     notes:'On hold - pipe work. Reminder in a couple months.' },
-  { id:10, name:'Grimes',          date:'2026-01-27', source:'Our fitter',        status:'lost',        value:7000,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
-  { id:11, name:'Tague',           date:'2026-02-05', source:'Local',             status:'pending',     value:2000,  prequalified:'No',      lostReason:'',                     notes:'Lives across street. Said yes then put on hold.' },
-  { id:12, name:'Caroline',        date:'2026-02-06', source:'Local',             status:'lost',        value:7000,  prequalified:'Yes',     lostReason:'Unknown - likely price',notes:'' },
-  { id:13, name:'Weiner',          date:'2026-02-11', source:'Unknown',           status:'lost',        value:11000, prequalified:'No',      lostReason:'',                     notes:'Bought new car - on hold. Likely dead.' },
-  { id:14, name:'Edge',            date:'2026-02-06', source:'Unknown',           status:'won',         value:7300,  prequalified:'Yes',     lostReason:'',                     notes:'' },
-  { id:15, name:'Howard',          date:'2026-01-12', source:'Unknown',           status:'pending',     value:3100,  prequalified:'Yes',     lostReason:'',                     notes:"Not quick decision makers. Don't chase." },
-  { id:16, name:'Alton',           date:'2026-01-19', source:'Unknown',           status:'pending',     value:6500,  prequalified:'Yes',     lostReason:'',                     notes:'Showroom visit booked.' },
-  { id:17, name:'Martha',          date:'2026-02-23', source:'Unknown',           status:'lost',        value:5500,  prequalified:'Yes',     lostReason:'Unknown - likely price',notes:'' },
-  { id:18, name:'Crompton',        date:'2026-02-24', source:'Unknown',           status:'won',         value:1600,  prequalified:'Yes',     lostReason:'',                     notes:'' },
-  { id:19, name:'Lloyd',           date:'2026-02-26', source:'Unknown',           status:'won',         value:3500,  prequalified:'No',      lostReason:'',                     notes:'' },
-  { id:20, name:'Sharron',         date:'2026-02-27', source:'Unknown',           status:'pending',     value:3600,  prequalified:'No',      lostReason:'',                     notes:"Liked quote, said will be in touch. Don't chase." },
-  { id:21, name:'Hancock',         date:'2026-03-02', source:'Referral',          status:'won',         value:2900,  prequalified:'No',      lostReason:'',                     notes:'' },
-  { id:22, name:'Manisha Natha',   date:'2026-03-05', source:'Unknown',           status:'lost',        value:9300,  prequalified:'Yes',     lostReason:'Unknown - likely price',notes:'' },
-  { id:23, name:'Zoe',             date:'2026-03-09', source:'Unknown',           status:'pending',     value:8800,  prequalified:'Yes',     lostReason:'',                     notes:"Didn't know what she wanted. Unlikely." },
-  { id:24, name:'Hughes',          date:'2026-03-11', source:'Unknown',           status:'won',         value:3300,  prequalified:'No',      lostReason:'',                     notes:'' },
-  { id:25, name:'Newby',           date:'2026-03-16', source:'Unknown',           status:'pending',     value:6700,  prequalified:'No',      lostReason:'',                     notes:'Showroom visit booked.' },
-  { id:26, name:'Godfrey',         date:'2026-03-16', source:'Referral',          status:'lost',        value:1000,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
-  { id:27, name:'Jackie',          date:'2026-03-18', source:'Referral',          status:'pending',     value:1650,  prequalified:'Yes',     lostReason:'',                     notes:'Remeasure booked to finalise.' },
-  { id:28, name:'Steve Laiker',    date:'2026-03-22', source:'Website',           status:'lost',        value:0,     prequalified:'Yes',     lostReason:'No reply',             notes:'' },
-  { id:29, name:'Grace',           date:'2026-03-23', source:'Facebook',          status:'pending',     value:9000,  prequalified:'No',      lostReason:'',                     notes:'Price sensitive. Showroom visit booked.' },
-  { id:30, name:'Anne-Marie Bentley',date:'2026-03-23',source:'Website',          status:'pending',     value:0,     prequalified:'Yes',     lostReason:'',                     notes:'Appointment booked.' },
-  { id:31, name:'Louise',          date:'2026-03-23', source:'Google',            status:'pending',     value:0,     prequalified:'Yes',     lostReason:'',                     notes:'Clueless husband on visit.' },
-  { id:32, name:'Alan Bates',      date:'2026-03-23', source:'Referral',          status:'pending',     value:0,     prequalified:'Yes',     lostReason:'',                     notes:'£25k budget. Considering Ikea.' },
-  { id:33, name:'Ann',             date:'2026-03-24', source:'Local',             status:'not_started', value:7000,  prequalified:'Yes',     lostReason:'',                     notes:'£6-8k all in. Appointment booked.' },
-  { id:34, name:'Paul Johnson',    date:'2026-03-24', source:'Previous customer', status:'pending',     value:0,     prequalified:'No',      lostReason:'',                     notes:'Appointment booked.' },
-  { id:35, name:'Slater',          date:'2026-03-27', source:'Local',             status:'pending',     value:9300,  prequalified:'Yes',     lostReason:'',                     notes:'Been going on for years.' },
-];
-
-const SOURCES   = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
-const P_STATUSES = ['pending','not_started','won','lost'];
-const S_LABELS  = { pending:'Pending', not_started:'Not Started', won:'Won', lost:'Lost' };
-const S_COLORS  = { pending:'#e8b96a', not_started:'#7ab8e8', won:'#6ec87a', lost:'#e07070' };
-const S_BG      = { pending:'#2d2418', not_started:'#1a2230', won:'#1a2d1e', lost:'#2d1a1a' };
-const S_BORDER  = { pending:'#8b6a2e', not_started:'#2e5a8b', won:'#2e7a3a', lost:'#8b2e2e' };
-
-// Jobs board columns — upcoming inserted between orders and invoices
-const J_COLS   = ['quotes','orders','upcoming','snagging','invoices'];
-const J_LABELS = { quotes:'Quotes to Do', orders:'Orders to Do', upcoming:'Upcoming Jobs', snagging:'Snagging', invoices:'Invoices' };
-const J_COLORS = { quotes:'#e8b96a', orders:'#7ab8e8', upcoming:'#b88de8', snagging:'#e07070', invoices:'#6ec87a' };
-const J_BG     = { quotes:'#2d2418', orders:'#1a2230', upcoming:'#221a2d', snagging:'#2d1a1a', invoices:'#1a2d1e' };
-const J_BORDER = { quotes:'#8b6a2e', orders:'#2e5a8b', upcoming:'#6a2e8b', snagging:'#8b2e2e', invoices:'#2e7a3a' };
-
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-const fmt  = v => v ? '£' + Number(v).toLocaleString() : '—';
-const fmtD = d => { try { return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); } catch { return d; }};
-
-const EL = { name:'', date:new Date().toISOString().split('T')[0], source:'Unknown', status:'pending', value:'', prequalified:'No', lostReason:'', notes:'' };
-const EJ = { name:'', column:'upcoming', priority:'Normal', dueDate:'', value:'', notes:'', finalProfit:'', invoicedDate:'' };
-
-function App() {
-  const [tab,      setTab]      = useState('pipeline');
-  const [data,     setData]     = useState(null);
-  const [loading,  setLoading]  = useState(true);
-  const [sync,     setSync]     = useState('');
-  const [nlid,     setNlid]     = useState(36);
-  const [njid,     setNjid]     = useState(1);
-  const [lFilter,  setLFilter]  = useState('all');
-  const [lSearch,  setLSearch]  = useState('');
-  const [expL,     setExpL]     = useState(null);
-  const [expJ,     setExpJ]     = useState(null);
-  const [lModal,   setLModal]   = useState(null);
-  const [jModal,   setJModal]   = useState(null);
-  const [lForm,    setLForm]    = useState(EL);
-  const [jForm,    setJForm]    = useState(EJ);
-  const [revYear,  setRevYear]  = useState(new Date().getFullYear());
-
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const d = JSON.parse(stored);
-        setData(d); setNlid(d.nextLeadId||36); setNjid(d.nextJobId||1);
-      } catch { setData({ leads:INITIAL_LEADS, manualJobs:[], nextLeadId:36, nextJobId:1 }); }
-    } else {
-      setData({ leads:INITIAL_LEADS, manualJobs:[], nextLeadId:36, nextJobId:1 });
-    }
-    setLoading(false);
-  }, []);
-
-  const save = useCallback((d) => {
-    setData(d);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); setSync('saved ✓'); setTimeout(()=>setSync(''),1500); }
-    catch { setSync('error'); }
-  }, []);
-
-  if (loading||!data) return React.createElement('div',{style:{background:'#1a1714',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Georgia,serif',color:'#c8922a',fontSize:18}},'Loading...');
-
-  const { leads, manualJobs } = data;
-  const pinnedIds = new Set(manualJobs.filter(j=>j.leadId).map(j=>j.leadId));
-  const autoQ = leads.filter(l=>l.status==='not_started'&&!pinnedIds.has(l.id));
-  const autoO = leads.filter(l=>l.status==='won'&&!pinnedIds.has(l.id));
-
-  const itemsFor = col => {
-    const m = manualJobs.filter(j=>j.column===col);
-    if (col==='quotes')  return [...autoQ.map(l=>({...l,_auto:true})), ...m];
-    if (col==='orders')  return [...autoO.map(l=>({...l,_auto:true})), ...m];
-    return m;
-  };
-
-  const pinTo = (lead, col, e) => {
-    e&&e.stopPropagation();
-    const nj = { id:njid, leadId:lead.id, name:lead.name, column:col, priority:'Normal', dueDate:'', value:lead.value||0, notes:lead.notes||'', finalProfit:'', invoicedDate:'' };
-    save({...data, manualJobs:[...manualJobs,nj], nextJobId:njid+1});
-    setNjid(njid+1); setExpJ(null);
-  };
-
-  const moveM = (id, col, e) => { e&&e.stopPropagation(); save({...data, manualJobs:manualJobs.map(j=>j.id===id?{...j,column:col}:j)}); };
-
-  const pSt = { pending:0, not_started:0, won:0, lost:0, activeVal:0 };
-  leads.forEach(l=>{ pSt[l.status]=(pSt[l.status]||0)+1; if(l.status==='pending'||l.status==='not_started') pSt.activeVal+=(Number(l.value)||0); });
-
-  const filtered = leads.filter(l => (lFilter==='all'||l.status===lFilter) && (!lSearch||l.name.toLowerCase().includes(lSearch.toLowerCase())));
-
-  const openAL = (s='pending') => { setLForm({...EL,status:s}); setLModal({mode:'add'}); };
-  const openEL = (l,e) => { e&&e.stopPropagation(); setLForm({...l,value:l.value||''}); setLModal({mode:'edit',lead:l}); };
-  const savL = () => {
-    const d={...lForm,value:parseFloat(lForm.value)||0}; let nl,nid=nlid;
-    if(lModal.mode==='edit'){nl=leads.map(l=>l.id===lModal.lead.id?{...l,...d}:l);}
-    else{nl=[...leads,{...d,id:nlid}];nid=nlid+1;setNlid(nid);}
-    save({...data,leads:nl,nextLeadId:nid}); setLModal(null);
-  };
-  const delL = () => { if(!confirm('Delete?'))return; save({...data,leads:leads.filter(l=>l.id!==lModal.lead.id)}); setLModal(null); };
-  const qSt  = (id,st,e) => { e&&e.stopPropagation(); save({...data,leads:leads.map(l=>l.id===id?{...l,status:st}:l)}); setExpL(null); };
-
-  const openAJ = (col='upcoming') => { setJForm({...EJ,column:col}); setJModal({mode:'add'}); };
-  const openEJ = (j,e) => { e&&e.stopPropagation(); setJForm({...j,value:j.value||'',finalProfit:j.finalProfit||'',invoicedDate:j.invoicedDate||''}); setJModal({mode:'edit',job:j}); };
-  const savJ = () => {
-    const d={...jForm,value:parseFloat(jForm.value)||0,finalProfit:jForm.finalProfit===''?'':parseFloat(jForm.finalProfit)||0}; let nj,nid=njid;
-    if(jModal.mode==='edit'){nj=manualJobs.map(j=>j.id===jModal.job.id?{...j,...d}:j);}
-    else{nj=[...manualJobs,{...d,id:njid}];nid=njid+1;setNjid(nid);}
-    save({...data,manualJobs:nj,nextJobId:nid}); setJModal(null);
-  };
-  const delJ = () => { if(!confirm('Delete?'))return; save({...data,manualJobs:manualJobs.filter(j=>j.id!==jModal.job.id)}); setJModal(null); };
-
-  const lf = (k,v) => setLForm(p=>({...p,[k]:v}));
-  const jf = (k,v) => setJForm(p=>({...p,[k]:v}));
-
-  // ---- REVENUE TRACKER DATA ----
-  // Gather all jobs with an invoicedDate and finalProfit
-  const revenueJobs = manualJobs.filter(j => j.invoicedDate && j.finalProfit !== '' && j.finalProfit !== undefined && j.finalProfit !== null);
-
-  // Group by year then month
-  const byMonth = {}; // key: "YYYY-MM" => { profit: number, jobs: [] }
-  revenueJobs.forEach(j => {
-    const d = new Date(j.invoicedDate);
-    if (isNaN(d)) return;
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    if (!byMonth[key]) byMonth[key] = { profit:0, jobs:[] };
-    byMonth[key].profit += Number(j.finalProfit)||0;
-    byMonth[key].jobs.push(j);
+  // Tab buttons
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.onclick = function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('.pane').forEach(function(p){ p.classList.remove('active'); });
+      document.getElementById('pane-'+activeTab).classList.add('active');
+      render();
+    };
   });
 
-  const availYears = [...new Set(Object.keys(byMonth).map(k=>parseInt(k.split('-')[0])))].sort((a,b)=>b-a);
-  if (availYears.length && !availYears.includes(revYear)) setRevYear(availYears[0]);
-
-  const yearData = MONTHS.map((m,i) => {
-    const key = `${revYear}-${String(i+1).padStart(2,'0')}`;
-    return { month:m, key, ...(byMonth[key]||{profit:0,jobs:[]}) };
-  });
-  const yearTotal = yearData.reduce((s,m)=>s+m.profit,0);
-  const ytdMonths = yearData.filter(m=>m.profit>0);
-  const maxProfit = Math.max(...yearData.map(m=>m.profit), 1);
-  let cumulative = 0;
-  const yearDataCum = yearData.map(m=>{ cumulative+=m.profit; return {...m,cumulative}; });
-
-  // ---- STYLES ----
-  const ab = (bc,tc) => ({ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:500,letterSpacing:'0.11em',textTransform:'uppercase',padding:'3px 9px',border:`1px solid ${bc}`,background:'transparent',color:tc||bc,cursor:'pointer' });
-  const inp = { width:'100%',fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,padding:'6px 9px',border:'1px solid #3a3430',background:'#1a1714',color:'#faf6f0',outline:'none' };
-  const tagA = { fontSize:9,fontWeight:500,letterSpacing:'0.1em',textTransform:'uppercase',padding:'2px 5px',border:'1px solid #c8922a',color:'#e8b96a' };
-  const tagM = { fontSize:9,fontWeight:400,letterSpacing:'0.1em',textTransform:'uppercase',padding:'2px 5px',border:'1px solid #3a3430',color:'#8a7d72' };
-  const addBtn = { width:'100%',padding:'7px',border:'1px dashed #3a3430',background:'transparent',color:'#8a7d72',fontFamily:"'Jost',sans-serif",fontSize:11,letterSpacing:'0.14em',textTransform:'uppercase',cursor:'pointer',marginTop:4 };
-
-  return (
-    <div style={{ background:'#1a1714', minHeight:'100vh' }}>
-
-      {/* TOPBAR */}
-      <div style={{ background:'#221f1b',borderBottom:'1px solid #3a3430',padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10 }}>
-        <div>
-          <span style={{ fontFamily:'Georgia,serif',fontSize:19,color:'#faf6f0' }}>Gatley <span style={{ color:'#e8b96a',fontStyle:'italic' }}>Kitchens</span></span>
-          {sync && <span style={{ marginLeft:10,fontSize:10,color:'#6ec87a' }}>{sync}</span>}
-        </div>
-        <div style={{ display:'flex',gap:5 }}>
-          {[['pipeline','Pipeline'],['jobs','Jobs'],['revenue','Revenue']].map(([t,l])=>(
-            <button key={t} onClick={()=>setTab(t)} style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:'0.13em',textTransform:'uppercase',padding:'5px 12px',border:'1px solid',borderColor:tab===t?'#c8922a':'#3a3430',background:tab===t?'#c8922a':'transparent',color:tab===t?'#1a1714':'#8a7d72' }}>{l}</button>
-          ))}
-        </div>
-      </div>
-
-      {/* ================================================================ PIPELINE */}
-      {tab==='pipeline' && (
-        <div style={{ padding:'16px 12px' }}>
-          <div style={{ display:'flex',gap:7,flexWrap:'wrap',marginBottom:16 }}>
-            {[['Pending',pSt.pending,'#e8b96a'],['Not Started',pSt.not_started,'#7ab8e8'],['Won',pSt.won,'#6ec87a'],['Lost',pSt.lost,'#e07070'],['Active £','£'+pSt.activeVal.toLocaleString(),'#e8b96a']].map(([l,v,c])=>(
-              <div key={l} style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'6px 12px',textAlign:'center',minWidth:60 }}>
-                <div style={{ fontFamily:'Georgia,serif',fontSize:typeof v==='string'?14:19,color:c,lineHeight:1 }}>{v}</div>
-                <div style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8a7d72',marginTop:2 }}>{l}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display:'flex',gap:6,flexWrap:'wrap',marginBottom:14,alignItems:'center' }}>
-            {[['all','All'],['pending','Pending'],['not_started','Not Started'],['won','Won'],['lost','Lost']].map(([f,l])=>(
-              <button key={f} onClick={()=>setLFilter(f)} style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:'0.11em',textTransform:'uppercase',padding:'4px 10px',border:'1px solid',borderColor:lFilter===f?(S_BORDER[f]||'#c8922a'):'#3a3430',background:lFilter===f?(S_BORDER[f]||'#c8922a'):'transparent',color:lFilter===f?'#faf6f0':'#8a7d72' }}>{l}</button>
-            ))}
-            <input value={lSearch} onChange={e=>setLSearch(e.target.value)} placeholder="Search..." style={{ marginLeft:'auto',fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,padding:'4px 10px',border:'1px solid #3a3430',background:'#221f1b',color:'#faf6f0',outline:'none',width:110 }} />
-          </div>
-          <div style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,alignItems:'start' }}>
-            {P_STATUSES.map(col=>{
-              const tc=S_COLORS[col],bc=S_BORDER[col],bg=S_BG[col];
-              const cl=filtered.filter(l=>l.status===col);
-              return (
-                <div key={col}>
-                  <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:`2px solid ${bc}`,paddingBottom:6,marginBottom:10 }}>
-                    <span style={{ fontSize:9,fontWeight:600,letterSpacing:'0.15em',textTransform:'uppercase',color:tc }}>{S_LABELS[col]}</span>
-                    <span style={{ fontFamily:'Georgia,serif',fontSize:16,color:tc }}>{cl.length}</span>
-                  </div>
-                  {cl.length===0&&<div style={{ fontSize:10,color:'#8a7d72',fontStyle:'italic',textAlign:'center',padding:'12px 0' }}>None</div>}
-                  {cl.map(l=>{
-                    const isE=expL===l.id;
-                    return (
-                      <div key={l.id} onClick={()=>setExpL(isE?null:l.id)} style={{ background:bg,border:`1px solid ${bc}`,padding:9,marginBottom:7,cursor:'pointer' }}>
-                        <div style={{ display:'flex',justifyContent:'space-between',gap:4,marginBottom:4 }}>
-                          <div style={{ fontFamily:'Georgia,serif',fontSize:13,color:'#faf6f0',lineHeight:1.2 }}>{l.name}</div>
-                          <div style={{ textAlign:'right',flexShrink:0 }}>
-                            <div style={{ fontSize:11,fontWeight:600,color:tc }}>{fmt(l.value)}</div>
-                            {l.value>0&&<div style={{ fontSize:8,color:'#8a7d72' }}>~{fmt(Math.round(l.value*0.5))}</div>}
-                          </div>
-                        </div>
-                        <div style={{ display:'flex',gap:3,marginBottom:3 }}>
-                          <span style={tagA}>{l.source}</span>
-                          <span style={tagM}>PQ:{l.prequalified}</span>
-                        </div>
-                        <div style={{ fontSize:9,color:'#8a7d72' }}>{fmtD(l.date)}</div>
-                        {l.lostReason&&<div style={{ fontSize:9,color:tc,opacity:0.8,marginTop:2 }}>↳ {l.lostReason}</div>}
-                        {isE&&l.notes&&<div style={{ fontSize:10,color:'#8a7d72',lineHeight:1.5,fontStyle:'italic',borderLeft:'2px solid #3a3430',paddingLeft:6,margin:'5px 0' }}>{l.notes}</div>}
-                        {isE&&(
-                          <div style={{ display:'flex',gap:3,flexWrap:'wrap',marginTop:6 }}>
-                            <button onClick={e=>openEL(l,e)} style={ab('#c8922a')}>Edit</button>
-                            {P_STATUSES.filter(s=>s!==col).map(s=>(
-                              <button key={s} onClick={e=>qSt(l.id,s,e)} style={ab(S_BORDER[s],S_COLORS[s])}>→{S_LABELS[s]}</button>
-                            ))}
-                          </div>
-                        )}
-                        {!isE&&<div style={{ fontSize:8,color:'#8a7d72',opacity:0.4,marginTop:2,letterSpacing:'0.1em',textTransform:'uppercase' }}>tap</div>}
-                      </div>
-                    );
-                  })}
-                  <button onClick={()=>openAL(col)} style={addBtn}>+ Add</button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ================================================================ JOBS */}
-      {tab==='jobs' && (
-        <div style={{ padding:'16px 12px' }}>
-          <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'8px 12px',marginBottom:16,fontSize:10,color:'#8a7d72',lineHeight:1.7 }}>
-            <span style={{ color:'#7ab8e8' }}>Not Started</span> → <span style={{ color:J_COLORS.quotes }}>Quotes</span> &nbsp;·&nbsp;
-            <span style={{ color:'#6ec87a' }}>Won</span> → <span style={{ color:J_COLORS.orders }}>Orders</span> &nbsp;·&nbsp;
-            Tap card to move between columns &nbsp;·&nbsp;
-            Add profit + invoice date to track in <span style={{ color:'#6ec87a' }}>Revenue</span>
-          </div>
-          <div style={{ display:'flex',gap:7,flexWrap:'wrap',marginBottom:16 }}>
-            {J_COLS.map(col=>(
-              <div key={col} style={{ background:'#221f1b',border:`1px solid ${J_BORDER[col]}`,padding:'6px 12px',minWidth:80,textAlign:'center' }}>
-                <div style={{ fontFamily:'Georgia,serif',fontSize:19,color:J_COLORS[col],lineHeight:1 }}>{itemsFor(col).length}</div>
-                <div style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8a7d72',marginTop:2 }}>{J_LABELS[col]}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:10,alignItems:'start' }}>
-            {J_COLS.map(col=>{
-              const items=itemsFor(col);
-              return (
-                <div key={col}>
-                  <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:`2px solid ${J_BORDER[col]}`,paddingBottom:6,marginBottom:10 }}>
-                    <span style={{ fontSize:9,fontWeight:600,letterSpacing:'0.13em',textTransform:'uppercase',color:J_COLORS[col] }}>{J_LABELS[col]}</span>
-                    <span style={{ fontFamily:'Georgia,serif',fontSize:16,color:J_COLORS[col] }}>{items.length}</span>
-                  </div>
-                  {items.length===0&&<div style={{ fontSize:10,color:'#8a7d72',fontStyle:'italic',textAlign:'center',padding:'12px 0' }}>Nothing</div>}
-                  {items.map(item=>{
-                    const isA=item._auto;
-                    const cid=isA?`a${item.id}`:`j${item.id}`;
-                    const isE=expJ===cid;
-                    const od=item.dueDate&&new Date(item.dueDate)<new Date();
-                    const hasProfit = item.finalProfit!==''&&item.finalProfit!==undefined&&item.finalProfit!==null;
-                    return (
-                      <div key={cid} onClick={()=>setExpJ(isE?null:cid)} style={{ background:J_BG[col],border:`1px solid ${J_BORDER[col]}`,padding:9,marginBottom:7,cursor:'pointer' }}>
-                        <div style={{ display:'flex',justifyContent:'space-between',gap:4,marginBottom:3 }}>
-                          <div style={{ fontFamily:'Georgia,serif',fontSize:13,color:'#faf6f0',lineHeight:1.2 }}>{item.name}</div>
-                          {isA&&<span style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:J_COLORS[col],opacity:0.6,flexShrink:0 }}>auto</span>}
-                        </div>
-                        {item.value>0&&<div style={{ fontSize:11,color:J_COLORS[col],fontWeight:500,marginBottom:2 }}>{fmt(item.value)}</div>}
-                        {hasProfit&&<div style={{ fontSize:10,color:'#6ec87a',fontWeight:500,marginBottom:2 }}>Profit: {fmt(item.finalProfit)}</div>}
-                        {item.invoicedDate&&<div style={{ fontSize:9,color:'#8a7d72',marginBottom:2 }}>Invoiced: {fmtD(item.invoicedDate)}</div>}
-                        {!isA&&item.priority&&<span style={{ fontSize:8,padding:'2px 4px',border:`1px solid ${item.priority==='High'?'#e07070':item.priority==='Low'?'#3a3430':'#8b6a2e'}`,color:item.priority==='High'?'#e07070':item.priority==='Low'?'#8a7d72':'#e8b96a',display:'inline-block',marginBottom:3 }}>{item.priority}</span>}
-                        {item.dueDate&&<div style={{ fontSize:9,color:od?'#e07070':'#8a7d72',marginTop:2 }}>Due: {fmtD(item.dueDate)}{od?' ⚠':''}</div>}
-                        {isE&&item.notes&&<div style={{ fontSize:10,color:'#8a7d72',lineHeight:1.5,fontStyle:'italic',borderLeft:'2px solid #3a3430',paddingLeft:6,margin:'5px 0' }}>{item.notes}</div>}
-                        {isE&&(
-                          <div style={{ display:'flex',gap:3,flexWrap:'wrap',marginTop:6 }}>
-                            {isA?(
-                              <>
-                                <button onClick={e=>pinTo(item,'upcoming',e)} style={ab(J_BORDER.upcoming,J_COLORS.upcoming)}>→ Upcoming</button>
-                                <button onClick={e=>pinTo(item,'snagging',e)} style={ab(J_BORDER.snagging,J_COLORS.snagging)}>→ Snag</button>
-                                <button onClick={e=>pinTo(item,'invoices',e)} style={ab(J_BORDER.invoices,J_COLORS.invoices)}>→ Invoice</button>
-                              </>
-                            ):(
-                              <>
-                                <button onClick={e=>openEJ(item,e)} style={ab('#c8922a')}>Edit</button>
-                                {J_COLS.filter(c=>c!==col).map(c=>(
-                                  <button key={c} onClick={e=>moveM(item.id,c,e)} style={ab(J_BORDER[c],J_COLORS[c])}>→{J_LABELS[c].split(' ')[0]}</button>
-                                ))}
-                              </>
-                            )}
-                          </div>
-                        )}
-                        {!isE&&<div style={{ fontSize:8,color:'#8a7d72',opacity:0.4,marginTop:2,letterSpacing:'0.1em',textTransform:'uppercase' }}>tap</div>}
-                      </div>
-                    );
-                  })}
-                  {(col==='upcoming'||col==='snagging'||col==='invoices')&&<button onClick={()=>openAJ(col)} style={addBtn}>+ Add</button>}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ================================================================ REVENUE */}
-      {tab==='revenue' && (
-        <div style={{ padding:'16px 12px' }}>
-
-          {/* Year selector + summary */}
-          <div style={{ display:'flex',gap:10,flexWrap:'wrap',alignItems:'center',marginBottom:20 }}>
-            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginRight:8 }}>Monthly Profit Tracker</div>
-            <div style={{ display:'flex',gap:5 }}>
-              {(availYears.length ? availYears : [new Date().getFullYear()]).map(y=>(
-                <button key={y} onClick={()=>setRevYear(y)} style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:'0.13em',padding:'4px 12px',border:'1px solid',borderColor:revYear===y?'#6ec87a':'#3a3430',background:revYear===y?'#6ec87a':'transparent',color:revYear===y?'#1a1714':'#8a7d72',cursor:'pointer' }}>{y}</button>
-              ))}
-            </div>
-            <div style={{ marginLeft:'auto',fontSize:10,color:'#8a7d72' }}>Add profit + invoice date to a job card to populate this chart</div>
-          </div>
-
-          {/* Summary tiles */}
-          <div style={{ display:'flex',gap:10,flexWrap:'wrap',marginBottom:24 }}>
-            {[
-              ['Year Profit',yearTotal>0?fmt(yearTotal):'—','#6ec87a'],
-              ['Jobs Logged',revenueJobs.filter(j=>{ const d=new Date(j.invoicedDate); return !isNaN(d)&&d.getFullYear()===revYear; }).length,'#e8b96a'],
-              ['Avg / Month',ytdMonths.length>0?fmt(Math.round(yearTotal/ytdMonths.filter(m=>m.profit>0&&new Date().getFullYear()===revYear?new Date(`${revYear}-${String(MONTHS.indexOf(m.month)+1).padStart(2,'0')}-01')<=new Date():true).length)):'—','#7ab8e8'],
-              ['Target Gap',yearTotal>0?fmt(Math.max(0,102000-yearTotal))+' to £102k':'Set jobs','#e07070'],
-            ].map(([l,v,c])=>(
-              <div key={l} style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'10px 16px',minWidth:110,flex:1 }}>
-                <div style={{ fontFamily:'Georgia,serif',fontSize:v.length>7?15:20,color:c,lineHeight:1,marginBottom:4 }}>{v}</div>
-                <div style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8a7d72' }}>{l}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Bar chart */}
-          <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'16px',marginBottom:20 }}>
-            <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:14 }}>Monthly Profit — {revYear}</div>
-            <div style={{ display:'flex',gap:4,alignItems:'flex-end',height:120 }}>
-              {yearData.map((m,i)=>{
-                const h = m.profit>0 ? Math.max(6, Math.round((m.profit/maxProfit)*110)) : 0;
-                const isThisMonth = new Date().getMonth()===i && new Date().getFullYear()===revYear;
-                return (
-                  <div key={m.month} style={{ flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4 }}>
-                    {m.profit>0&&<div style={{ fontSize:7,color:'#6ec87a',letterSpacing:'0.05em',textAlign:'center',lineHeight:1.2 }}>{fmt(m.profit).replace('£','')}</div>}
-                    <div style={{ width:'100%',height:h||2,background:m.profit>0?'#6ec87a':'#2a2520',borderRadius:2,border:isThisMonth?'1px solid #c8922a':'none',minHeight:2,transition:'height 0.3s' }}></div>
-                    <div style={{ fontSize:8,color:isThisMonth?'#c8922a':'#8a7d72',letterSpacing:'0.05em' }}>{m.month}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Cumulative + month breakdown */}
-          <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10 }}>
-
-            {/* Cumulative */}
-            <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'16px' }}>
-              <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:14 }}>Cumulative — {revYear}</div>
-              {yearDataCum.filter(m=>m.profit>0).length===0&&(
-                <div style={{ fontSize:11,color:'#8a7d72',fontStyle:'italic' }}>No data yet for {revYear}. Edit a job card and add Final Profit + Invoice Date.</div>
-              )}
-              {yearDataCum.filter(m=>m.profit>0).map((m,i,arr)=>(
-                <div key={m.month} style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid #2a2520' }}>
-                  <div style={{ fontSize:11,color:'#faf6f0' }}>{m.month}</div>
-                  <div style={{ display:'flex',gap:16,alignItems:'center' }}>
-                    <div style={{ fontSize:11,color:'#6ec87a',fontWeight:500 }}>{fmt(m.profit)}</div>
-                    <div style={{ fontSize:10,color:'#8a7d72' }}>= {fmt(m.cumulative)}</div>
-                  </div>
-                </div>
-              ))}
-              {yearTotal>0&&(
-                <div style={{ display:'flex',justifyContent:'space-between',padding:'10px 0 0',marginTop:4 }}>
-                  <div style={{ fontSize:10,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'#8a7d72' }}>Total</div>
-                  <div style={{ fontSize:14,fontFamily:'Georgia,serif',color:'#6ec87a' }}>{fmt(yearTotal)}</div>
-                </div>
-              )}
-            </div>
-
-            {/* Job list */}
-            <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'16px' }}>
-              <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:14 }}>Logged Jobs — {revYear}</div>
-              {revenueJobs.filter(j=>{ const d=new Date(j.invoicedDate); return !isNaN(d)&&d.getFullYear()===revYear; }).length===0&&(
-                <div style={{ fontSize:11,color:'#8a7d72',fontStyle:'italic' }}>No jobs logged for {revYear} yet.</div>
-              )}
-              {revenueJobs
-                .filter(j=>{ const d=new Date(j.invoicedDate); return !isNaN(d)&&d.getFullYear()===revYear; })
-                .sort((a,b)=>new Date(b.invoicedDate)-new Date(a.invoicedDate))
-                .map(j=>(
-                  <div key={j.id} style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid #2a2520' }}>
-                    <div>
-                      <div style={{ fontSize:11,color:'#faf6f0',fontFamily:'Georgia,serif' }}>{j.name}</div>
-                      <div style={{ fontSize:9,color:'#8a7d72' }}>{fmtD(j.invoicedDate)}</div>
-                    </div>
-                    <div style={{ fontSize:12,color:'#6ec87a',fontWeight:500 }}>{fmt(j.finalProfit)}</div>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ================================================================ LEAD MODAL */}
-      {lModal&&(
-        <div onClick={e=>{if(e.target===e.currentTarget)setLModal(null);}} style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:14 }}>
-          <div style={{ background:'#2a2520',border:'1px solid #3a3430',width:'100%',maxWidth:440,maxHeight:'90vh',overflowY:'auto',padding:20 }}>
-            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginBottom:14 }}>{lModal.mode==='edit'?`Edit — ${lModal.lead.name}`:'Add Lead'}</div>
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:9 }}>
-              {[['Name','name','text'],['Date','date','date']].map(([l,k,t])=>(
-                <div key={k}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>{l}</div><input type={t} value={lForm[k]} onChange={e=>lf(k,e.target.value)} style={inp}/></div>
-              ))}
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Source</div><select value={lForm.source} onChange={e=>lf('source',e.target.value)} style={inp}>{SOURCES.map(s=><option key={s}>{s}</option>)}</select></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Status</div><select value={lForm.status} onChange={e=>lf('status',e.target.value)} style={inp}>{P_STATUSES.map(s=><option key={s} value={s}>{S_LABELS[s]}</option>)}</select></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Value £</div><input type="number" value={lForm.value} onChange={e=>lf('value',e.target.value)} style={inp}/></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Pre-qual?</div><select value={lForm.prequalified} onChange={e=>lf('prequalified',e.target.value)} style={inp}><option>No</option><option>Yes</option><option>Partial</option></select></div>
-            </div>
-            <div style={{ marginTop:9 }}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Lost Reason</div><input value={lForm.lostReason} onChange={e=>lf('lostReason',e.target.value)} style={inp}/></div>
-            <div style={{ marginTop:9 }}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Notes</div><textarea value={lForm.notes} onChange={e=>lf('notes',e.target.value)} rows={3} style={{...inp,resize:'vertical'}}/></div>
-            <div style={{ display:'flex',gap:7,marginTop:14,justifyContent:'flex-end' }}>
-              {lModal.mode==='edit'&&<button onClick={delL} style={ab('#8b2e2e','#e07070')}>Delete</button>}
-              <button onClick={()=>setLModal(null)} style={ab('#3a3430','#8a7d72')}>Cancel</button>
-              <button onClick={savL} style={{...ab('#c8922a'),background:'#c8922a',color:'#1a1714',padding:'5px 14px'}}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ================================================================ JOB MODAL */}
-      {jModal&&(
-        <div onClick={e=>{if(e.target===e.currentTarget)setJModal(null);}} style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:14 }}>
-          <div style={{ background:'#2a2520',border:'1px solid #3a3430',width:'100%',maxWidth:440,maxHeight:'90vh',overflowY:'auto',padding:20 }}>
-            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginBottom:14 }}>{jModal.mode==='edit'?`Edit — ${jModal.job.name}`:'Add Job'}</div>
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:9 }}>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Job / Customer</div><input value={jForm.name} onChange={e=>jf('name',e.target.value)} style={inp}/></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Column</div><select value={jForm.column} onChange={e=>jf('column',e.target.value)} style={inp}>{J_COLS.map(c=><option key={c} value={c}>{J_LABELS[c]}</option>)}</select></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Priority</div><select value={jForm.priority} onChange={e=>jf('priority',e.target.value)} style={inp}><option>High</option><option>Normal</option><option>Low</option></select></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Due Date</div><input type="date" value={jForm.dueDate} onChange={e=>jf('dueDate',e.target.value)} style={inp}/></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Job Value £</div><input type="number" value={jForm.value} onChange={e=>jf('value',e.target.value)} style={inp}/></div>
-            </div>
-
-            {/* Revenue fields — highlighted section */}
-            <div style={{ marginTop:14,padding:'12px',background:'#1f1c19',border:'1px solid #2e7a3a',borderRadius:2 }}>
-              <div style={{ fontSize:9,fontWeight:600,letterSpacing:'0.16em',textTransform:'uppercase',color:'#6ec87a',marginBottom:10 }}>Revenue Tracking</div>
-              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:9 }}>
-                <div>
-                  <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Final Profit £</div>
-                  <input type="number" value={jForm.finalProfit} onChange={e=>jf('finalProfit',e.target.value)} placeholder="e.g. 3200" style={inp}/>
-                </div>
-                <div>
-                  <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Job Invoiced Date</div>
-                  <input type="date" value={jForm.invoicedDate} onChange={e=>jf('invoicedDate',e.target.value)} style={inp}/>
-                </div>
-              </div>
-              <div style={{ fontSize:9,color:'#8a7d72',marginTop:8,lineHeight:1.5 }}>Fill both fields to include this job in the Revenue Tracker tab.</div>
-            </div>
-
-            <div style={{ marginTop:9 }}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Notes</div><textarea value={jForm.notes} onChange={e=>jf('notes',e.target.value)} rows={3} style={{...inp,resize:'vertical'}}/></div>
-            <div style={{ display:'flex',gap:7,marginTop:14,justifyContent:'flex-end' }}>
-              {jModal.mode==='edit'&&<button onClick={delJ} style={ab('#8b2e2e','#e07070')}>Delete</button>}
-              <button onClick={()=>setJModal(null)} style={ab('#3a3430','#8a7d72')}>Cancel</button>
-              <button onClick={savJ} style={{...ab('#c8922a'),background:'#c8922a',color:'#1a1714',padding:'5px 14px'}}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
+  // Filter bar
+  buildFilterBar();
+  render();
 }
 
-ReactDOM.render(React.createElement(App), document.getElementById('root'));
+// ============================================================
+// RENDER DISPATCH
+// ============================================================
+function render(){
+  renderPipeline();
+  renderJobs();
+  renderRevenue();
+}
+
+// ============================================================
+// PIPELINE
+// ============================================================
+function buildFilterBar(){
+  var bar = document.getElementById('filterBar');
+  bar.innerHTML = '';
+  var filters = [['all','All'],['pending','Pending'],['not_started','Not Started'],['won','Won'],['lost','Lost']];
+  filters.forEach(function(f){
+    var btn = document.createElement('button');
+    btn.className = 'flt-btn' + (lFilter===f[0]?' active':'');
+    btn.textContent = f[1];
+    if(lFilter===f[0] && f[0]!=='all'){
+      btn.style.borderColor = P_BDR[f[0]]||'#c8922a';
+      btn.style.background  = P_BDR[f[0]]||'#c8922a';
+    }
+    btn.onclick = function(){ lFilter=f[0]; expandedL=null; buildFilterBar(); renderPipeline(); };
+    bar.appendChild(btn);
+  });
+  var inp = document.createElement('input');
+  inp.id='lSearch'; inp.placeholder='Search...'; inp.value=lSearch;
+  inp.oninput = function(){ lSearch=this.value; renderPipeline(); };
+  bar.appendChild(inp);
+}
+
+function renderPipeline(){
+  var counts = {pending:0,not_started:0,won:0,lost:0,activeVal:0};
+  db.leads.forEach(function(l){
+    counts[l.status] = (counts[l.status]||0)+1;
+    if(l.status==='pending'||l.status==='not_started') counts.activeVal += Number(l.value)||0;
+  });
+
+  // Tiles
+  var tileData = [
+    ['Pending',counts.pending,'#e8b96a'],
+    ['Not Started',counts.not_started,'#7ab8e8'],
+    ['Won',counts.won,'#6ec87a'],
+    ['Lost',counts.lost,'#e07070'],
+    ['Active £','£'+counts.activeVal.toLocaleString(),'#e8b96a']
+  ];
+  var tilesEl = document.getElementById('pipelineTiles');
+  tilesEl.innerHTML = '';
+  tileData.forEach(function(t){
+    var div = document.createElement('div'); div.className='tile';
+    div.innerHTML = '<div class="tv" style="color:'+t[2]+'">'+t[1]+'</div><div class="tl">'+t[0]+'</div>';
+    tilesEl.appendChild(div);
+  });
+
+  // Board
+  var board = document.getElementById('pipelineBoard');
+  board.innerHTML = '';
+  var filtered = db.leads.filter(function(l){
+    return (lFilter==='all'||l.status===lFilter) && (!lSearch||l.name.toLowerCase().includes(lSearch.toLowerCase()));
+  });
+
+  P_ST.forEach(function(col){
+    var col_leads = filtered.filter(function(l){ return l.status===col; });
+    var tc=P_COL[col],bc=P_BDR[col],bg=P_BG[col];
+    var colEl = document.createElement('div');
+
+    var head = '<div class="kcol-head" style="border-color:'+bc+'"><span class="khl" style="color:'+tc+'">'+P_LBL[col]+'</span><span class="khc" style="color:'+tc+'">'+col_leads.length+'</span></div>';
+    var cards = col_leads.length===0 ? '<div class="kempty">None</div>' : '';
+
+    col_leads.forEach(function(l){
+      var isExp = expandedL === l.id;
+      var actBtns = '';
+      if(isExp){
+        actBtns += '<button class="act-btn" style="border-color:#c8922a;color:#c8922a" onclick="openLeadModal('+l.id+',event)">Edit</button>';
+        P_ST.filter(function(s){ return s!==col; }).forEach(function(s){
+          actBtns += '<button class="act-btn" style="border-color:'+P_BDR[s]+';color:'+P_COL[s]+'" onclick="quickStatus('+l.id+',\''+s+'\',event)">→'+P_LBL[s]+'</button>';
+        });
+      }
+      cards += '<div class="card" style="background:'+bg+';border-color:'+bc+'" onclick="toggleLead('+l.id+')">'
+        +'<div style="display:flex;justify-content:space-between;gap:4px;margin-bottom:3px">'
+        +'<div class="cname">'+h(l.name)+'</div>'
+        +'<div style="text-align:right;flex-shrink:0">'
+        +(l.value?'<div class="cval" style="color:'+tc+'">'+fmtMoney(l.value)+'</div>':'')
+        +(l.value>0?'<div style="font-size:8px;color:#8a7d72">~'+fmtMoney(Math.round(l.value*0.5))+'</div>':'')
+        +'</div></div>'
+        +'<div class="ctags"><span class="tag-a">'+h(l.source)+'</span><span class="tag-m">PQ:'+h(l.pq)+'</span></div>'
+        +'<div class="cdate">'+fmtDate(l.date)+'</div>'
+        +(l.lostReason?'<div class="clost" style="color:'+tc+'">↳ '+h(l.lostReason)+'</div>':'')
+        +(isExp&&l.notes?'<div class="cnotes">'+h(l.notes)+'</div>':'')
+        +(isExp&&actBtns?'<div class="cactions">'+actBtns+'</div>':'')
+        +(!isExp?'<div class="ctap">tap</div>':'')
+        +'</div>';
+    });
+
+    var addBtnHtml = '<button class="add-btn" onclick="openLeadModal(0,event,\''+col+'\')">+ Add</button>';
+    colEl.innerHTML = head + cards + addBtnHtml;
+    board.appendChild(colEl);
+  });
+}
+
+function toggleLead(id){ expandedL = expandedL===id ? null : id; renderPipeline(); }
+function quickStatus(id, st, e){ e.stopPropagation(); db.leads = db.leads.map(function(l){ return l.id===id ? Object.assign({},l,{status:st}) : l; }); saveDB(); expandedL=null; renderPipeline(); }
+
+// ============================================================
+// JOBS
+// ============================================================
+function getItemsFor(col){
+  var pinned = {};
+  db.manualJobs.forEach(function(j){ if(j.leadId) pinned[j.leadId]=true; });
+  var m = db.manualJobs.filter(function(j){ return j.column===col; });
+  if(col==='quotes') return db.leads.filter(function(l){ return l.status==='not_started'&&!pinned[l.id]; }).map(function(l){ return Object.assign({},l,{_auto:true}); }).concat(m);
+  if(col==='orders') return db.leads.filter(function(l){ return l.status==='won'&&!pinned[l.id]; }).map(function(l){ return Object.assign({},l,{_auto:true}); }).concat(m);
+  return m;
+}
+
+function renderJobs(){
+  // Info bar
+  document.getElementById('jobsInfo').innerHTML =
+    '<span style="color:#7ab8e8">Not Started</span> → <span style="color:'+J_COL.quotes+'">Quotes</span> &nbsp;·&nbsp; '
+    +'<span style="color:#6ec87a">Won</span> → <span style="color:'+J_COL.orders+'">Orders</span> &nbsp;·&nbsp; '
+    +'Tap card to move columns &nbsp;·&nbsp; Add profit + invoice date to track in <span style="color:#6ec87a">Revenue</span>';
+
+  // Tiles
+  var tilesEl = document.getElementById('jobsTiles');
+  tilesEl.innerHTML = '';
+  J_COLS.forEach(function(col){
+    var items = getItemsFor(col);
+    var div = document.createElement('div'); div.className='tile';
+    div.innerHTML = '<div class="tv" style="color:'+J_COL[col]+'">'+items.length+'</div><div class="tl">'+J_LBL[col]+'</div>';
+    tilesEl.appendChild(div);
+  });
+
+  // Board
+  var board = document.getElementById('jobsBoard');
+  board.innerHTML = '';
+
+  J_COLS.forEach(function(col){
+    var items = getItemsFor(col);
+    var tc=J_COL[col], bc=J_BDR[col], bg=J_BG[col];
+    var colEl = document.createElement('div');
+
+    var head = '<div class="kcol-head" style="border-color:'+bc+'"><span class="khl" style="color:'+tc+'">'+J_LBL[col]+'</span><span class="khc" style="color:'+tc+'">'+items.length+'</span></div>';
+    var cards = items.length===0 ? '<div class="kempty">Nothing</div>' : '';
+
+    items.forEach(function(item){
+      var isA = item._auto;
+      var cid = isA ? 'a'+item.id : 'j'+item.id;
+      var isExp = expandedJ === cid;
+      var od = item.dueDate && new Date(item.dueDate) < new Date();
+      var hasProfit = item.finalProfit!==''&&item.finalProfit!==undefined&&item.finalProfit!==null&&item.finalProfit!==false;
+      var priCol = item.priority==='High'?'#e07070':item.priority==='Low'?'#3a3430':'#8b6a2e';
+      var priTxt = item.priority==='High'?'#e07070':item.priority==='Low'?'#8a7d72':'#e8b96a';
+
+      var actBtns = '';
+      if(isExp){
+        if(isA){
+          ['upcoming','snagging','invoices'].forEach(function(c){
+            actBtns += '<button class="act-btn" style="border-color:'+J_BDR[c]+';color:'+J_COL[c]+'" onclick="pinJobTo('+item.id+',\''+c+'\',event)">→'+J_LBL[c].split(' ')[0]+'</button>';
+          });
+        } else {
+          actBtns += '<button class="act-btn" style="border-color:#c8922a;color:#c8922a" onclick="openJobModal('+item.id+',event)">Edit</button>';
+          J_COLS.filter(function(c){ return c!==col; }).forEach(function(c){
+            actBtns += '<button class="act-btn" style="border-color:'+J_BDR[c]+';color:'+J_COL[c]+'" onclick="moveJob('+item.id+',\''+c+'\',event)">→'+J_LBL[c].split(' ')[0]+'</button>';
+          });
+        }
+      }
+
+      cards += '<div class="card" style="background:'+bg+';border-color:'+bc+'" onclick="toggleJob(\''+cid+'\')">'
+        +'<div style="display:flex;justify-content:space-between;gap:4px;margin-bottom:2px">'
+        +'<div class="cname">'+h(item.name)+'</div>'
+        +(isA?'<span class="tag-auto" style="color:'+tc+'">auto</span>':'')
+        +'</div>'
+        +(item.value>0?'<div class="cval" style="color:'+tc+'">'+fmtMoney(item.value)+'</div>':'')
+        +(hasProfit?'<div class="cprofit">Profit: '+fmtMoney(item.finalProfit)+'</div>':'')
+        +(item.invoicedDate?'<div class="cinv">Invoiced: '+fmtDate(item.invoicedDate)+'</div>':'')
+        +(!isA&&item.priority?'<span class="cpri" style="border-color:'+priCol+';color:'+priTxt+'">'+item.priority+'</span>':'')
+        +(item.dueDate?'<div class="cdue" style="color:'+(od?'#e07070':'#8a7d72')+'">Due: '+fmtDate(item.dueDate)+(od?' ⚠':'')+'</div>':'')
+        +(isExp&&item.notes?'<div class="cnotes">'+h(item.notes)+'</div>':'')
+        +(isExp&&actBtns?'<div class="cactions">'+actBtns+'</div>':'')
+        +(!isExp?'<div class="ctap">tap</div>':'')
+        +'</div>';
+    });
+
+    var canAdd = col==='upcoming'||col==='snagging'||col==='invoices';
+    var addBtnHtml = canAdd ? '<button class="add-btn" onclick="openJobModal(0,event,\''+col+'\')">+ Add</button>' : '';
+    colEl.innerHTML = head + cards + addBtnHtml;
+    board.appendChild(colEl);
+  });
+}
+
+function toggleJob(cid){ expandedJ = expandedJ===cid ? null : cid; renderJobs(); }
+
+function pinJobTo(leadId, col, e){
+  e.stopPropagation();
+  var lead = db.leads.find(function(l){ return l.id===leadId; });
+  if(!lead) return;
+  var nj = {id:db.nextJobId++, leadId:leadId, name:lead.name, column:col, priority:'Normal', dueDate:'', value:lead.value||0, notes:lead.notes||'', finalProfit:'', invoicedDate:''};
+  db.manualJobs.push(nj);
+  saveDB(); expandedJ=null; renderJobs();
+}
+
+function moveJob(id, col, e){
+  e.stopPropagation();
+  db.manualJobs = db.manualJobs.map(function(j){ return j.id===id ? Object.assign({},j,{column:col}) : j; });
+  saveDB(); renderJobs();
+}
+
+// ============================================================
+// REVENUE
+// ============================================================
+function renderRevenue(){
+  var revJobs = db.manualJobs.filter(function(j){
+    return j.invoicedDate && j.finalProfit!==''&&j.finalProfit!==undefined&&j.finalProfit!==null;
+  });
+
+  // Year buttons
+  var years = [];
+  revJobs.forEach(function(j){ var y=new Date(j.invoicedDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
+  if(years.indexOf(new Date().getFullYear())<0) years.push(new Date().getFullYear());
+  years.sort(function(a,b){ return b-a; });
+  if(years.indexOf(revYear)<0) revYear = years[0];
+
+  var yrEl = document.getElementById('yearBtns');
+  yrEl.innerHTML = '';
+  years.forEach(function(y){
+    var btn = document.createElement('button');
+    btn.className = 'yr-btn'+(y===revYear?' active':'');
+    btn.textContent = y;
+    btn.onclick = function(){ revYear=y; renderRevenue(); };
+    yrEl.appendChild(btn);
+  });
+
+  // Build month data for selected year
+  var byMonth = {};
+  revJobs.forEach(function(j){
+    var d = new Date(j.invoicedDate);
+    if(isNaN(d)||d.getFullYear()!==revYear) return;
+    var mi = d.getMonth();
+    if(!byMonth[mi]) byMonth[mi] = {profit:0, jobs:[]};
+    byMonth[mi].profit += Number(j.finalProfit)||0;
+    byMonth[mi].jobs.push(j);
+  });
+
+  var yearTotal = 0;
+  var monthsWithData = 0;
+  for(var mi=0;mi<12;mi++){ if(byMonth[mi]){ yearTotal+=byMonth[mi].profit; monthsWithData++; } }
+
+  var yearJobs = revJobs.filter(function(j){ return new Date(j.invoicedDate).getFullYear()===revYear; });
+
+  // Summary tiles
+  var gap = Math.max(0, TARGET-yearTotal);
+  var avgMonthly = monthsWithData>0 ? Math.round(yearTotal/monthsWithData) : 0;
+  var tileData = [
+    ['Year Profit', yearTotal>0 ? fmtMoney(yearTotal) : '—', '#6ec87a'],
+    ['Jobs Logged', yearJobs.length, '#e8b96a'],
+    ['Avg / Month', avgMonthly>0 ? fmtMoney(avgMonthly) : '—', '#7ab8e8'],
+    ['Gap to £102k', yearTotal>0 ? (gap>0?fmtMoney(gap):' Target hit!') : 'Log jobs', '#e07070']
+  ];
+  var tilesEl = document.getElementById('revTiles');
+  tilesEl.innerHTML = '';
+  tileData.forEach(function(t){
+    var div = document.createElement('div'); div.className='rev-tile';
+    div.innerHTML = '<div class="rtv" style="color:'+t[2]+'">'+t[1]+'</div><div class="rtl">'+t[0]+'</div>';
+    tilesEl.appendChild(div);
+  });
+
+  // Bar chart
+  document.getElementById('chartLabel').textContent = 'Monthly Profit — '+revYear;
+  var maxP = 1;
+  for(var mi=0;mi<12;mi++){ if(byMonth[mi]&&byMonth[mi].profit>maxP) maxP=byMonth[mi].profit; }
+  var barEl = document.getElementById('barChart');
+  barEl.innerHTML = '';
+  var now = new Date();
+  for(var mi=0;mi<12;mi++){
+    var p = byMonth[mi] ? byMonth[mi].profit : 0;
+    var barH = p>0 ? Math.max(6,Math.round((p/maxP)*110)) : 2;
+    var isCurrent = mi===now.getMonth()&&revYear===now.getFullYear();
+    var col = document.createElement('div'); col.className='bar-col';
+    col.innerHTML = '<div class="bar-val">'+(p>0?fmtMoney(p).replace('£',''):'')+'</div>'
+      +'<div class="bar-fill" style="height:'+barH+'px;background:'+(p>0?'#6ec87a':'#2a2520')+';border:'+(isCurrent?'1px solid #c8922a':'none')+'"></div>'
+      +'<div class="bar-mon" style="color:'+(isCurrent?'#c8922a':'#8a7d72')+'">'+MONTHS[mi]+'</div>';
+    barEl.appendChild(col);
+  }
+
+  // Cumulative list
+  document.getElementById('cumLabel').textContent = 'Cumulative — '+revYear;
+  var cumEl = document.getElementById('cumList');
+  cumEl.innerHTML = '';
+  if(monthsWithData===0){
+    cumEl.innerHTML = '<div class="rev-empty">No data yet for '+revYear+'. Edit a job card and add Final Profit + Invoice Date.</div>';
+  } else {
+    var cum = 0;
+    for(var mi=0;mi<12;mi++){
+      if(!byMonth[mi]) continue;
+      cum += byMonth[mi].profit;
+      var row = document.createElement('div'); row.className='rev-row';
+      row.innerHTML = '<div class="rn">'+MONTHS[mi]+'</div>'
+        +'<div style="display:flex;gap:14px;align-items:center">'
+        +'<div class="rp">'+fmtMoney(byMonth[mi].profit)+'</div>'
+        +'<div class="rv">= '+fmtMoney(cum)+'</div>'
+        +'</div>';
+      cumEl.appendChild(row);
+    }
+    var tot = document.createElement('div'); tot.className='rev-total';
+    tot.innerHTML = '<span>Total</span><strong>'+fmtMoney(yearTotal)+'</strong>';
+    cumEl.appendChild(tot);
+  }
+
+  // Jobs list
+  document.getElementById('jobsLogLabel').textContent = 'Logged Jobs — '+revYear;
+  var jlEl = document.getElementById('jobsList');
+  jlEl.innerHTML = '';
+  var sortedJobs = yearJobs.slice().sort(function(a,b){ return new Date(b.invoicedDate)-new Date(a.invoicedDate); });
+  if(sortedJobs.length===0){
+    jlEl.innerHTML = '<div class="rev-empty">No jobs logged for '+revYear+' yet.</div>';
+  } else {
+    sortedJobs.forEach(function(j){
+      var row = document.createElement('div'); row.className='rev-row';
+      row.innerHTML = '<div class="rn">'+h(j.name)+'<small>'+fmtDate(j.invoicedDate)+'</small></div>'
+        +'<div class="rp">'+fmtMoney(j.finalProfit)+'</div>';
+      jlEl.appendChild(row);
+    });
+  }
+}
+
+// ============================================================
+// LEAD MODAL
+// ============================================================
+function openLeadModal(id, e, defaultStatus){
+  e&&e.stopPropagation();
+  var lead = id ? db.leads.find(function(l){ return l.id===id; }) : null;
+  editingLead = lead || null;
+  document.getElementById('leadModalTitle').textContent = lead ? 'Edit — '+lead.name : 'Add Lead';
+  document.getElementById('lf_name').value  = lead ? lead.name : '';
+  document.getElementById('lf_date').value  = lead ? lead.date : new Date().toISOString().split('T')[0];
+  document.getElementById('lf_source').value = lead ? lead.source : 'Unknown';
+  document.getElementById('lf_status').value = lead ? lead.status : (defaultStatus||'pending');
+  document.getElementById('lf_value').value  = lead ? (lead.value||'') : '';
+  document.getElementById('lf_pq').value     = lead ? lead.pq : 'No';
+  document.getElementById('lf_lost').value   = lead ? lead.lostReason : '';
+  document.getElementById('lf_notes').value  = lead ? lead.notes : '';
+  document.getElementById('delLeadBtn').style.display = lead ? 'block' : 'none';
+  document.getElementById('leadModal').style.display = 'flex';
+}
+
+function closeLeadModal(){ document.getElementById('leadModal').style.display='none'; }
+document.getElementById('leadModal').onclick = function(e){ if(e.target===this) closeLeadModal(); };
+
+document.getElementById('delLeadBtn').onclick = function(){
+  if(!confirm('Delete this lead?')) return;
+  db.leads = db.leads.filter(function(l){ return l.id!==editingLead.id; });
+  saveDB(); closeLeadModal(); renderPipeline();
+};
+
+function saveLeadModal(){
+  var d = {
+    name:document.getElementById('lf_name').value,
+    date:document.getElementById('lf_date').value,
+    source:document.getElementById('lf_source').value,
+    status:document.getElementById('lf_status').value,
+    value:parseFloat(document.getElementById('lf_value').value)||0,
+    pq:document.getElementById('lf_pq').value,
+    lostReason:document.getElementById('lf_lost').value,
+    notes:document.getElementById('lf_notes').value
+  };
+  if(editingLead){
+    db.leads = db.leads.map(function(l){ return l.id===editingLead.id ? Object.assign({},l,d) : l; });
+  } else {
+    d.id = db.nextLeadId++;
+    db.leads.push(d);
+  }
+  saveDB(); closeLeadModal(); renderPipeline();
+}
+
+// ============================================================
+// JOB MODAL
+// ============================================================
+function openJobModal(id, e, defaultCol){
+  e&&e.stopPropagation();
+  var job = id ? db.manualJobs.find(function(j){ return j.id===id; }) : null;
+  editingJob = job || null;
+  document.getElementById('jobModalTitle').textContent = job ? 'Edit — '+job.name : 'Add Job';
+  document.getElementById('jf_name').value    = job ? job.name : '';
+  document.getElementById('jf_col').value     = job ? job.column : (defaultCol||'upcoming');
+  document.getElementById('jf_pri').value     = job ? (job.priority||'Normal') : 'Normal';
+  document.getElementById('jf_due').value     = job ? (job.dueDate||'') : '';
+  document.getElementById('jf_val').value     = job ? (job.value||'') : '';
+  document.getElementById('jf_profit').value  = job ? (job.finalProfit!==undefined&&job.finalProfit!==''?job.finalProfit:'') : '';
+  document.getElementById('jf_invdate').value = job ? (job.invoicedDate||'') : '';
+  document.getElementById('jf_notes').value   = job ? (job.notes||'') : '';
+  document.getElementById('delJobBtn').style.display = job ? 'block' : 'none';
+  document.getElementById('jobModal').style.display = 'flex';
+}
+
+function closeJobModal(){ document.getElementById('jobModal').style.display='none'; }
+document.getElementById('jobModal').onclick = function(e){ if(e.target===this) closeJobModal(); };
+
+document.getElementById('delJobBtn').onclick = function(){
+  if(!confirm('Delete this job?')) return;
+  db.manualJobs = db.manualJobs.filter(function(j){ return j.id!==editingJob.id; });
+  saveDB(); closeJobModal(); renderJobs(); renderRevenue();
+};
+
+function saveJobModal(){
+  var profVal = document.getElementById('jf_profit').value;
+  var d = {
+    name:document.getElementById('jf_name').value,
+    column:document.getElementById('jf_col').value,
+    priority:document.getElementById('jf_pri').value,
+    dueDate:document.getElementById('jf_due').value,
+    value:parseFloat(document.getElementById('jf_val').value)||0,
+    finalProfit: profVal==='' ? '' : (parseFloat(profVal)||0),
+    invoicedDate:document.getElementById('jf_invdate').value,
+    notes:document.getElementById('jf_notes').value
+  };
+  if(editingJob){
+    db.manualJobs = db.manualJobs.map(function(j){ return j.id===editingJob.id ? Object.assign({},j,d) : j; });
+  } else {
+    d.id = db.nextJobId++;
+    db.manualJobs.push(d);
+  }
+  saveDB(); closeJobModal(); renderJobs(); renderRevenue();
+}
 </script>
 </body>
 </html>
