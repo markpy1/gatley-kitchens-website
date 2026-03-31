@@ -11,7 +11,6 @@ body{background:#1a1714;font-family:'Jost',sans-serif;color:#faf6f0;font-size:13
 button{cursor:pointer;font-family:'Jost',sans-serif}
 input,select,textarea{font-family:'Jost',sans-serif}
 
-/* GATE */
 #gate{position:fixed;inset:0;background:#1a1714;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:9999}
 #gate h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:#faf6f0}
 #gate h2 span{color:#e8b96a;font-style:italic}
@@ -22,35 +21,26 @@ input,select,textarea{font-family:'Jost',sans-serif}
 #gate .gbtn:hover{background:#e8b96a}
 #gate .gerr{font-size:10px;color:#e07070;min-height:14px}
 
-/* APP */
 #app{display:none;min-height:100vh}
-
-/* TOPBAR */
 #topbar{background:#221f1b;border-bottom:1px solid #3a3430;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:50}
 #topbar .logo{font-family:'Cormorant Garamond',serif;font-size:18px;color:#faf6f0}
 #topbar .logo em{color:#e8b96a;font-style:italic}
-#topbar .tabs{display:flex;gap:5px}
+.tabs{display:flex;gap:5px}
 .tab-btn{font-size:10px;font-weight:600;letter-spacing:0.13em;text-transform:uppercase;padding:5px 12px;border:1px solid #3a3430;background:transparent;color:#8a7d72}
 .tab-btn.active{background:#c8922a;border-color:#c8922a;color:#1a1714}
 #syncMsg{font-size:10px;color:#6ec87a;margin-left:8px}
+.pane{display:none;padding:14px 12px}.pane.active{display:block}
 
-/* CONTENT */
-.pane{display:none;padding:14px 12px}
-.pane.active{display:block}
-
-/* STAT TILES */
 .tiles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .tile{background:#221f1b;border:1px solid #3a3430;padding:7px 12px;text-align:center;min-width:70px}
 .tile .tv{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1;margin-bottom:2px}
 .tile .tl{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:#8a7d72}
 
-/* FILTER BAR */
 .filterbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
 .flt-btn{font-size:9px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;padding:4px 9px;border:1px solid #3a3430;background:transparent;color:#8a7d72}
 .flt-btn.active{color:#faf6f0}
 #lSearch{margin-left:auto;padding:4px 9px;border:1px solid #3a3430;background:#221f1b;color:#faf6f0;outline:none;font-size:11px;width:110px}
 
-/* KANBAN GRID */
 .kboard{display:grid;gap:10px;align-items:start}
 .kboard.cols4{grid-template-columns:repeat(4,1fr)}
 .kboard.cols5{grid-template-columns:repeat(5,1fr)}
@@ -59,12 +49,13 @@ input,select,textarea{font-family:'Jost',sans-serif}
 .kcol-head .khc{font-family:'Cormorant Garamond',serif;font-size:17px}
 .kempty{font-size:10px;color:#8a7d72;font-style:italic;text-align:center;padding:12px 0}
 
-/* CARDS */
 .card{padding:9px;margin-bottom:7px;cursor:pointer;border:1px solid}
 .card .cname{font-family:'Cormorant Garamond',serif;font-size:13px;color:#faf6f0;line-height:1.2;margin-bottom:3px}
 .card .cval{font-size:11px;font-weight:600;margin-bottom:2px}
-.card .cprofit{font-size:10px;color:#6ec87a;font-weight:500;margin-bottom:2px}
+.card .cprofit{font-size:10px;color:#6ec87a;font-weight:500;margin-bottom:1px}
+.card .cexpected{font-size:10px;color:#7ab8e8;font-weight:500;margin-bottom:1px}
 .card .cinv{font-size:9px;color:#8a7d72;margin-bottom:2px}
+.card .cstart{font-size:9px;color:#8a7d72;margin-bottom:2px}
 .card .ctags{display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap}
 .tag-a{font-size:8px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:2px 5px;border:1px solid #c8922a;color:#e8b96a}
 .tag-m{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 5px;border:1px solid #3a3430;color:#8a7d72}
@@ -76,84 +67,112 @@ input,select,textarea{font-family:'Jost',sans-serif}
 .card .ctap{font-size:7px;color:#8a7d72;opacity:0.4;margin-top:2px;letter-spacing:0.1em;text-transform:uppercase}
 .card .cpri{font-size:8px;padding:2px 4px;border:1px solid;display:inline-block;margin-bottom:3px}
 .card .cdue{font-size:9px;margin-top:2px}
-
 .act-btn{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border:1px solid;background:transparent;cursor:pointer}
 .add-btn{width:100%;padding:7px;border:1px dashed #3a3430;background:transparent;color:#8a7d72;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;margin-top:4px}
 .add-btn:hover{border-color:#8a7d72}
-
-/* INFO BAR */
 .infobar{background:#221f1b;border:1px solid #3a3430;padding:8px 12px;margin-bottom:14px;font-size:10px;color:#8a7d72;line-height:1.7}
 
-/* MODAL */
+/* MODALS */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:200;display:flex;align-items:center;justify-content:center;padding:14px}
-.modal{background:#2a2520;border:1px solid #3a3430;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:20px}
+.modal{background:#2a2520;border:1px solid #3a3430;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;padding:20px}
 .modal h3{font-family:'Cormorant Garamond',serif;font-size:18px;color:#faf6f0;margin-bottom:14px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
 .form-field label{display:block;font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:4px}
 .form-field input,.form-field select,.form-field textarea{width:100%;padding:6px 9px;border:1px solid #3a3430;background:#1a1714;color:#faf6f0;outline:none;font-size:12px;font-weight:300}
 .form-field textarea{resize:vertical}
 .modal-footer{display:flex;gap:7px;margin-top:14px;justify-content:flex-end}
-.rev-section{margin-top:14px;padding:12px;background:#1f1c19;border:1px solid #2e7a3a}
-.rev-section .rev-label{font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6ec87a;margin-bottom:10px}
+
+/* Revenue tracking section in job modal */
+.rev-section{margin-top:14px;padding:12px;background:#1a2118;border:1px solid #2e7a3a}
+.rev-section .rs-label{font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6ec87a;margin-bottom:10px}
 .rev-hint{font-size:9px;color:#8a7d72;margin-top:8px;line-height:1.5}
 
-/* REVENUE TAB */
+/* Expected profit section in job modal */
+.exp-section{margin-top:10px;padding:12px;background:#1a1f2d;border:1px solid #2e5a8b}
+.exp-section .es-label{font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#7ab8e8;margin-bottom:10px}
+
+/* ===== REVENUE TAB ===== */
 .rev-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
 .rev-top h2{font-family:'Cormorant Garamond',serif;font-size:18px;color:#faf6f0}
 .yr-btn{font-size:10px;font-weight:600;letter-spacing:0.12em;padding:4px 11px;border:1px solid #3a3430;background:transparent;color:#8a7d72;cursor:pointer}
 .yr-btn.active{background:#6ec87a;border-color:#6ec87a;color:#1a1714}
-.rev-hint-top{margin-left:auto;font-size:9px;color:#8a7d72}
+.rev-hint-top{margin-left:auto;font-size:9px;color:#8a7d72;max-width:200px;text-align:right;line-height:1.5}
 
-.rev-tiles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.rev-tile{background:#221f1b;border:1px solid #3a3430;padding:10px 14px;flex:1;min-width:100px}
-.rev-tile .rtv{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1;margin-bottom:3px}
-.rev-tile .rtl{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:#8a7d72}
+/* Summary tiles */
+.rev-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px}
+.rev-tile{background:#221f1b;border:1px solid #3a3430;padding:10px 12px}
+.rev-tile .rtv{font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1;margin-bottom:3px}
+.rev-tile .rtl{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:#8a7d72;line-height:1.4}
 
+/* Legend */
+.chart-legend{display:flex;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:9px;color:#8a7d72;letter-spacing:0.06em;text-transform:uppercase}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* Chart */
 .chart-wrap{background:#221f1b;border:1px solid #3a3430;padding:14px;margin-bottom:16px}
-.chart-label{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:12px}
-.bars{display:flex;gap:3px;align-items:flex-end;height:120px}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-.bar-val{font-size:7px;color:#6ec87a;text-align:center;line-height:1.2;min-height:12px}
-.bar-fill{width:100%;border-radius:2px;min-height:2px;transition:height 0.3s}
-.bar-mon{font-size:8px;letter-spacing:0.04em}
+.chart-label{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:10px}
+.bars{display:flex;gap:3px;align-items:flex-end;height:130px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:0}
+.bar-stack{width:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.bar-seg{width:100%;min-height:0;transition:height 0.3s}
+.bar-val{font-size:7px;color:#8a7d72;text-align:center;line-height:1.2;min-height:10px;margin-bottom:1px;white-space:nowrap}
+.bar-mon{font-size:8px;letter-spacing:0.04em;margin-top:3px}
 
-.rev-split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* Target line area */
+.target-line-wrap{position:relative;height:2px;background:#3a3430;margin:0 0 16px}
+.target-line-wrap span{position:absolute;right:0;top:-10px;font-size:8px;color:#e8b96a;letter-spacing:0.08em;text-transform:uppercase}
+
+/* Three column bottom section */
+.rev-bottom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .rev-box{background:#221f1b;border:1px solid #3a3430;padding:14px}
 .rev-box h4{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:12px}
-.rev-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #2a2520}
-.rev-row .rn{font-size:11px;color:#faf6f0}
-.rev-row .rn small{display:block;font-size:9px;color:#8a7d72}
-.rev-row .rp{font-size:12px;color:#6ec87a;font-weight:500}
-.rev-row .rv{font-size:10px;color:#8a7d72}
+.rev-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid #2a2520}
+.rev-row .rn{font-size:11px;color:#faf6f0;font-family:'Cormorant Garamond',serif}
+.rev-row .rn small{display:block;font-size:9px;color:#8a7d72;font-family:'Jost',sans-serif;font-weight:300;margin-top:1px}
+.rev-row .rp{font-size:11px;font-weight:500;flex-shrink:0;margin-left:8px}
+.rev-row .rtag{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 5px;border:1px solid;display:inline-block;margin-top:2px}
 .rev-total{display:flex;justify-content:space-between;padding:10px 0 0;margin-top:4px}
 .rev-total span{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#8a7d72}
-.rev-total strong{font-family:'Cormorant Garamond',serif;font-size:15px;color:#6ec87a}
-.rev-empty{font-size:11px;color:#8a7d72;font-style:italic}
+.rev-total strong{font-family:'Cormorant Garamond',serif;font-size:15px}
+.rev-empty{font-size:11px;color:#8a7d72;font-style:italic;line-height:1.6}
 
+/* Next 3 months highlight */
+.next3{background:#1a1f2d;border:1px solid #2e5a8b;padding:14px;margin-bottom:16px}
+.next3 h4{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#7ab8e8;margin-bottom:12px}
+.next3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.next3-card{background:#1a1714;border:1px solid #2e5a8b;padding:10px 12px}
+.next3-card .n3m{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#7ab8e8;margin-bottom:6px}
+.next3-card .n3v{font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1;margin-bottom:3px}
+.next3-card .n3sub{font-size:9px;color:#8a7d72}
+
+@media(max-width:900px){
+  .rev-tiles{grid-template-columns:repeat(3,1fr)}
+  .rev-bottom{grid-template-columns:1fr 1fr}
+  .next3-grid{grid-template-columns:1fr}
+}
 @media(max-width:700px){
   .kboard.cols4{grid-template-columns:repeat(2,1fr)}
   .kboard.cols5{grid-template-columns:repeat(2,1fr)}
-  .rev-split{grid-template-columns:1fr}
+  .rev-tiles{grid-template-columns:repeat(2,1fr)}
+  .rev-bottom{grid-template-columns:1fr}
   .form-grid{grid-template-columns:1fr}
 }
 @media(max-width:420px){
   .kboard.cols4,.kboard.cols5{grid-template-columns:1fr}
-  .rev-tiles{flex-direction:column}
 }
 </style>
 </head>
 <body>
 
-<!-- GATE -->
 <div id="gate">
   <h2>Gatley <span>Kitchens</span></h2>
   <p>Dashboard — private access</p>
-  <input type="password" id="pwInput" placeholder="Password" />
+  <input type="password" id="pwInput" placeholder="Password">
   <button class="gbtn" id="unlockBtn">Enter</button>
   <div class="gerr" id="pwErr"></div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <div id="topbar">
     <div>
@@ -167,40 +186,51 @@ input,select,textarea{font-family:'Jost',sans-serif}
     </div>
   </div>
 
-  <!-- PIPELINE PANE -->
   <div class="pane active" id="pane-pipeline">
     <div class="tiles" id="pipelineTiles"></div>
     <div class="filterbar" id="filterBar"></div>
     <div class="kboard cols4" id="pipelineBoard"></div>
   </div>
 
-  <!-- JOBS PANE -->
   <div class="pane" id="pane-jobs">
     <div class="infobar" id="jobsInfo"></div>
     <div class="tiles" id="jobsTiles"></div>
     <div class="kboard cols5" id="jobsBoard"></div>
   </div>
 
-  <!-- REVENUE PANE -->
   <div class="pane" id="pane-revenue">
     <div class="rev-top">
-      <h2>Monthly Profit Tracker</h2>
+      <h2>Revenue & Profit Tracker</h2>
       <div id="yearBtns"></div>
-      <span class="rev-hint-top">Edit a job card → add Final Profit + Invoice Date</span>
+      <span class="rev-hint-top">Expected = booked jobs · Actual = invoiced jobs</span>
     </div>
     <div class="rev-tiles" id="revTiles"></div>
+    <div class="next3" id="next3Wrap">
+      <h4>&#9654; Next 3 Months — Expected Profit</h4>
+      <div class="next3-grid" id="next3Grid"></div>
+    </div>
     <div class="chart-wrap">
-      <div class="chart-label" id="chartLabel">Monthly Profit</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px">
+        <div class="chart-label" id="chartLabel">Monthly Profit — 2026</div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#6ec87a"></div>Actual</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#2e5a8b"></div>Expected</div>
+        </div>
+      </div>
       <div class="bars" id="barChart"></div>
     </div>
-    <div class="rev-split">
+    <div class="rev-bottom">
       <div class="rev-box">
-        <h4 id="cumLabel">Cumulative</h4>
+        <h4 id="cumLabel">Cumulative Actual</h4>
         <div id="cumList"></div>
       </div>
       <div class="rev-box">
-        <h4 id="jobsLogLabel">Logged Jobs</h4>
-        <div id="jobsList"></div>
+        <h4>Booked / Expected Jobs</h4>
+        <div id="expectedList"></div>
+      </div>
+      <div class="rev-box">
+        <h4 id="invoicedLabel">Invoiced Jobs</h4>
+        <div id="invoicedList"></div>
       </div>
     </div>
   </div>
@@ -217,6 +247,7 @@ input,select,textarea{font-family:'Jost',sans-serif}
       <div class="form-field"><label>Status</label><select id="lf_status"></select></div>
       <div class="form-field"><label>Value £</label><input id="lf_value" type="number"></div>
       <div class="form-field"><label>Pre-qualified?</label><select id="lf_pq"><option>No</option><option>Yes</option><option>Partial</option></select></div>
+      <div class="form-field"><label>Expected Profit £</label><input id="lf_exprofit" type="number" placeholder="Your margin"></div>
     </div>
     <div class="form-field" style="margin-bottom:9px"><label>Lost Reason</label><input id="lf_lost" type="text"></div>
     <div class="form-field"><label>Notes</label><textarea id="lf_notes" rows="3"></textarea></div>
@@ -239,15 +270,28 @@ input,select,textarea{font-family:'Jost',sans-serif}
       <div class="form-field"><label>Due Date</label><input id="jf_due" type="date"></div>
       <div class="form-field"><label>Job Value £</label><input id="jf_val" type="number"></div>
     </div>
+
+    <!-- EXPECTED PROFIT (booked/upcoming jobs) -->
+    <div class="exp-section">
+      <div class="es-label">&#128197; Booked / Expected</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Expected Profit £</label><input id="jf_exprofit" type="number" placeholder="e.g. 3500"></div>
+        <div class="form-field"><label>Job Start Date</label><input id="jf_startdate" type="date"></div>
+      </div>
+      <div class="rev-hint">Enter when job is booked in. Appears on Revenue chart as expected until invoiced.</div>
+    </div>
+
+    <!-- FINAL PROFIT (invoiced jobs) -->
     <div class="rev-section">
-      <div class="rev-label">Revenue Tracking</div>
+      <div class="rs-label">&#10003; Actual / Invoiced</div>
       <div class="form-grid">
         <div class="form-field"><label>Final Profit £</label><input id="jf_profit" type="number" placeholder="e.g. 3200"></div>
-        <div class="form-field"><label>Job Invoiced Date</label><input id="jf_invdate" type="date"></div>
+        <div class="form-field"><label>Invoice Date</label><input id="jf_invdate" type="date"></div>
       </div>
-      <div class="rev-hint">Fill both fields to include this job in the Revenue tab.</div>
+      <div class="rev-hint">Once final profit + invoice date are entered, this replaces the expected figure on the chart.</div>
     </div>
-    <div class="form-field" style="margin-top:9px"><label>Notes</label><textarea id="jf_notes" rows="3"></textarea></div>
+
+    <div class="form-field" style="margin-top:10px"><label>Notes</label><textarea id="jf_notes" rows="3"></textarea></div>
     <div class="modal-footer">
       <button class="act-btn" id="delJobBtn" style="border-color:#8b2e2e;color:#e07070;display:none">Delete</button>
       <button class="act-btn" style="border-color:#3a3430;color:#8a7d72" onclick="closeJobModal()">Cancel</button>
@@ -257,26 +301,21 @@ input,select,textarea{font-family:'Jost',sans-serif}
 </div>
 
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
-var SK = 'gatley-dash-v4';
+var SK        = 'gatley-dash-v5';
 var AUTH_HASH = 'Uml2ZXI4NSE=';
-
-var SOURCES = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
-var P_ST    = ['pending','not_started','won','lost'];
-var P_LBL   = {pending:'Pending',not_started:'Not Started',won:'Won',lost:'Lost'};
-var P_COL   = {pending:'#e8b96a',not_started:'#7ab8e8',won:'#6ec87a',lost:'#e07070'};
-var P_BG    = {pending:'#2d2418',not_started:'#1a2230',won:'#1a2d1e',lost:'#2d1a1a'};
-var P_BDR   = {pending:'#8b6a2e',not_started:'#2e5a8b',won:'#2e7a3a',lost:'#8b2e2e'};
-
-var J_COLS  = ['quotes','orders','upcoming','snagging','invoices'];
-var J_LBL   = {quotes:'Quotes to Do',orders:'Orders to Do',upcoming:'Upcoming Jobs',snagging:'Snagging',invoices:'Invoices'};
-var J_COL   = {quotes:'#e8b96a',orders:'#7ab8e8',upcoming:'#b88de8',snagging:'#e07070',invoices:'#6ec87a'};
-var J_BG    = {quotes:'#2d2418',orders:'#1a2230',upcoming:'#221a2d',snagging:'#2d1a1a',invoices:'#1a2d1e'};
-var J_BDR   = {quotes:'#8b6a2e',orders:'#2e5a8b',upcoming:'#6a2e8b',snagging:'#8b2e2e',invoices:'#2e7a3a'};
-var MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-var TARGET  = 102000;
+var TARGET    = 102000;
+var SOURCES   = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
+var P_ST      = ['pending','not_started','won','lost'];
+var P_LBL     = {pending:'Pending',not_started:'Not Started',won:'Won',lost:'Lost'};
+var P_COL     = {pending:'#e8b96a',not_started:'#7ab8e8',won:'#6ec87a',lost:'#e07070'};
+var P_BG      = {pending:'#2d2418',not_started:'#1a2230',won:'#1a2d1e',lost:'#2d1a1a'};
+var P_BDR     = {pending:'#8b6a2e',not_started:'#2e5a8b',won:'#2e7a3a',lost:'#8b2e2e'};
+var J_COLS    = ['quotes','orders','upcoming','snagging','invoices'];
+var J_LBL     = {quotes:'Quotes to Do',orders:'Orders to Do',upcoming:'Upcoming Jobs',snagging:'Snagging',invoices:'Invoices'};
+var J_COL     = {quotes:'#e8b96a',orders:'#7ab8e8',upcoming:'#b88de8',snagging:'#e07070',invoices:'#6ec87a'};
+var J_BG      = {quotes:'#2d2418',orders:'#1a2230',upcoming:'#221a2d',snagging:'#2d1a1a',invoices:'#1a2d1e'};
+var J_BDR     = {quotes:'#8b6a2e',orders:'#2e5a8b',upcoming:'#6a2e8b',snagging:'#8b2e2e',invoices:'#2e7a3a'};
+var MONTHS    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 var INIT_LEADS = [
   {id:1,name:'Heather',date:'2026-01-06',source:'Unknown',status:'lost',value:2900,pq:'No',lostReason:'',notes:"Tricky job - don't really want it."},
@@ -316,522 +355,474 @@ var INIT_LEADS = [
   {id:35,name:'Slater',date:'2026-03-27',source:'Local',status:'pending',value:9300,pq:'Yes',lostReason:'',notes:'Been going on for years.'}
 ];
 
-// ============================================================
 // STATE
-// ============================================================
-var db = {leads:[], manualJobs:[], nextLeadId:36, nextJobId:1};
-var activeTab = 'pipeline';
-var lFilter = 'all', lSearch = '';
-var expandedL = null, expandedJ = null;
-var editingLead = null, editingJob = null;
-var revYear = new Date().getFullYear();
+var db = {leads:[],manualJobs:[],nextLeadId:36,nextJobId:1};
+var activeTab='pipeline', lFilter='all', lSearch='';
+var expandedL=null, expandedJ=null;
+var editingLead=null, editingJob=null;
+var revYear=new Date().getFullYear();
 
-// ============================================================
 // UTILS
-// ============================================================
-function fmtMoney(v){ return v ? '£'+Number(v).toLocaleString() : '—'; }
-function fmtDate(d){ try{ return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); } catch(e){ return d||''; } }
-function saveDB(){
-  try{ localStorage.setItem(SK, JSON.stringify(db)); showSync('saved ✓'); }
-  catch(e){ showSync('error'); }
-}
+function fm(v){ return (v!==''&&v!==null&&v!==undefined&&!isNaN(Number(v))&&Number(v)!==0) ? '£'+Number(v).toLocaleString() : '—'; }
+function fd(d){ try{ return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); }catch(e){ return d||''; } }
+function fmy(d){ try{ var dt=new Date(d); return MONTHS[dt.getMonth()]+' '+dt.getFullYear(); }catch(e){ return ''; } }
+function h(s){ return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''; }
+function numOrEmpty(v){ return (v!==''&&v!==null&&v!==undefined)?parseFloat(v)||0:''; }
+function hasNum(v){ return v!==''&&v!==null&&v!==undefined&&!isNaN(Number(v)); }
+function saveDB(){ try{ localStorage.setItem(SK,JSON.stringify(db)); showSync('saved ✓'); }catch(e){ showSync('error'); } }
 function showSync(m){ var el=document.getElementById('syncMsg'); el.textContent=m; setTimeout(function(){ el.textContent=''; },1500); }
-function h(str){ return str ? String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
 
-// ============================================================
 // AUTH
-// ============================================================
-document.getElementById('unlockBtn').onclick = tryUnlock;
-document.getElementById('pwInput').onkeydown = function(e){ if(e.key==='Enter') tryUnlock(); };
-
+document.getElementById('unlockBtn').onclick=tryUnlock;
+document.getElementById('pwInput').onkeydown=function(e){ if(e.key==='Enter') tryUnlock(); };
 function tryUnlock(){
-  var val = document.getElementById('pwInput').value;
-  var hash = btoa(unescape(encodeURIComponent(val)));
-  if(hash === AUTH_HASH){
-    localStorage.setItem('gk_auth', AUTH_HASH);
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+  var hash=btoa(unescape(encodeURIComponent(document.getElementById('pwInput').value)));
+  if(hash===AUTH_HASH){
+    localStorage.setItem('gk_auth',AUTH_HASH);
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
     initApp();
   } else {
-    document.getElementById('pwErr').textContent = 'Incorrect password';
-    document.getElementById('pwInput').value = '';
+    document.getElementById('pwErr').textContent='Incorrect password';
+    document.getElementById('pwInput').value='';
   }
 }
-
-window.addEventListener('DOMContentLoaded', function(){
-  if(localStorage.getItem('gk_auth') === AUTH_HASH){
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+window.addEventListener('DOMContentLoaded',function(){
+  if(localStorage.getItem('gk_auth')===AUTH_HASH){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
     initApp();
   }
   document.getElementById('pwInput').focus();
 });
 
-// ============================================================
-// INIT
-// ============================================================
 function initApp(){
-  var stored = localStorage.getItem(SK);
-  if(stored){
-    try{
-      var d = JSON.parse(stored);
-      db.leads      = d.leads      || INIT_LEADS;
-      db.manualJobs = d.manualJobs || [];
-      db.nextLeadId = d.nextLeadId || 36;
-      db.nextJobId  = d.nextJobId  || 1;
-    } catch(e){ db.leads = INIT_LEADS; }
-  } else {
-    db.leads = INIT_LEADS;
-  }
+  var stored=localStorage.getItem(SK);
+  if(stored){ try{ var d=JSON.parse(stored); db.leads=d.leads||INIT_LEADS; db.manualJobs=d.manualJobs||[]; db.nextLeadId=d.nextLeadId||36; db.nextJobId=d.nextJobId||1; }catch(e){ db.leads=INIT_LEADS; } }
+  else{ db.leads=INIT_LEADS; }
 
   // Populate selects
-  var srcSel = document.getElementById('lf_source');
-  SOURCES.forEach(function(s){ var o=document.createElement('option'); o.value=s; o.textContent=s; srcSel.appendChild(o); });
-  var stSel = document.getElementById('lf_status');
-  P_ST.forEach(function(s){ var o=document.createElement('option'); o.value=s; o.textContent=P_LBL[s]; stSel.appendChild(o); });
-  var jcSel = document.getElementById('jf_col');
-  J_COLS.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=J_LBL[c]; jcSel.appendChild(o); });
+  SOURCES.forEach(function(s){ var o=document.createElement('option'); o.value=s; o.textContent=s; document.getElementById('lf_source').appendChild(o); });
+  P_ST.forEach(function(s){ var o=document.createElement('option'); o.value=s; o.textContent=P_LBL[s]; document.getElementById('lf_status').appendChild(o); });
+  J_COLS.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=J_LBL[c]; document.getElementById('jf_col').appendChild(o); });
 
-  // Tab buttons
   document.querySelectorAll('.tab-btn').forEach(function(btn){
-    btn.onclick = function(){
+    btn.onclick=function(){
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
-      activeTab = btn.dataset.tab;
+      activeTab=btn.dataset.tab;
       document.querySelectorAll('.pane').forEach(function(p){ p.classList.remove('active'); });
       document.getElementById('pane-'+activeTab).classList.add('active');
       render();
     };
   });
-
-  // Filter bar
-  buildFilterBar();
-  render();
+  buildFilterBar(); render();
 }
 
-// ============================================================
-// RENDER DISPATCH
-// ============================================================
-function render(){
-  renderPipeline();
-  renderJobs();
-  renderRevenue();
-}
+function render(){ renderPipeline(); renderJobs(); renderRevenue(); }
 
-// ============================================================
+// =========================================================
 // PIPELINE
-// ============================================================
+// =========================================================
 function buildFilterBar(){
-  var bar = document.getElementById('filterBar');
-  bar.innerHTML = '';
-  var filters = [['all','All'],['pending','Pending'],['not_started','Not Started'],['won','Won'],['lost','Lost']];
-  filters.forEach(function(f){
-    var btn = document.createElement('button');
-    btn.className = 'flt-btn' + (lFilter===f[0]?' active':'');
-    btn.textContent = f[1];
-    if(lFilter===f[0] && f[0]!=='all'){
-      btn.style.borderColor = P_BDR[f[0]]||'#c8922a';
-      btn.style.background  = P_BDR[f[0]]||'#c8922a';
-    }
-    btn.onclick = function(){ lFilter=f[0]; expandedL=null; buildFilterBar(); renderPipeline(); };
+  var bar=document.getElementById('filterBar'); bar.innerHTML='';
+  [['all','All'],['pending','Pending'],['not_started','Not Started'],['won','Won'],['lost','Lost']].forEach(function(f){
+    var btn=document.createElement('button');
+    btn.className='flt-btn'+(lFilter===f[0]?' active':'');
+    btn.textContent=f[1];
+    if(lFilter===f[0]&&f[0]!=='all'){ btn.style.borderColor=P_BDR[f[0]]||'#c8922a'; btn.style.background=P_BDR[f[0]]||'#c8922a'; }
+    btn.onclick=function(){ lFilter=f[0]; expandedL=null; buildFilterBar(); renderPipeline(); };
     bar.appendChild(btn);
   });
-  var inp = document.createElement('input');
-  inp.id='lSearch'; inp.placeholder='Search...'; inp.value=lSearch;
-  inp.oninput = function(){ lSearch=this.value; renderPipeline(); };
+  var inp=document.createElement('input'); inp.id='lSearch'; inp.placeholder='Search...'; inp.value=lSearch;
+  inp.oninput=function(){ lSearch=this.value; renderPipeline(); };
   bar.appendChild(inp);
 }
 
 function renderPipeline(){
-  var counts = {pending:0,not_started:0,won:0,lost:0,activeVal:0};
-  db.leads.forEach(function(l){
-    counts[l.status] = (counts[l.status]||0)+1;
-    if(l.status==='pending'||l.status==='not_started') counts.activeVal += Number(l.value)||0;
-  });
-
-  // Tiles
-  var tileData = [
-    ['Pending',counts.pending,'#e8b96a'],
-    ['Not Started',counts.not_started,'#7ab8e8'],
-    ['Won',counts.won,'#6ec87a'],
-    ['Lost',counts.lost,'#e07070'],
-    ['Active £','£'+counts.activeVal.toLocaleString(),'#e8b96a']
-  ];
-  var tilesEl = document.getElementById('pipelineTiles');
-  tilesEl.innerHTML = '';
-  tileData.forEach(function(t){
-    var div = document.createElement('div'); div.className='tile';
-    div.innerHTML = '<div class="tv" style="color:'+t[2]+'">'+t[1]+'</div><div class="tl">'+t[0]+'</div>';
+  var counts={pending:0,not_started:0,won:0,lost:0,activeVal:0};
+  db.leads.forEach(function(l){ counts[l.status]=(counts[l.status]||0)+1; if(l.status==='pending'||l.status==='not_started') counts.activeVal+=Number(l.value)||0; });
+  var tilesEl=document.getElementById('pipelineTiles'); tilesEl.innerHTML='';
+  [['Pending',counts.pending,'#e8b96a'],['Not Started',counts.not_started,'#7ab8e8'],['Won',counts.won,'#6ec87a'],['Lost',counts.lost,'#e07070'],['Active £','£'+counts.activeVal.toLocaleString(),'#e8b96a']].forEach(function(t){
+    var div=document.createElement('div'); div.className='tile';
+    div.innerHTML='<div class="tv" style="color:'+t[2]+'">'+t[1]+'</div><div class="tl">'+t[0]+'</div>';
     tilesEl.appendChild(div);
   });
-
-  // Board
-  var board = document.getElementById('pipelineBoard');
-  board.innerHTML = '';
-  var filtered = db.leads.filter(function(l){
-    return (lFilter==='all'||l.status===lFilter) && (!lSearch||l.name.toLowerCase().includes(lSearch.toLowerCase()));
-  });
-
+  var board=document.getElementById('pipelineBoard'); board.innerHTML='';
+  var filtered=db.leads.filter(function(l){ return (lFilter==='all'||l.status===lFilter)&&(!lSearch||l.name.toLowerCase().includes(lSearch.toLowerCase())); });
   P_ST.forEach(function(col){
-    var col_leads = filtered.filter(function(l){ return l.status===col; });
+    var cl=filtered.filter(function(l){ return l.status===col; });
     var tc=P_COL[col],bc=P_BDR[col],bg=P_BG[col];
-    var colEl = document.createElement('div');
-
-    var head = '<div class="kcol-head" style="border-color:'+bc+'"><span class="khl" style="color:'+tc+'">'+P_LBL[col]+'</span><span class="khc" style="color:'+tc+'">'+col_leads.length+'</span></div>';
-    var cards = col_leads.length===0 ? '<div class="kempty">None</div>' : '';
-
-    col_leads.forEach(function(l){
-      var isExp = expandedL === l.id;
-      var actBtns = '';
-      if(isExp){
-        actBtns += '<button class="act-btn" style="border-color:#c8922a;color:#c8922a" onclick="openLeadModal('+l.id+',event)">Edit</button>';
+    var colEl=document.createElement('div');
+    var head='<div class="kcol-head" style="border-color:'+bc+'"><span class="khl" style="color:'+tc+'">'+P_LBL[col]+'</span><span class="khc" style="color:'+tc+'">'+cl.length+'</span></div>';
+    var cards=cl.length===0?'<div class="kempty">None</div>':'';
+    cl.forEach(function(l){
+      var isE=expandedL===l.id;
+      var acts='';
+      if(isE){
+        acts+='<button class="act-btn" style="border-color:#c8922a;color:#c8922a" onclick="openLeadModal('+l.id+',event)">Edit</button>';
         P_ST.filter(function(s){ return s!==col; }).forEach(function(s){
-          actBtns += '<button class="act-btn" style="border-color:'+P_BDR[s]+';color:'+P_COL[s]+'" onclick="quickStatus('+l.id+',\''+s+'\',event)">→'+P_LBL[s]+'</button>';
+          acts+='<button class="act-btn" style="border-color:'+P_BDR[s]+';color:'+P_COL[s]+'" onclick="quickStatus('+l.id+',\''+s+'\',event)">→'+P_LBL[s]+'</button>';
         });
       }
-      cards += '<div class="card" style="background:'+bg+';border-color:'+bc+'" onclick="toggleLead('+l.id+')">'
+      cards+='<div class="card" style="background:'+bg+';border-color:'+bc+'" onclick="toggleLead('+l.id+')">'
         +'<div style="display:flex;justify-content:space-between;gap:4px;margin-bottom:3px">'
         +'<div class="cname">'+h(l.name)+'</div>'
         +'<div style="text-align:right;flex-shrink:0">'
-        +(l.value?'<div class="cval" style="color:'+tc+'">'+fmtMoney(l.value)+'</div>':'')
-        +(l.value>0?'<div style="font-size:8px;color:#8a7d72">~'+fmtMoney(Math.round(l.value*0.5))+'</div>':'')
+        +(l.value?'<div class="cval" style="color:'+tc+'">'+fm(l.value)+'</div>':'')
+        +(l.expectedProfit?'<div style="font-size:9px;color:#7ab8e8">Exp: '+fm(l.expectedProfit)+'</div>':'')
         +'</div></div>'
         +'<div class="ctags"><span class="tag-a">'+h(l.source)+'</span><span class="tag-m">PQ:'+h(l.pq)+'</span></div>'
-        +'<div class="cdate">'+fmtDate(l.date)+'</div>'
+        +'<div class="cdate">'+fd(l.date)+'</div>'
         +(l.lostReason?'<div class="clost" style="color:'+tc+'">↳ '+h(l.lostReason)+'</div>':'')
-        +(isExp&&l.notes?'<div class="cnotes">'+h(l.notes)+'</div>':'')
-        +(isExp&&actBtns?'<div class="cactions">'+actBtns+'</div>':'')
-        +(!isExp?'<div class="ctap">tap</div>':'')
+        +(isE&&l.notes?'<div class="cnotes">'+h(l.notes)+'</div>':'')
+        +(isE&&acts?'<div class="cactions">'+acts+'</div>':'')
+        +(!isE?'<div class="ctap">tap</div>':'')
         +'</div>';
     });
-
-    var addBtnHtml = '<button class="add-btn" onclick="openLeadModal(0,event,\''+col+'\')">+ Add</button>';
-    colEl.innerHTML = head + cards + addBtnHtml;
+    colEl.innerHTML=head+cards+'<button class="add-btn" onclick="openLeadModal(0,event,\''+col+'\')">+ Add</button>';
     board.appendChild(colEl);
   });
 }
+function toggleLead(id){ expandedL=expandedL===id?null:id; renderPipeline(); }
+function quickStatus(id,st,e){ e.stopPropagation(); db.leads=db.leads.map(function(l){ return l.id===id?Object.assign({},l,{status:st}):l; }); saveDB(); expandedL=null; renderPipeline(); }
 
-function toggleLead(id){ expandedL = expandedL===id ? null : id; renderPipeline(); }
-function quickStatus(id, st, e){ e.stopPropagation(); db.leads = db.leads.map(function(l){ return l.id===id ? Object.assign({},l,{status:st}) : l; }); saveDB(); expandedL=null; renderPipeline(); }
-
-// ============================================================
+// =========================================================
 // JOBS
-// ============================================================
+// =========================================================
 function getItemsFor(col){
-  var pinned = {};
+  var pinned={};
   db.manualJobs.forEach(function(j){ if(j.leadId) pinned[j.leadId]=true; });
-  var m = db.manualJobs.filter(function(j){ return j.column===col; });
+  var m=db.manualJobs.filter(function(j){ return j.column===col; });
   if(col==='quotes') return db.leads.filter(function(l){ return l.status==='not_started'&&!pinned[l.id]; }).map(function(l){ return Object.assign({},l,{_auto:true}); }).concat(m);
   if(col==='orders') return db.leads.filter(function(l){ return l.status==='won'&&!pinned[l.id]; }).map(function(l){ return Object.assign({},l,{_auto:true}); }).concat(m);
   return m;
 }
 
 function renderJobs(){
-  // Info bar
-  document.getElementById('jobsInfo').innerHTML =
-    '<span style="color:#7ab8e8">Not Started</span> → <span style="color:'+J_COL.quotes+'">Quotes</span> &nbsp;·&nbsp; '
-    +'<span style="color:#6ec87a">Won</span> → <span style="color:'+J_COL.orders+'">Orders</span> &nbsp;·&nbsp; '
-    +'Tap card to move columns &nbsp;·&nbsp; Add profit + invoice date to track in <span style="color:#6ec87a">Revenue</span>';
-
-  // Tiles
-  var tilesEl = document.getElementById('jobsTiles');
-  tilesEl.innerHTML = '';
+  document.getElementById('jobsInfo').innerHTML=
+    '<span style="color:#7ab8e8">Not Started</span> → <span style="color:#e8b96a">Quotes</span> &nbsp;·&nbsp; '
+    +'<span style="color:#6ec87a">Won</span> → <span style="color:#7ab8e8">Orders</span> &nbsp;·&nbsp; '
+    +'Tap card to move · Add Expected Profit + Start Date when booking · Add Final Profit + Invoice Date when complete';
+  var tilesEl=document.getElementById('jobsTiles'); tilesEl.innerHTML='';
   J_COLS.forEach(function(col){
-    var items = getItemsFor(col);
-    var div = document.createElement('div'); div.className='tile';
-    div.innerHTML = '<div class="tv" style="color:'+J_COL[col]+'">'+items.length+'</div><div class="tl">'+J_LBL[col]+'</div>';
+    var div=document.createElement('div'); div.className='tile';
+    div.innerHTML='<div class="tv" style="color:'+J_COL[col]+'">'+getItemsFor(col).length+'</div><div class="tl">'+J_LBL[col]+'</div>';
     tilesEl.appendChild(div);
   });
-
-  // Board
-  var board = document.getElementById('jobsBoard');
-  board.innerHTML = '';
-
+  var board=document.getElementById('jobsBoard'); board.innerHTML='';
   J_COLS.forEach(function(col){
-    var items = getItemsFor(col);
-    var tc=J_COL[col], bc=J_BDR[col], bg=J_BG[col];
-    var colEl = document.createElement('div');
-
-    var head = '<div class="kcol-head" style="border-color:'+bc+'"><span class="khl" style="color:'+tc+'">'+J_LBL[col]+'</span><span class="khc" style="color:'+tc+'">'+items.length+'</span></div>';
-    var cards = items.length===0 ? '<div class="kempty">Nothing</div>' : '';
-
+    var items=getItemsFor(col);
+    var tc=J_COL[col],bc=J_BDR[col],bg=J_BG[col];
+    var colEl=document.createElement('div');
+    var head='<div class="kcol-head" style="border-color:'+bc+'"><span class="khl" style="color:'+tc+'">'+J_LBL[col]+'</span><span class="khc" style="color:'+tc+'">'+items.length+'</span></div>';
+    var cards=items.length===0?'<div class="kempty">Nothing</div>':'';
     items.forEach(function(item){
-      var isA = item._auto;
-      var cid = isA ? 'a'+item.id : 'j'+item.id;
-      var isExp = expandedJ === cid;
-      var od = item.dueDate && new Date(item.dueDate) < new Date();
-      var hasProfit = item.finalProfit!==''&&item.finalProfit!==undefined&&item.finalProfit!==null&&item.finalProfit!==false;
-      var priCol = item.priority==='High'?'#e07070':item.priority==='Low'?'#3a3430':'#8b6a2e';
-      var priTxt = item.priority==='High'?'#e07070':item.priority==='Low'?'#8a7d72':'#e8b96a';
-
-      var actBtns = '';
-      if(isExp){
+      var isA=item._auto;
+      var cid=isA?'a'+item.id:'j'+item.id;
+      var isE=expandedJ===cid;
+      var od=item.dueDate&&new Date(item.dueDate)<new Date();
+      var hasFinal=hasNum(item.finalProfit)&&item.invoicedDate;
+      var hasExp=hasNum(item.expectedProfit)&&item.startDate;
+      var priCol=item.priority==='High'?'#e07070':item.priority==='Low'?'#3a3430':'#8b6a2e';
+      var priTxt=item.priority==='High'?'#e07070':item.priority==='Low'?'#8a7d72':'#e8b96a';
+      var acts='';
+      if(isE){
         if(isA){
-          ['upcoming','snagging','invoices'].forEach(function(c){
-            actBtns += '<button class="act-btn" style="border-color:'+J_BDR[c]+';color:'+J_COL[c]+'" onclick="pinJobTo('+item.id+',\''+c+'\',event)">→'+J_LBL[c].split(' ')[0]+'</button>';
-          });
+          ['upcoming','snagging','invoices'].forEach(function(c){ acts+='<button class="act-btn" style="border-color:'+J_BDR[c]+';color:'+J_COL[c]+'" onclick="pinJobTo('+item.id+',\''+c+'\',event)">→'+J_LBL[c].split(' ')[0]+'</button>'; });
         } else {
-          actBtns += '<button class="act-btn" style="border-color:#c8922a;color:#c8922a" onclick="openJobModal('+item.id+',event)">Edit</button>';
-          J_COLS.filter(function(c){ return c!==col; }).forEach(function(c){
-            actBtns += '<button class="act-btn" style="border-color:'+J_BDR[c]+';color:'+J_COL[c]+'" onclick="moveJob('+item.id+',\''+c+'\',event)">→'+J_LBL[c].split(' ')[0]+'</button>';
-          });
+          acts+='<button class="act-btn" style="border-color:#c8922a;color:#c8922a" onclick="openJobModal('+item.id+',event)">Edit</button>';
+          J_COLS.filter(function(c){ return c!==col; }).forEach(function(c){ acts+='<button class="act-btn" style="border-color:'+J_BDR[c]+';color:'+J_COL[c]+'" onclick="moveJob('+item.id+',\''+c+'\',event)">→'+J_LBL[c].split(' ')[0]+'</button>'; });
         }
       }
-
-      cards += '<div class="card" style="background:'+bg+';border-color:'+bc+'" onclick="toggleJob(\''+cid+'\')">'
+      cards+='<div class="card" style="background:'+bg+';border-color:'+bc+'" onclick="toggleJob(\''+cid+'\')">'
         +'<div style="display:flex;justify-content:space-between;gap:4px;margin-bottom:2px">'
         +'<div class="cname">'+h(item.name)+'</div>'
         +(isA?'<span class="tag-auto" style="color:'+tc+'">auto</span>':'')
         +'</div>'
-        +(item.value>0?'<div class="cval" style="color:'+tc+'">'+fmtMoney(item.value)+'</div>':'')
-        +(hasProfit?'<div class="cprofit">Profit: '+fmtMoney(item.finalProfit)+'</div>':'')
-        +(item.invoicedDate?'<div class="cinv">Invoiced: '+fmtDate(item.invoicedDate)+'</div>':'')
+        +(item.value>0?'<div class="cval" style="color:'+tc+'">'+fm(item.value)+'</div>':'')
+        +(hasFinal?'<div class="cprofit">Profit: '+fm(item.finalProfit)+'</div>':'')
+        +(!hasFinal&&hasExp?'<div class="cexpected">Expected: '+fm(item.expectedProfit)+'</div>':'')
+        +(hasFinal&&item.invoicedDate?'<div class="cinv">Invoiced: '+fd(item.invoicedDate)+'</div>':'')
+        +(!hasFinal&&item.startDate?'<div class="cstart">Starts: '+fd(item.startDate)+'</div>':'')
         +(!isA&&item.priority?'<span class="cpri" style="border-color:'+priCol+';color:'+priTxt+'">'+item.priority+'</span>':'')
-        +(item.dueDate?'<div class="cdue" style="color:'+(od?'#e07070':'#8a7d72')+'">Due: '+fmtDate(item.dueDate)+(od?' ⚠':'')+'</div>':'')
-        +(isExp&&item.notes?'<div class="cnotes">'+h(item.notes)+'</div>':'')
-        +(isExp&&actBtns?'<div class="cactions">'+actBtns+'</div>':'')
-        +(!isExp?'<div class="ctap">tap</div>':'')
+        +(item.dueDate?'<div class="cdue" style="color:'+(od?'#e07070':'#8a7d72')+'">Due: '+fd(item.dueDate)+(od?' ⚠':'')+'</div>':'')
+        +(isE&&item.notes?'<div class="cnotes">'+h(item.notes)+'</div>':'')
+        +(isE&&acts?'<div class="cactions">'+acts+'</div>':'')
+        +(!isE?'<div class="ctap">tap</div>':'')
         +'</div>';
     });
-
-    var canAdd = col==='upcoming'||col==='snagging'||col==='invoices';
-    var addBtnHtml = canAdd ? '<button class="add-btn" onclick="openJobModal(0,event,\''+col+'\')">+ Add</button>' : '';
-    colEl.innerHTML = head + cards + addBtnHtml;
+    var canAdd=col==='upcoming'||col==='snagging'||col==='invoices';
+    colEl.innerHTML=head+cards+(canAdd?'<button class="add-btn" onclick="openJobModal(0,event,\''+col+'\')">+ Add</button>':'');
     board.appendChild(colEl);
   });
 }
-
-function toggleJob(cid){ expandedJ = expandedJ===cid ? null : cid; renderJobs(); }
-
-function pinJobTo(leadId, col, e){
+function toggleJob(cid){ expandedJ=expandedJ===cid?null:cid; renderJobs(); }
+function pinJobTo(leadId,col,e){
   e.stopPropagation();
-  var lead = db.leads.find(function(l){ return l.id===leadId; });
-  if(!lead) return;
-  var nj = {id:db.nextJobId++, leadId:leadId, name:lead.name, column:col, priority:'Normal', dueDate:'', value:lead.value||0, notes:lead.notes||'', finalProfit:'', invoicedDate:''};
-  db.manualJobs.push(nj);
+  var lead=db.leads.find(function(l){ return l.id===leadId; }); if(!lead) return;
+  db.manualJobs.push({id:db.nextJobId++,leadId:leadId,name:lead.name,column:col,priority:'Normal',dueDate:'',value:lead.value||0,notes:lead.notes||'',expectedProfit:'',startDate:'',finalProfit:'',invoicedDate:''});
   saveDB(); expandedJ=null; renderJobs();
 }
+function moveJob(id,col,e){ e.stopPropagation(); db.manualJobs=db.manualJobs.map(function(j){ return j.id===id?Object.assign({},j,{column:col}):j; }); saveDB(); renderJobs(); }
 
-function moveJob(id, col, e){
-  e.stopPropagation();
-  db.manualJobs = db.manualJobs.map(function(j){ return j.id===id ? Object.assign({},j,{column:col}) : j; });
-  saveDB(); renderJobs();
-}
-
-// ============================================================
+// =========================================================
 // REVENUE
-// ============================================================
+// =========================================================
 function renderRevenue(){
-  var revJobs = db.manualJobs.filter(function(j){
-    return j.invoicedDate && j.finalProfit!==''&&j.finalProfit!==undefined&&j.finalProfit!==null;
-  });
+  var now=new Date();
+
+  // ---- Build data sets ----
+  // 1. Manual jobs with FINAL profit + invoice date → actual
+  var actualJobs=db.manualJobs.filter(function(j){ return j.invoicedDate&&hasNum(j.finalProfit); });
+  // 2. Manual jobs with EXPECTED profit + start date but NO final yet → expected
+  var expectedJobs=db.manualJobs.filter(function(j){ return j.startDate&&hasNum(j.expectedProfit)&&!(j.invoicedDate&&hasNum(j.finalProfit)); });
+  // 3. Won leads with expectedProfit set and no manual job card taking over
+  var pinnedLeadIds={};
+  db.manualJobs.forEach(function(j){ if(j.leadId) pinnedLeadIds[j.leadId]=true; });
+  var autoExpLeads=db.leads.filter(function(l){ return l.status==='won'&&!pinnedLeadIds[l.id]&&hasNum(l.expectedProfit); });
+
+  // ---- Year list ----
+  var years=[];
+  actualJobs.forEach(function(j){ var y=new Date(j.invoicedDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
+  expectedJobs.forEach(function(j){ var y=new Date(j.startDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
+  if(years.indexOf(now.getFullYear())<0) years.push(now.getFullYear());
+  if(years.indexOf(now.getFullYear()+1)<0) years.push(now.getFullYear()+1);
+  years.sort(function(a,b){ return b-a; });
+  if(years.indexOf(revYear)<0) revYear=years[0];
 
   // Year buttons
-  var years = [];
-  revJobs.forEach(function(j){ var y=new Date(j.invoicedDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
-  if(years.indexOf(new Date().getFullYear())<0) years.push(new Date().getFullYear());
-  years.sort(function(a,b){ return b-a; });
-  if(years.indexOf(revYear)<0) revYear = years[0];
-
-  var yrEl = document.getElementById('yearBtns');
-  yrEl.innerHTML = '';
+  var yrEl=document.getElementById('yearBtns'); yrEl.innerHTML='';
   years.forEach(function(y){
-    var btn = document.createElement('button');
-    btn.className = 'yr-btn'+(y===revYear?' active':'');
-    btn.textContent = y;
-    btn.onclick = function(){ revYear=y; renderRevenue(); };
+    var btn=document.createElement('button'); btn.className='yr-btn'+(y===revYear?' active':'');
+    btn.textContent=y; btn.onclick=function(){ revYear=y; renderRevenue(); };
     yrEl.appendChild(btn);
   });
 
-  // Build month data for selected year
-  var byMonth = {};
-  revJobs.forEach(function(j){
-    var d = new Date(j.invoicedDate);
-    if(isNaN(d)||d.getFullYear()!==revYear) return;
-    var mi = d.getMonth();
-    if(!byMonth[mi]) byMonth[mi] = {profit:0, jobs:[]};
-    byMonth[mi].profit += Number(j.finalProfit)||0;
-    byMonth[mi].jobs.push(j);
+  // ---- Month buckets for selected year ----
+  var actByMonth={}, expByMonth={};
+  for(var i=0;i<12;i++){ actByMonth[i]={total:0,jobs:[]}; expByMonth[i]={total:0,jobs:[]}; }
+
+  actualJobs.forEach(function(j){
+    var d=new Date(j.invoicedDate); if(isNaN(d)||d.getFullYear()!==revYear) return;
+    var mi=d.getMonth(); actByMonth[mi].total+=Number(j.finalProfit)||0; actByMonth[mi].jobs.push(j);
+  });
+  expectedJobs.forEach(function(j){
+    var d=new Date(j.startDate); if(isNaN(d)||d.getFullYear()!==revYear) return;
+    var mi=d.getMonth(); expByMonth[mi].total+=Number(j.expectedProfit)||0; expByMonth[mi].jobs.push(j);
+  });
+  // Auto leads — use lead date, 50% margin
+  autoExpLeads.forEach(function(l){
+    var d=new Date(l.date); if(isNaN(d)||d.getFullYear()!==revYear) return;
+    var mi=d.getMonth(); var ep=Number(l.expectedProfit)||0;
+    expByMonth[mi].total+=ep; expByMonth[mi].jobs.push({name:l.name,expectedProfit:ep,startDate:l.date,_autoLead:true});
   });
 
-  var yearTotal = 0;
-  var monthsWithData = 0;
-  for(var mi=0;mi<12;mi++){ if(byMonth[mi]){ yearTotal+=byMonth[mi].profit; monthsWithData++; } }
+  // ---- Summary figures ----
+  var ytdActual=0, totalExpected=0;
+  for(var i=0;i<12;i++){ ytdActual+=actByMonth[i].total; totalExpected+=expByMonth[i].total; }
+  var totalJobs=actualJobs.filter(function(j){ return new Date(j.invoicedDate).getFullYear()===revYear; }).length;
+  var gap=Math.max(0,TARGET-ytdActual);
 
-  var yearJobs = revJobs.filter(function(j){ return new Date(j.invoicedDate).getFullYear()===revYear; });
-
-  // Summary tiles
-  var gap = Math.max(0, TARGET-yearTotal);
-  var avgMonthly = monthsWithData>0 ? Math.round(yearTotal/monthsWithData) : 0;
-  var tileData = [
-    ['Year Profit', yearTotal>0 ? fmtMoney(yearTotal) : '—', '#6ec87a'],
-    ['Jobs Logged', yearJobs.length, '#e8b96a'],
-    ['Avg / Month', avgMonthly>0 ? fmtMoney(avgMonthly) : '—', '#7ab8e8'],
-    ['Gap to £102k', yearTotal>0 ? (gap>0?fmtMoney(gap):' Target hit!') : 'Log jobs', '#e07070']
-  ];
-  var tilesEl = document.getElementById('revTiles');
-  tilesEl.innerHTML = '';
-  tileData.forEach(function(t){
-    var div = document.createElement('div'); div.className='rev-tile';
-    div.innerHTML = '<div class="rtv" style="color:'+t[2]+'">'+t[1]+'</div><div class="rtl">'+t[0]+'</div>';
-    tilesEl.appendChild(div);
+  // ---- Summary tiles ----
+  document.getElementById('revTiles').innerHTML='';
+  [
+    ['YTD Actual Profit', ytdActual>0?fm(ytdActual):'—', '#6ec87a'],
+    ['Expected / Booked', totalExpected>0?fm(totalExpected):'—', '#7ab8e8'],
+    ['Combined View', (ytdActual+totalExpected)>0?fm(ytdActual+totalExpected):'—', '#b88de8'],
+    ['Jobs Invoiced', totalJobs, '#e8b96a'],
+    ['Gap to £102k', ytdActual>0?(gap>0?fm(gap):'✓ Hit!'):'Log jobs', gap===0?'#6ec87a':'#e07070']
+  ].forEach(function(t){
+    var div=document.createElement('div'); div.className='rev-tile';
+    div.innerHTML='<div class="rtv" style="color:'+t[2]+'">'+t[1]+'</div><div class="rtl">'+t[0]+'</div>';
+    document.getElementById('revTiles').appendChild(div);
   });
 
-  // Bar chart
-  document.getElementById('chartLabel').textContent = 'Monthly Profit — '+revYear;
-  var maxP = 1;
-  for(var mi=0;mi<12;mi++){ if(byMonth[mi]&&byMonth[mi].profit>maxP) maxP=byMonth[mi].profit; }
-  var barEl = document.getElementById('barChart');
-  barEl.innerHTML = '';
-  var now = new Date();
-  for(var mi=0;mi<12;mi++){
-    var p = byMonth[mi] ? byMonth[mi].profit : 0;
-    var barH = p>0 ? Math.max(6,Math.round((p/maxP)*110)) : 2;
-    var isCurrent = mi===now.getMonth()&&revYear===now.getFullYear();
-    var col = document.createElement('div'); col.className='bar-col';
-    col.innerHTML = '<div class="bar-val">'+(p>0?fmtMoney(p).replace('£',''):'')+'</div>'
-      +'<div class="bar-fill" style="height:'+barH+'px;background:'+(p>0?'#6ec87a':'#2a2520')+';border:'+(isCurrent?'1px solid #c8922a':'none')+'"></div>'
-      +'<div class="bar-mon" style="color:'+(isCurrent?'#c8922a':'#8a7d72')+'">'+MONTHS[mi]+'</div>';
+  // ---- Next 3 months ----
+  var next3El=document.getElementById('next3Grid'); next3El.innerHTML='';
+  var shown=0;
+  for(var offset=0;offset<12&&shown<3;offset++){
+    var mi=(now.getMonth()+offset)%12;
+    var yr=revYear+(now.getMonth()+offset>=12?1:0);
+    if(yr!==revYear) continue; // only show within selected year for simplicity
+    var expTotal=expByMonth[mi].total;
+    var actTotal=actByMonth[mi].total;
+    if(expTotal>0||actTotal>0||offset<3){
+      var card=document.createElement('div'); card.className='next3-card';
+      var isActual=actTotal>0;
+      card.innerHTML='<div class="n3m">'+MONTHS[mi]+(yr!==now.getFullYear()?' '+yr:'')+'</div>'
+        +'<div class="n3v" style="color:'+(isActual?'#6ec87a':'#7ab8e8')+'">'+(isActual?fm(actTotal):expTotal>0?fm(expTotal):'Nothing yet')+'</div>'
+        +'<div class="n3sub">'+(isActual?'Actual (invoiced)':(expTotal>0?expByMonth[mi].jobs.length+' job'+(expByMonth[mi].jobs.length!==1?'s':'')+' booked':'No jobs booked'))+'</div>';
+      next3El.appendChild(card); shown++;
+    }
+  }
+  if(shown===0){ next3El.innerHTML='<div style="font-size:11px;color:#8a7d72;font-style:italic">No jobs booked for the next 3 months. Add Expected Profit + Start Date to job cards to see them here.</div>'; }
+
+  // ---- Bar chart ----
+  document.getElementById('chartLabel').textContent='Monthly Profit — '+revYear;
+  var maxVal=1;
+  for(var i=0;i<12;i++){ var combined=actByMonth[i].total+expByMonth[i].total; if(combined>maxVal) maxVal=combined; }
+  var barEl=document.getElementById('barChart'); barEl.innerHTML='';
+  for(var i=0;i<12;i++){
+    var act=actByMonth[i].total, exp=expByMonth[i].total;
+    var total=act+exp;
+    var totalH=total>0?Math.max(8,Math.round((total/maxVal)*120)):2;
+    var actH=total>0?Math.round((act/total)*totalH):0;
+    var expH=totalH-actH;
+    var isCurrent=i===now.getMonth()&&revYear===now.getFullYear();
+    var col=document.createElement('div'); col.className='bar-col';
+    col.innerHTML='<div class="bar-val">'+(total>0?fm(total).replace('£',''):'')+'</div>'
+      +'<div class="bar-stack" style="height:'+totalH+'px;border:'+(isCurrent?'1px solid #c8922a':'none')+'">'
+      +(act>0?'<div class="bar-seg" style="height:'+actH+'px;background:#6ec87a"></div>':'')
+      +(exp>0?'<div class="bar-seg" style="height:'+expH+'px;background:#2e5a8b"></div>':'')
+      +(total===0?'<div style="width:100%;height:2px;background:#2a2520"></div>':'')
+      +'</div>'
+      +'<div class="bar-mon" style="color:'+(isCurrent?'#c8922a':'#8a7d72')+'">'+MONTHS[i]+'</div>';
     barEl.appendChild(col);
   }
 
-  // Cumulative list
-  document.getElementById('cumLabel').textContent = 'Cumulative — '+revYear;
-  var cumEl = document.getElementById('cumList');
-  cumEl.innerHTML = '';
-  if(monthsWithData===0){
-    cumEl.innerHTML = '<div class="rev-empty">No data yet for '+revYear+'. Edit a job card and add Final Profit + Invoice Date.</div>';
+  // ---- Cumulative actual ----
+  document.getElementById('cumLabel').textContent='Cumulative Actual — '+revYear;
+  var cumEl=document.getElementById('cumList'); cumEl.innerHTML='';
+  var actMonths=[];
+  for(var i=0;i<12;i++){ if(actByMonth[i].total>0) actMonths.push(i); }
+  if(actMonths.length===0){
+    cumEl.innerHTML='<div class="rev-empty">No invoiced jobs in '+revYear+' yet. Add Final Profit + Invoice Date to job cards.</div>';
   } else {
-    var cum = 0;
-    for(var mi=0;mi<12;mi++){
-      if(!byMonth[mi]) continue;
-      cum += byMonth[mi].profit;
-      var row = document.createElement('div'); row.className='rev-row';
-      row.innerHTML = '<div class="rn">'+MONTHS[mi]+'</div>'
-        +'<div style="display:flex;gap:14px;align-items:center">'
-        +'<div class="rp">'+fmtMoney(byMonth[mi].profit)+'</div>'
-        +'<div class="rv">= '+fmtMoney(cum)+'</div>'
+    var cum=0;
+    actMonths.forEach(function(i){
+      cum+=actByMonth[i].total;
+      var row=document.createElement('div'); row.className='rev-row';
+      row.innerHTML='<div class="rn">'+MONTHS[i]+'</div>'
+        +'<div style="display:flex;gap:12px;align-items:center">'
+        +'<div class="rp" style="color:#6ec87a">'+fm(actByMonth[i].total)+'</div>'
+        +'<div style="font-size:10px;color:#8a7d72">'+fm(cum)+'</div>'
         +'</div>';
       cumEl.appendChild(row);
-    }
-    var tot = document.createElement('div'); tot.className='rev-total';
-    tot.innerHTML = '<span>Total</span><strong>'+fmtMoney(yearTotal)+'</strong>';
+    });
+    var tot=document.createElement('div'); tot.className='rev-total';
+    tot.innerHTML='<span>Total</span><strong style="color:#6ec87a">'+fm(ytdActual)+'</strong>';
     cumEl.appendChild(tot);
   }
 
-  // Jobs list
-  document.getElementById('jobsLogLabel').textContent = 'Logged Jobs — '+revYear;
-  var jlEl = document.getElementById('jobsList');
-  jlEl.innerHTML = '';
-  var sortedJobs = yearJobs.slice().sort(function(a,b){ return new Date(b.invoicedDate)-new Date(a.invoicedDate); });
-  if(sortedJobs.length===0){
-    jlEl.innerHTML = '<div class="rev-empty">No jobs logged for '+revYear+' yet.</div>';
+  // ---- Expected jobs list ----
+  var expEl=document.getElementById('expectedList'); expEl.innerHTML='';
+  var allExpJobs=[];
+  for(var i=0;i<12;i++){
+    expByMonth[i].jobs.forEach(function(j){ allExpJobs.push({job:j,month:i}); });
+  }
+  if(allExpJobs.length===0){
+    expEl.innerHTML='<div class="rev-empty">No booked jobs for '+revYear+'. Add Expected Profit + Start Date to job cards in the Jobs board.</div>';
   } else {
-    sortedJobs.forEach(function(j){
-      var row = document.createElement('div'); row.className='rev-row';
-      row.innerHTML = '<div class="rn">'+h(j.name)+'<small>'+fmtDate(j.invoicedDate)+'</small></div>'
-        +'<div class="rp">'+fmtMoney(j.finalProfit)+'</div>';
-      jlEl.appendChild(row);
+    allExpJobs.sort(function(a,b){ return new Date(a.job.startDate||a.job.date)-new Date(b.job.startDate||b.job.date); });
+    allExpJobs.forEach(function(item){
+      var j=item.job;
+      var row=document.createElement('div'); row.className='rev-row';
+      row.innerHTML='<div class="rn">'+h(j.name)
+        +(j._autoLead?'<span class="rtag" style="border-color:#2e5a8b;color:#7ab8e8;margin-left:4px">pipeline</span>':'')
+        +'<small>'+MONTHS[item.month]+(j.startDate?' · '+fd(j.startDate):'')+'</small></div>'
+        +'<div class="rp" style="color:#7ab8e8">'+fm(j.expectedProfit)+'</div>';
+      expEl.appendChild(row);
+    });
+    var expTot=document.createElement('div'); expTot.className='rev-total';
+    expTot.innerHTML='<span>Total</span><strong style="color:#7ab8e8">'+fm(totalExpected)+'</strong>';
+    expEl.appendChild(expTot);
+  }
+
+  // ---- Invoiced jobs list ----
+  document.getElementById('invoicedLabel').textContent='Invoiced Jobs — '+revYear;
+  var invEl=document.getElementById('invoicedList'); invEl.innerHTML='';
+  var invJobs=actualJobs.filter(function(j){ return new Date(j.invoicedDate).getFullYear()===revYear; })
+    .sort(function(a,b){ return new Date(b.invoicedDate)-new Date(a.invoicedDate); });
+  if(invJobs.length===0){
+    invEl.innerHTML='<div class="rev-empty">No invoiced jobs for '+revYear+' yet.</div>';
+  } else {
+    invJobs.forEach(function(j){
+      var row=document.createElement('div'); row.className='rev-row';
+      row.innerHTML='<div class="rn">'+h(j.name)+'<small>'+fd(j.invoicedDate)+'</small></div>'
+        +'<div class="rp" style="color:#6ec87a">'+fm(j.finalProfit)+'</div>';
+      invEl.appendChild(row);
     });
   }
 }
 
-// ============================================================
+// =========================================================
 // LEAD MODAL
-// ============================================================
-function openLeadModal(id, e, defaultStatus){
+// =========================================================
+function openLeadModal(id,e,defaultStatus){
   e&&e.stopPropagation();
-  var lead = id ? db.leads.find(function(l){ return l.id===id; }) : null;
-  editingLead = lead || null;
-  document.getElementById('leadModalTitle').textContent = lead ? 'Edit — '+lead.name : 'Add Lead';
-  document.getElementById('lf_name').value  = lead ? lead.name : '';
-  document.getElementById('lf_date').value  = lead ? lead.date : new Date().toISOString().split('T')[0];
-  document.getElementById('lf_source').value = lead ? lead.source : 'Unknown';
-  document.getElementById('lf_status').value = lead ? lead.status : (defaultStatus||'pending');
-  document.getElementById('lf_value').value  = lead ? (lead.value||'') : '';
-  document.getElementById('lf_pq').value     = lead ? lead.pq : 'No';
-  document.getElementById('lf_lost').value   = lead ? lead.lostReason : '';
-  document.getElementById('lf_notes').value  = lead ? lead.notes : '';
-  document.getElementById('delLeadBtn').style.display = lead ? 'block' : 'none';
-  document.getElementById('leadModal').style.display = 'flex';
+  var lead=id?db.leads.find(function(l){ return l.id===id; }):null;
+  editingLead=lead||null;
+  document.getElementById('leadModalTitle').textContent=lead?'Edit — '+lead.name:'Add Lead';
+  document.getElementById('lf_name').value=lead?lead.name:'';
+  document.getElementById('lf_date').value=lead?lead.date:new Date().toISOString().split('T')[0];
+  document.getElementById('lf_source').value=lead?lead.source:'Unknown';
+  document.getElementById('lf_status').value=lead?lead.status:(defaultStatus||'pending');
+  document.getElementById('lf_value').value=lead?(lead.value||''):'';
+  document.getElementById('lf_pq').value=lead?lead.pq:'No';
+  document.getElementById('lf_lost').value=lead?lead.lostReason:'';
+  document.getElementById('lf_notes').value=lead?lead.notes:'';
+  document.getElementById('lf_exprofit').value=lead?(lead.expectedProfit!==undefined&&lead.expectedProfit!==''?lead.expectedProfit:''):'';
+  document.getElementById('delLeadBtn').style.display=lead?'block':'none';
+  document.getElementById('leadModal').style.display='flex';
 }
-
 function closeLeadModal(){ document.getElementById('leadModal').style.display='none'; }
-document.getElementById('leadModal').onclick = function(e){ if(e.target===this) closeLeadModal(); };
-
-document.getElementById('delLeadBtn').onclick = function(){
+document.getElementById('leadModal').onclick=function(e){ if(e.target===this) closeLeadModal(); };
+document.getElementById('delLeadBtn').onclick=function(){
   if(!confirm('Delete this lead?')) return;
-  db.leads = db.leads.filter(function(l){ return l.id!==editingLead.id; });
+  db.leads=db.leads.filter(function(l){ return l.id!==editingLead.id; });
   saveDB(); closeLeadModal(); renderPipeline();
 };
-
 function saveLeadModal(){
-  var d = {
-    name:document.getElementById('lf_name').value,
-    date:document.getElementById('lf_date').value,
-    source:document.getElementById('lf_source').value,
-    status:document.getElementById('lf_status').value,
-    value:parseFloat(document.getElementById('lf_value').value)||0,
-    pq:document.getElementById('lf_pq').value,
-    lostReason:document.getElementById('lf_lost').value,
-    notes:document.getElementById('lf_notes').value
-  };
-  if(editingLead){
-    db.leads = db.leads.map(function(l){ return l.id===editingLead.id ? Object.assign({},l,d) : l; });
-  } else {
-    d.id = db.nextLeadId++;
-    db.leads.push(d);
-  }
+  var d={name:document.getElementById('lf_name').value,date:document.getElementById('lf_date').value,source:document.getElementById('lf_source').value,status:document.getElementById('lf_status').value,value:parseFloat(document.getElementById('lf_value').value)||0,pq:document.getElementById('lf_pq').value,lostReason:document.getElementById('lf_lost').value,notes:document.getElementById('lf_notes').value,expectedProfit:numOrEmpty(document.getElementById('lf_exprofit').value)};
+  if(editingLead){ db.leads=db.leads.map(function(l){ return l.id===editingLead.id?Object.assign({},l,d):l; }); }
+  else{ d.id=db.nextLeadId++; db.leads.push(d); }
   saveDB(); closeLeadModal(); renderPipeline();
 }
 
-// ============================================================
+// =========================================================
 // JOB MODAL
-// ============================================================
-function openJobModal(id, e, defaultCol){
+// =========================================================
+function openJobModal(id,e,defaultCol){
   e&&e.stopPropagation();
-  var job = id ? db.manualJobs.find(function(j){ return j.id===id; }) : null;
-  editingJob = job || null;
-  document.getElementById('jobModalTitle').textContent = job ? 'Edit — '+job.name : 'Add Job';
-  document.getElementById('jf_name').value    = job ? job.name : '';
-  document.getElementById('jf_col').value     = job ? job.column : (defaultCol||'upcoming');
-  document.getElementById('jf_pri').value     = job ? (job.priority||'Normal') : 'Normal';
-  document.getElementById('jf_due').value     = job ? (job.dueDate||'') : '';
-  document.getElementById('jf_val').value     = job ? (job.value||'') : '';
-  document.getElementById('jf_profit').value  = job ? (job.finalProfit!==undefined&&job.finalProfit!==''?job.finalProfit:'') : '';
-  document.getElementById('jf_invdate').value = job ? (job.invoicedDate||'') : '';
-  document.getElementById('jf_notes').value   = job ? (job.notes||'') : '';
-  document.getElementById('delJobBtn').style.display = job ? 'block' : 'none';
-  document.getElementById('jobModal').style.display = 'flex';
+  var job=id?db.manualJobs.find(function(j){ return j.id===id; }):null;
+  editingJob=job||null;
+  document.getElementById('jobModalTitle').textContent=job?'Edit — '+job.name:'Add Job';
+  document.getElementById('jf_name').value=job?job.name:'';
+  document.getElementById('jf_col').value=job?job.column:(defaultCol||'upcoming');
+  document.getElementById('jf_pri').value=job?(job.priority||'Normal'):'Normal';
+  document.getElementById('jf_due').value=job?(job.dueDate||''):'';
+  document.getElementById('jf_val').value=job?(job.value||''):'';
+  document.getElementById('jf_exprofit').value=job?(job.expectedProfit!==undefined&&job.expectedProfit!==''?job.expectedProfit:''):'';
+  document.getElementById('jf_startdate').value=job?(job.startDate||''):'';
+  document.getElementById('jf_profit').value=job?(job.finalProfit!==undefined&&job.finalProfit!==''?job.finalProfit:''):'';
+  document.getElementById('jf_invdate').value=job?(job.invoicedDate||''):'';
+  document.getElementById('jf_notes').value=job?(job.notes||''):'';
+  document.getElementById('delJobBtn').style.display=job?'block':'none';
+  document.getElementById('jobModal').style.display='flex';
 }
-
 function closeJobModal(){ document.getElementById('jobModal').style.display='none'; }
-document.getElementById('jobModal').onclick = function(e){ if(e.target===this) closeJobModal(); };
-
-document.getElementById('delJobBtn').onclick = function(){
+document.getElementById('jobModal').onclick=function(e){ if(e.target===this) closeJobModal(); };
+document.getElementById('delJobBtn').onclick=function(){
   if(!confirm('Delete this job?')) return;
-  db.manualJobs = db.manualJobs.filter(function(j){ return j.id!==editingJob.id; });
+  db.manualJobs=db.manualJobs.filter(function(j){ return j.id!==editingJob.id; });
   saveDB(); closeJobModal(); renderJobs(); renderRevenue();
 };
-
 function saveJobModal(){
-  var profVal = document.getElementById('jf_profit').value;
-  var d = {
+  var d={
     name:document.getElementById('jf_name').value,
     column:document.getElementById('jf_col').value,
     priority:document.getElementById('jf_pri').value,
     dueDate:document.getElementById('jf_due').value,
     value:parseFloat(document.getElementById('jf_val').value)||0,
-    finalProfit: profVal==='' ? '' : (parseFloat(profVal)||0),
+    expectedProfit:numOrEmpty(document.getElementById('jf_exprofit').value),
+    startDate:document.getElementById('jf_startdate').value,
+    finalProfit:numOrEmpty(document.getElementById('jf_profit').value),
     invoicedDate:document.getElementById('jf_invdate').value,
     notes:document.getElementById('jf_notes').value
   };
-  if(editingJob){
-    db.manualJobs = db.manualJobs.map(function(j){ return j.id===editingJob.id ? Object.assign({},j,d) : j; });
-  } else {
-    d.id = db.nextJobId++;
-    db.manualJobs.push(d);
-  }
+  if(editingJob){ db.manualJobs=db.manualJobs.map(function(j){ return j.id===editingJob.id?Object.assign({},j,d):j; }); }
+  else{ d.id=db.nextJobId++; db.manualJobs.push(d); }
   saveDB(); closeJobModal(); renderJobs(); renderRevenue();
 }
 </script>
