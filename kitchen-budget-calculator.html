@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitchen Budget Calculator – Gatley Kitchens & Bedrooms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #f9f6f1; --dark: #1c1a17; --mid: #4a4540;
+  --accent: #8b6f47; --gold: #c9a97a; --border: #ddd8cf; --white: #ffffff;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Jost', sans-serif; font-weight: 300; background: var(--cream); color: var(--dark); font-size: 16px; line-height: 1.6; min-height: 100vh; }
+
+nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 70px; position: sticky; top: 0; z-index: 100; }
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--dark); text-decoration: none; }
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--mid); transition: color 0.2s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-cta { background: var(--dark); color: var(--white) !important; padding: 8px 18px; border-radius: 2px; }
+.nav-dropdown { position: relative; }
+.nav-dropdown > a::after { content: ' ▾'; font-size: 0.7em; opacity: 0.5; }
+.dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--white); border: 1px solid var(--border); min-width: 200px; padding: 8px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.nav-dropdown:hover .dropdown-menu { display: block; }
+.dropdown-menu a { display: block; padding: 10px 20px; font-size: 0.78rem; color: var(--mid); text-transform: none; letter-spacing: 0.04em; }
+.dropdown-menu a:hover { background: var(--cream); color: var(--accent); }
+.nav-burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+.nav-burger span { display: block; width: 24px; height: 2px; background: var(--dark); border-radius: 2px; }
+
+.hero { background: var(--dark); color: var(--white); padding: 64px 40px 56px; text-align: center; }
+.hero-tag { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 16px; display: block; }
+.hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 300; line-height: 1.05; margin-bottom: 18px; }
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero p { font-size: 0.88rem; color: rgba(255,255,255,0.5); max-width: 500px; margin: 0 auto; line-height: 1.8; }
+
+.calc-outer { max-width: 780px; margin: 0 auto; padding: 52px 24px 80px; }
+
+.progress-wrap { margin-bottom: 48px; }
+.progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.progress-label span { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); font-weight: 500; }
+.progress-label .step-count { color: var(--accent); }
+.progress-track { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+
+.step { display: none; animation: fadeIn 0.35s ease; }
+.step.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.step-header { margin-bottom: 32px; }
+.step-number { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 500; display: block; margin-bottom: 10px; }
+.step-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 300; line-height: 1.1; margin-bottom: 10px; }
+.step-title em { font-style: italic; color: var(--accent); }
+.step-sub { font-size: 0.84rem; color: var(--mid); line-height: 1.7; max-width: 520px; }
+
+.option-grid { display: grid; gap: 14px; margin-bottom: 36px; }
+.option-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.option-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.option-card { position: relative; cursor: pointer; }
+.option-card input { position: absolute; opacity: 0; width: 0; height: 0; }
+.option-inner { border: 1px solid var(--border); background: var(--white); padding: 20px 22px; transition: all 0.18s; cursor: pointer; height: 100%; }
+.option-card input:checked + .option-inner { border-color: var(--accent); background: #fdf8f3; box-shadow: inset 0 0 0 1px var(--accent); }
+.option-inner:hover { border-color: var(--accent); }
+.option-title { font-size: 0.9rem; font-weight: 500; color: var(--dark); margin-bottom: 4px; }
+.option-desc { font-size: 0.78rem; color: var(--mid); line-height: 1.55; }
+.option-tag { display: inline-block; margin-top: 8px; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; background: var(--cream); color: var(--accent); padding: 3px 8px; border-radius: 2px; }
+.option-card input:checked + .option-inner .option-tag { background: var(--accent); color: var(--white); }
+
+.toggle-group { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+.toggle-btn { flex: 1; min-width: 200px; border: 1px solid var(--border); background: var(--white); padding: 16px 20px; font-family: 'Jost', sans-serif; font-size: 0.84rem; font-weight: 400; color: var(--mid); cursor: pointer; transition: all 0.18s; text-align: center; border-radius: 2px; }
+.toggle-btn.selected { border-color: var(--accent); background: #fdf8f3; color: var(--dark); box-shadow: inset 0 0 0 1px var(--accent); }
+.toggle-btn:hover { border-color: var(--accent); }
+
+.info-box { background: var(--white); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 16px 20px; margin-bottom: 28px; }
+.info-box p { font-size: 0.82rem; color: var(--mid); line-height: 1.7; }
+.info-box strong { color: var(--dark); font-weight: 500; }
+
+.nav-btns { display: flex; gap: 12px; align-items: center; }
+.btn-next { background: var(--dark); color: var(--white); border: none; padding: 14px 36px; font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background 0.22s; }
+.btn-next:hover { background: var(--accent); }
+.btn-next:disabled { background: var(--border); color: #bbb6af; cursor: not-allowed; }
+.btn-back { background: transparent; color: var(--mid); border: 1px solid var(--border); padding: 14px 24px; font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: all 0.2s; }
+.btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+#result { display: none; animation: fadeIn 0.4s ease; }
+.result-header { margin-bottom: 36px; }
+
+.estimate-band { background: var(--dark); color: var(--white); padding: 36px 40px; margin-bottom: 24px; text-align: center; }
+.band-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 12px; }
+.band-range { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 6vw, 3.6rem); font-weight: 300; line-height: 1; margin-bottom: 8px; }
+.band-sub { font-size: 0.8rem; color: rgba(255,255,255,0.45); }
+
+.breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); margin-bottom: 28px; }
+.breakdown-item { background: var(--white); padding: 20px 22px; }
+.breakdown-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 6px; font-weight: 500; }
+.breakdown-value { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; color: var(--dark); }
+
+.disclaimer { background: var(--white); border: 1px solid var(--border); padding: 24px 28px; margin-bottom: 32px; }
+.disclaimer h4 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dark); margin-bottom: 14px; }
+.disclaimer ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.disclaimer ul li { font-size: 0.8rem; color: var(--mid); line-height: 1.6; padding-left: 18px; position: relative; }
+.disclaimer ul li::before { content: '—'; position: absolute; left: 0; color: var(--gold); font-size: 0.75rem; }
+
+.cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.cta-primary { background: var(--dark); color: var(--white); border: none; padding: 16px 36px; font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background 0.22s; text-decoration: none; display: inline-block; }
+.cta-primary:hover { background: var(--accent); }
+.cta-secondary { background: transparent; color: var(--dark); border: 1px solid var(--border); padding: 16px 28px; font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: all 0.2s; text-decoration: none; display: inline-block; }
+.cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 800px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none !important; }
+  .nav-burger { display: flex; }
+  .nav-links.open { display: flex !important; flex-direction: column; position: absolute; top: 70px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 99; gap: 0; }
+  .nav-links.open li a { display: block; padding: 12px 24px; }
+  .hero { padding: 48px 20px 40px; }
+  .calc-outer { padding: 40px 16px 60px; }
+  .option-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+  .option-grid.cols-2 { grid-template-columns: 1fr; }
+  .breakdown-grid { grid-template-columns: 1fr; }
+  .estimate-band { padding: 28px 20px; }
+}
+@media (max-width: 480px) {
+  .option-grid.cols-3 { grid-template-columns: 1fr; }
+  .cta-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Gatley <span>Kitchens</span> & Bedrooms</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="gatley-kitchens-our-work.html">Our Work</a></li>
+    <li class="nav-dropdown">
+      <a href="gatley-kitchens-doors.html">Doors</a>
+      <div class="dropdown-menu">
+        <a href="gatley-kitchens-doors.html">Kitchen & Bedroom Doors</a>
+        <a href="gatley-kitchens-sliding-wardrobes.html">Sliding Wardrobes</a>
+      </div>
+    </li>
+    <li><a href="gatley-kitchens-worktops.html">Worktops</a></li>
+    <li><a href="gatley-kitchens-blog.html">Blog</a></li>
+    <li><a href="gatley-kitchens-about.html">About</a></li>
+    <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Free Quote</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="hero">
+  <span class="hero-tag">Free Planning Tool</span>
+  <h1>What will your new<br>kitchen <em>cost?</em></h1>
+  <p>Answer seven questions about your kitchen and we'll give you a realistic ballpark figure — based on the actual materials and suppliers we use every day.</p>
+</div>
+
+<div class="calc-outer">
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Kitchen Estimate</span>
+      <span class="step-count" id="stepCount">Step 1 of 7</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:14.3%"></div>
+    </div>
+  </div>
+
+  <!-- STEP 1: SIZE -->
+  <div class="step active" id="step1">
+    <div class="step-header">
+      <span class="step-number">Step 1 — Kitchen Size</span>
+      <h2 class="step-title">How big is your<br><em>kitchen space?</em></h2>
+      <p class="step-sub">Think about how many walls you have units running along, not just the floor area. A narrow room can still have a lot of storage if units run on two long walls.</p>
+    </div>
+    <div class="option-grid cols-3">
+      <label class="option-card">
+        <input type="radio" name="size" value="small">
+        <div class="option-inner">
+          <div class="option-title">Small</div>
+          <div class="option-desc">Up to around 3 metres of unit run in total. Compact galley or small L-shape.</div>
+          <span class="option-tag">e.g. terrace or flat</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="size" value="medium">
+        <div class="option-inner">
+          <div class="option-title">Medium</div>
+          <div class="option-desc">Between 3 and 5 metres of unit run. Typical semi-detached or detached kitchen.</div>
+          <span class="option-tag">Most common</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="size" value="large">
+        <div class="option-inner">
+          <div class="option-title">Large</div>
+          <div class="option-desc">Over 5 metres of run, or an open-plan kitchen with significant storage requirements.</div>
+          <span class="option-tag">e.g. extension</span>
+        </div>
+      </label>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-next" id="next1" onclick="goTo(2)" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: LAYOUT -->
+  <div class="step" id="step2">
+    <div class="step-header">
+      <span class="step-number">Step 2 — Layout</span>
+      <h2 class="step-title">What shape is<br>the <em>layout?</em></h2>
+      <p class="step-sub">Layout affects how many units are needed and whether specialist corner solutions are required. Corner units cost more and take longer to fit.</p>
+    </div>
+    <div class="option-grid cols-2">
+      <label class="option-card">
+        <input type="radio" name="layout" value="galley">
+        <div class="option-inner">
+          <div class="option-title">Single Run or Galley</div>
+          <div class="option-desc">All units along one wall, or facing walls with a walkway between. No corners involved.</div>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="layout" value="lshape">
+        <div class="option-inner">
+          <div class="option-title">L-Shape</div>
+          <div class="option-desc">Units on two adjoining walls meeting at a single corner. The most common layout in South Manchester homes.</div>
+          <span class="option-tag">Most popular</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="layout" value="ushape">
+        <div class="option-inner">
+          <div class="option-title">U-Shape</div>
+          <div class="option-desc">Units on three walls with two corners. Maximises storage but requires more specialist corner units and longer fitting.</div>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="layout" value="island">
+        <div class="option-inner">
+          <div class="option-title">With Island</div>
+          <div class="option-desc">Any of the above, plus a separate freestanding island unit. Requires adequate floor space — typically suits large open-plan rooms.</div>
+        </div>
+      </label>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goTo(1)">Back</button>
+      <button class="btn-next" id="next2" onclick="goTo(3)" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: DOOR STYLE -->
+  <div class="step" id="step3">
+    <div class="step-header">
+      <span class="step-number">Step 3 — Door Style</span>
+      <h2 class="step-title">What kind of<br><em>door style?</em></h2>
+      <p class="step-sub">All our doors are made-to-measure to the exact size of each unit — no standard sizes, no unnecessary gaps. Your door choice affects both the look and the cost.</p>
+    </div>
+    <div class="option-grid cols-3">
+      <label class="option-card">
+        <input type="radio" name="doorstyle" value="slab">
+        <div class="option-inner">
+          <div class="option-title">Flat Slab</div>
+          <div class="option-desc">Plain flat door with no routing or profiling. Clean, modern look. Widest range of colour choices.</div>
+          <span class="option-tag">Most affordable</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="doorstyle" value="shaker">
+        <div class="option-inner">
+          <div class="option-title">Shaker / Framed</div>
+          <div class="option-desc">Classic inset panel design that works in both traditional and contemporary kitchens. Our most popular door style by a clear margin.</div>
+          <span class="option-tag">Most popular</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="doorstyle" value="handleless">
+        <div class="option-inner">
+          <div class="option-title">Handleless</div>
+          <div class="option-desc">J-pull or rail-based grip instead of traditional handles. Sleek and seamless. Requires an aluminium rail system in addition to doors.</div>
+          <span class="option-tag">+ rail system</span>
+        </div>
+      </label>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goTo(2)">Back</button>
+      <button class="btn-next" id="next3" onclick="goTo(4)" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: FINISH -->
+  <div class="step" id="step4">
+    <div class="step-header">
+      <span class="step-number">Step 4 — Colour & Finish</span>
+      <h2 class="step-title">What colour<br>are you <em>thinking?</em></h2>
+      <p class="step-sub">Our doors cover everything from classic whites and creams through to bold colours, wood effects, and fully bespoke painted finishes. We bring samples on the home visit.</p>
+    </div>
+    <div class="option-grid cols-2">
+      <label class="option-card">
+        <input type="radio" name="finish" value="standard">
+        <div class="option-inner">
+          <div class="option-title">Standard Colour Range</div>
+          <div class="option-desc">White, cream, any shade of grey, navy, sage, forest green, blush, black — all available in our core matt foil range. Huge choice at a standard price.</div>
+          <span class="option-tag">Standard pricing</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="finish" value="premium">
+        <div class="option-inner">
+          <div class="option-title">Premium or Bespoke Finish</div>
+          <div class="option-desc">Specific RAL colour match, realistic wood-effect veneer, two-tone combination, or a hand-painted finish. Slightly higher cost per door.</div>
+          <span class="option-tag">+10–15% on doors</span>
+        </div>
+      </label>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goTo(3)">Back</button>
+      <button class="btn-next" id="next4" onclick="goTo(5)" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: WORKTOP -->
+  <div class="step" id="step5">
+    <div class="step-header">
+      <span class="step-number">Step 5 — Worktops</span>
+      <h2 class="step-title">What worktop<br><em>material?</em></h2>
+      <p class="step-sub">Worktop choice has a significant impact on the overall budget. Our stone worktops are templated and fitted by our specialist supplier — we coordinate everything.</p>
+    </div>
+    <div class="option-grid cols-3">
+      <label class="option-card">
+        <input type="radio" name="worktop" value="laminate">
+        <div class="option-inner">
+          <div class="option-title">Laminate</div>
+          <div class="option-desc">A solid budget-friendly choice. Wide range of colours, stone effects, and wood effects. Cut and fitted on-site during installation.</div>
+          <span class="option-tag">Most affordable</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="worktop" value="quartz">
+        <div class="option-inner">
+          <div class="option-title">Quartz</div>
+          <div class="option-desc">Engineered stone templated and fitted by our specialist supplier after the units are in. Seamless joins, hard-wearing surface, huge colour range.</div>
+          <span class="option-tag">Most popular</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="worktop" value="dekton">
+        <div class="option-inner">
+          <div class="option-title">Dekton or Natural Stone</div>
+          <div class="option-desc">Ultra-compact sintered surface or natural granite / marble. Premium performance and aesthetics. Higher material and fabrication cost.</div>
+          <span class="option-tag">Premium</span>
+        </div>
+      </label>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goTo(4)">Back</button>
+      <button class="btn-next" id="next5" onclick="goTo(6)" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 6: COMPLEXITY -->
+  <div class="step" id="step6">
+    <div class="step-header">
+      <span class="step-number">Step 6 — Installation Complexity</span>
+      <h2 class="step-title">How straightforward<br>is the <em>installation?</em></h2>
+      <p class="step-sub">Some jobs are simple swap-outs. Others involve moving pipes, rerouting electrics, building in appliances, or working around difficult ceiling heights or uneven walls.</p>
+    </div>
+    <div class="option-grid cols-3">
+      <label class="option-card">
+        <input type="radio" name="complexity" value="simple">
+        <div class="option-inner">
+          <div class="option-title">Straightforward</div>
+          <div class="option-desc">Like-for-like replacement. Sink and appliances staying roughly in the same positions. Clean, square walls. No structural changes.</div>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="complexity" value="medium">
+        <div class="option-inner">
+          <div class="option-title">Some Complexity</div>
+          <div class="option-desc">Minor repositioning of sink or appliances, some boxing in, extractor housing, scribing to uneven walls, or a low ceiling requiring custom heights.</div>
+          <span class="option-tag">Most common</span>
+        </div>
+      </label>
+      <label class="option-card">
+        <input type="radio" name="complexity" value="complex">
+        <div class="option-inner">
+          <div class="option-title">High Complexity</div>
+          <div class="option-desc">Significant plumbing or electrical moves, chimney breast boxing, alcoves, sloped or very low ceilings, or an extension with new drainage.</div>
+        </div>
+      </label>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goTo(5)">Back</button>
+      <button class="btn-next" id="next6" onclick="goTo(7)" disabled>Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 7: STRIP OUT -->
+  <div class="step" id="step7">
+    <div class="step-header">
+      <span class="step-number">Step 7 — Existing Kitchen</span>
+      <h2 class="step-title">Is there an existing<br>kitchen to <em>remove?</em></h2>
+      <p class="step-sub">Stripping out an old kitchen adds time to the job. We remove and dispose of the old units as part of the installation — you don't need to arrange a skip separately.</p>
+    </div>
+    <div class="toggle-group">
+      <button class="toggle-btn" id="stripYes" onclick="setStrip(true)">Yes — existing kitchen to remove</button>
+      <button class="toggle-btn" id="stripNo" onclick="setStrip(false)">No — new build or empty room</button>
+    </div>
+    <div class="info-box">
+      <p><strong>What's included in our fitting price:</strong> delivery of all units, installation of carcasses, doors and drawers, fitting of plinths and cornices, coordination with your plumber and electrician, and a snagging visit after completion. We use a trusted fitter we've worked with for years — not a subcontractor we've never met.</p>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="goTo(6)">Back</button>
+      <button class="btn-next" id="next7" onclick="showResult()" disabled>See My Estimate</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result">
+    <div class="step-header">
+      <span class="step-number">Your Estimate — Supplied &amp; Fitted, Inc. VAT</span>
+      <h2 class="step-title">Here's a <em>ballpark figure</em><br>for your project</h2>
+      <p class="step-sub">Based on what you've told us and the real suppliers and materials we use. These are honest working figures — not inflated showroom estimates, and not unrealistic low-ball numbers either.</p>
+    </div>
+
+    <div class="estimate-band">
+      <div class="band-label">Indicative Budget Range — Fully Supplied &amp; Fitted, Inc. VAT</div>
+      <div class="band-range" id="bandRange">£8,500 – £11,000</div>
+      <div class="band-sub" id="bandSub">Medium · L-shape · Shaker · Quartz</div>
+    </div>
+
+    <div class="breakdown-grid">
+      <div class="breakdown-item">
+        <div class="breakdown-label">Carcasses &amp; Units</div>
+        <div class="breakdown-value" id="bCarcass">—</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-label">Doors, Drawers &amp; Hardware</div>
+        <div class="breakdown-value" id="bDoors">—</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-label">Worktops (supplied &amp; fitted)</div>
+        <div class="breakdown-value" id="bWorktop">—</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-label">Fitting &amp; Installation</div>
+        <div class="breakdown-value" id="bFitting">—</div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <h4>Important — please read before getting in touch</h4>
+      <ul>
+        <li>These figures are a ballpark only. Every kitchen is different and an accurate price can only be given after Mark visits your home, takes measurements, and understands exactly what you have in mind. There's no charge for this visit.</li>
+        <li><strong>Appliances are not included.</strong> Ovens, hobs, extractors, dishwashers, and fridges are supplied and fitted by your own appliance retailer or electrician. We design around whatever you're buying.</li>
+        <li><strong>Plumbing and electrics are not included.</strong> We coordinate with your plumber and electrician, but their work is a separate cost. Most of our customers use their own trusted trades for this.</li>
+        <li><strong>Tiling, flooring, plastering, and decorating are not included.</strong> These are typically done before or after the kitchen installation by your own trades.</li>
+        <li>If your kitchen involves significant structural changes — e.g. removing a wall, moving a soil stack, or adding drainage in an extension — these are separate costs handled by a builder or plumber before we start.</li>
+        <li>All prices shown include VAT at the current standard rate of 20%. Fitting is charged without VAT where applicable to help keep your costs down.</li>
+        <li>These figures reflect kitchens installed across South Manchester — Cheadle, Gatley, Didsbury, Hale, Bramhall, and surrounding areas — using the specific suppliers and materials we work with regularly.</li>
+      </ul>
+    </div>
+
+    <div class="cta-row">
+      <a href="gatley-kitchens-quote.html" class="cta-primary">Get a Free Quote from Mark</a>
+      <a href="tel:01614378899" class="cta-secondary">Call 0161 437 8899</a>
+      <button class="cta-secondary" onclick="restartCalc()">Start Again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var answers = { size:null, layout:null, doorstyle:null, finish:null, worktop:null, complexity:null, strip:null };
+var currentStep = 1;
+
+// PRICING (all inc VAT where noted)
+var P = {
+  carcass: {
+    small:  { low:1550, high:1950 },
+    medium: { low:2500, high:3100 },
+    large:  { low:3500, high:4400 }
+  },
+  layoutUp: {
+    galley: { low:0,   high:0   },
+    lshape: { low:150, high:250 },
+    ushape: { low:350, high:550 },
+    island: { low:600, high:950 }
+  },
+  doors: {
+    small: {
+      slab:       { low:800,  high:1050 },
+      shaker:     { low:850,  high:1100 },
+      handleless: { low:1150, high:1450 }
+    },
+    medium: {
+      slab:       { low:1700, high:2100 },
+      shaker:     { low:1800, high:2250 },
+      handleless: { low:2150, high:2650 }
+    },
+    large: {
+      slab:       { low:2600, high:3200 },
+      shaker:     { low:2750, high:3400 },
+      handleless: { low:3150, high:3950 }
+    }
+  },
+  finishMult: { standard:1.0, premium:1.12 },
+  worktop: {
+    small: {
+      laminate: { low:500,  high:750  },
+      quartz:   { low:2200, high:2700 },
+      dekton:   { low:2900, high:3600 }
+    },
+    medium: {
+      laminate: { low:750,  high:1100 },
+      quartz:   { low:2800, high:3500 },
+      dekton:   { low:3600, high:4600 }
+    },
+    large: {
+      laminate: { low:1100, high:1600 },
+      quartz:   { low:3800, high:5000 },
+      dekton:   { low:4900, high:6500 }
+    }
+  },
+  fitting: {
+    simple:  { small:{low:1200,high:1700}, medium:{low:1700,high:2200}, large:{low:2200,high:2800} },
+    medium:  { small:{low:1500,high:2000}, medium:{low:2000,high:2600}, large:{low:2600,high:3400} },
+    complex: { small:{low:1900,high:2500}, medium:{low:2500,high:3200}, large:{low:3200,high:4200} }
+  },
+  stripUp: { yes:{low:200,high:400}, no:{low:0,high:0} }
+};
+
+function watchRadios(name, btnId) {
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      answers[name] = this.value;
+      document.getElementById(btnId).disabled = false;
+    });
+  });
+}
+watchRadios('size','next1');
+watchRadios('layout','next2');
+watchRadios('doorstyle','next3');
+watchRadios('finish','next4');
+watchRadios('worktop','next5');
+watchRadios('complexity','next6');
+
+function setStrip(val) {
+  answers.strip = val;
+  document.getElementById('stripYes').classList.toggle('selected', val === true);
+  document.getElementById('stripNo').classList.toggle('selected', val === false);
+  document.getElementById('next7').disabled = false;
+}
+
+function goTo(n) {
+  document.getElementById('step' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step' + n).classList.add('active');
+  var pct = (n / 7) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepCount').textContent = 'Step ' + n + ' of 7';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function fmt(n) { return '£' + n.toLocaleString(); }
+
+function showResult() {
+  for (var i = 1; i <= 7; i++) { document.getElementById('step'+i).classList.remove('active'); }
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('stepCount').textContent = 'Complete';
+
+  var s = answers.size, lay = answers.layout, ds = answers.doorstyle;
+  var fin = answers.finish, wt = answers.worktop, cx = answers.complexity;
+  var strip = answers.strip ? 'yes' : 'no';
+
+  // Carcasses + layout uplift
+  var c = P.carcass[s], lu = P.layoutUp[lay];
+  var cLow = c.low + lu.low, cHigh = c.high + lu.high;
+
+  // Doors + finish multiplier
+  var d = P.doors[s][ds], fm = P.finishMult[fin];
+  var dLow = Math.round(d.low * fm / 50) * 50;
+  var dHigh = Math.round(d.high * fm / 50) * 50;
+
+  // Worktops
+  var w = P.worktop[s][wt];
+
+  // Fitting + strip out
+  var f = P.fitting[cx][s], su = P.stripUp[strip];
+  var fLow = f.low + su.low, fHigh = f.high + su.high;
+
+  // Totals rounded to nearest £250
+  var tLow  = Math.round((cLow  + dLow  + w.low  + fLow)  / 250) * 250;
+  var tHigh = Math.round((cHigh + dHigh + w.high + fHigh) / 250) * 250;
+
+  document.getElementById('bandRange').textContent = fmt(tLow) + ' – ' + fmt(tHigh);
+
+  var slabs = {small:'Small kitchen',medium:'Medium kitchen',large:'Large kitchen'};
+  var llabs = {galley:'single run',lshape:'L-shape',ushape:'U-shape',island:'with island'};
+  var dlabs = {slab:'flat slab doors',shaker:'shaker doors',handleless:'handleless'};
+  var wlabs = {laminate:'laminate worktops',quartz:'quartz worktops',dekton:'Dekton/stone worktops'};
+  document.getElementById('bandSub').textContent = slabs[s] + ' · ' + llabs[lay] + ' · ' + dlabs[ds] + ' · ' + wlabs[wt];
+
+  document.getElementById('bCarcass').textContent = fmt(cLow) + ' – ' + fmt(cHigh);
+  document.getElementById('bDoors').textContent   = fmt(dLow) + ' – ' + fmt(dHigh);
+  document.getElementById('bWorktop').textContent = fmt(w.low) + ' – ' + fmt(w.high);
+  document.getElementById('bFitting').textContent = fmt(fLow) + ' – ' + fmt(fHigh);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartCalc() {
+  answers = { size:null, layout:null, doorstyle:null, finish:null, worktop:null, complexity:null, strip:null };
+  document.getElementById('result').style.display = 'none';
+  document.querySelectorAll('input[type="radio"]').forEach(function(r){ r.checked = false; });
+  document.getElementById('stripYes').classList.remove('selected');
+  document.getElementById('stripNo').classList.remove('selected');
+  ['next1','next2','next3','next4','next5','next6','next7'].forEach(function(id){
+    document.getElementById(id).disabled = true;
+  });
+  currentStep = 1;
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('progressFill').style.width = '14.3%';
+  document.getElementById('stepCount').textContent = 'Step 1 of 7';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Mobile nav
+document.getElementById('navBurger').addEventListener('click', function() {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+</script>
+</body>
+</html>
