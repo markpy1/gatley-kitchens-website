@@ -30,6 +30,7 @@ select option { background: #2a2520; }
 </style>
 </head>
 <body>
+
 <div id="gate">
   <h2>Gatley <span>Kitchens</span></h2>
   <p>Dashboard — private access</p>
@@ -43,7 +44,6 @@ select option { background: #2a2520; }
 <script>
 function unlock() {
   const val = document.getElementById('pwInput').value;
-  // Simple hash check — password is: Gatley2026
   const hash = btoa(unescape(encodeURIComponent(val)));
   if (hash === 'Uml2ZXI4NSE=') {
     document.getElementById('gate').style.display = 'none';
@@ -55,7 +55,6 @@ function unlock() {
     document.getElementById('pwInput').focus();
   }
 }
-// Auto-unlock if already authenticated this session
 window.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('gk_auth') === 'Uml2ZXI4NSE=') {
     document.getElementById('gate').style.display = 'none';
@@ -68,78 +67,84 @@ window.addEventListener('DOMContentLoaded', () => {
 <script type="text/babel">
 const { useState, useEffect, useCallback } = React;
 
-const STORAGE_KEY = 'gatley-dashboard-v2';
+const STORAGE_KEY = 'gatley-dashboard-v3';
 
 const INITIAL_LEADS = [
-  { id:1, name:'Heather', date:'2026-01-06', source:'Unknown', status:'lost', value:2900, prequalified:'No', lostReason:'', notes:"Tricky job - don't really want it." },
-  { id:2, name:'Blunt', date:'2026-01-07', source:'Unknown', status:'lost', value:8800, prequalified:'No', lostReason:'Roof first', notes:'Pretty much dead for now.' },
-  { id:3, name:'Morris', date:'2026-01-07', source:'Google', status:'won', value:8000, prequalified:'No', lostReason:'', notes:'' },
-  { id:4, name:'Jason', date:'2026-01-13', source:'Unknown', status:'lost', value:4800, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
-  { id:5, name:'Donna Early', date:'2026-01-14', source:'Local', status:'lost', value:4700, prequalified:'No', lostReason:'Too expensive', notes:'' },
-  { id:6, name:'Alexandra Patteson', date:'2026-01-05', source:'Referral', status:'pending', value:3200, prequalified:'No', lostReason:'', notes:"Don't chase - said will come back." },
-  { id:7, name:'Evans', date:'2026-01-16', source:'Previous customer', status:'lost', value:4200, prequalified:'No', lostReason:'', notes:"Don't chase - think too pricey now." },
-  { id:8, name:'George', date:'2026-01-13', source:'Google', status:'lost', value:2200, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
-  { id:9, name:'Platt', date:'2026-11-20', source:'Facebook', status:'lost', value:9600, prequalified:'No', lostReason:'', notes:'On hold - pipe work. Reminder in a couple months.' },
-  { id:10, name:'Grimes', date:'2026-01-27', source:'Our fitter', status:'lost', value:7000, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
-  { id:11, name:'Tague', date:'2026-02-05', source:'Local', status:'pending', value:2000, prequalified:'No', lostReason:'', notes:'Lives across street. Said yes then put on hold.' },
-  { id:12, name:'Caroline', date:'2026-02-06', source:'Local', status:'lost', value:7000, prequalified:'Yes', lostReason:'Unknown - likely price', notes:'' },
-  { id:13, name:'Weiner', date:'2026-02-11', source:'Unknown', status:'lost', value:11000, prequalified:'No', lostReason:'', notes:'Bought new car - on hold. Likely dead.' },
-  { id:14, name:'Edge', date:'2026-02-06', source:'Unknown', status:'won', value:7300, prequalified:'Yes', lostReason:'', notes:'' },
-  { id:15, name:'Howard', date:'2026-01-12', source:'Unknown', status:'pending', value:3100, prequalified:'Yes', lostReason:'', notes:"Not quick decision makers. Don't chase." },
-  { id:16, name:'Alton', date:'2026-01-19', source:'Unknown', status:'pending', value:6500, prequalified:'Yes', lostReason:'', notes:'Showroom visit booked.' },
-  { id:17, name:'Martha', date:'2026-02-23', source:'Unknown', status:'lost', value:5500, prequalified:'Yes', lostReason:'Unknown - likely price', notes:'' },
-  { id:18, name:'Crompton', date:'2026-02-24', source:'Unknown', status:'won', value:1600, prequalified:'Yes', lostReason:'', notes:'' },
-  { id:19, name:'Lloyd', date:'2026-02-26', source:'Unknown', status:'won', value:3500, prequalified:'No', lostReason:'', notes:'' },
-  { id:20, name:'Sharron', date:'2026-02-27', source:'Unknown', status:'pending', value:3600, prequalified:'No', lostReason:'', notes:"Liked quote, said will be in touch. Don't chase." },
-  { id:21, name:'Hancock', date:'2026-03-02', source:'Referral', status:'won', value:2900, prequalified:'No', lostReason:'', notes:'' },
-  { id:22, name:'Manisha Natha', date:'2026-03-05', source:'Unknown', status:'lost', value:9300, prequalified:'Yes', lostReason:'Unknown - likely price', notes:'' },
-  { id:23, name:'Zoe', date:'2026-03-09', source:'Unknown', status:'pending', value:8800, prequalified:'Yes', lostReason:'', notes:"Didn't know what she wanted. Unlikely." },
-  { id:24, name:'Hughes', date:'2026-03-11', source:'Unknown', status:'won', value:3300, prequalified:'No', lostReason:'', notes:'' },
-  { id:25, name:'Newby', date:'2026-03-16', source:'Unknown', status:'pending', value:6700, prequalified:'No', lostReason:'', notes:'Showroom visit booked.' },
-  { id:26, name:'Godfrey', date:'2026-03-16', source:'Referral', status:'lost', value:1000, prequalified:'No', lostReason:'Unknown - likely price', notes:'' },
-  { id:27, name:'Jackie', date:'2026-03-18', source:'Referral', status:'pending', value:1650, prequalified:'Yes', lostReason:'', notes:'Remeasure booked to finalise.' },
-  { id:28, name:'Steve Laiker', date:'2026-03-22', source:'Website', status:'lost', value:0, prequalified:'Yes', lostReason:'No reply', notes:'' },
-  { id:29, name:'Grace', date:'2026-03-23', source:'Facebook', status:'pending', value:9000, prequalified:'No', lostReason:'', notes:'Price sensitive. Showroom visit booked.' },
-  { id:30, name:'Anne-Marie Bentley', date:'2026-03-23', source:'Website', status:'pending', value:0, prequalified:'Yes', lostReason:'', notes:'Appointment booked.' },
-  { id:31, name:'Louise', date:'2026-03-23', source:'Google', status:'pending', value:0, prequalified:'Yes', lostReason:'', notes:'Clueless husband on visit.' },
-  { id:32, name:'Alan Bates', date:'2026-03-23', source:'Referral', status:'pending', value:0, prequalified:'Yes', lostReason:'', notes:'£25k budget. Considering Ikea.' },
-  { id:33, name:'Ann', date:'2026-03-24', source:'Local', status:'not_started', value:7000, prequalified:'Yes', lostReason:'', notes:'£6-8k all in. Appointment booked.' },
-  { id:34, name:'Paul Johnson', date:'2026-03-24', source:'Previous customer', status:'pending', value:0, prequalified:'No', lostReason:'', notes:'Appointment booked.' },
-  { id:35, name:'Slater', date:'2026-03-27', source:'Local', status:'pending', value:9300, prequalified:'Yes', lostReason:'', notes:'Been going on for years.' },
+  { id:1,  name:'Heather',         date:'2026-01-06', source:'Unknown',           status:'lost',        value:2900,  prequalified:'No',      lostReason:'',                     notes:"Tricky job - don't really want it." },
+  { id:2,  name:'Blunt',           date:'2026-01-07', source:'Unknown',           status:'lost',        value:8800,  prequalified:'No',      lostReason:'Roof first',           notes:'Pretty much dead for now.' },
+  { id:3,  name:'Morris',          date:'2026-01-07', source:'Google',            status:'won',         value:8000,  prequalified:'No',      lostReason:'',                     notes:'' },
+  { id:4,  name:'Jason',           date:'2026-01-13', source:'Unknown',           status:'lost',        value:4800,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
+  { id:5,  name:'Donna Early',     date:'2026-01-14', source:'Local',             status:'lost',        value:4700,  prequalified:'No',      lostReason:'Too expensive',        notes:'' },
+  { id:6,  name:'Alexandra Patteson',date:'2026-01-05',source:'Referral',         status:'pending',     value:3200,  prequalified:'No',      lostReason:'',                     notes:"Don't chase - said will come back." },
+  { id:7,  name:'Evans',           date:'2026-01-16', source:'Previous customer', status:'lost',        value:4200,  prequalified:'No',      lostReason:'',                     notes:"Don't chase - think too pricey now." },
+  { id:8,  name:'George',          date:'2026-01-13', source:'Google',            status:'lost',        value:2200,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
+  { id:9,  name:'Platt',           date:'2026-11-20', source:'Facebook',          status:'lost',        value:9600,  prequalified:'No',      lostReason:'',                     notes:'On hold - pipe work. Reminder in a couple months.' },
+  { id:10, name:'Grimes',          date:'2026-01-27', source:'Our fitter',        status:'lost',        value:7000,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
+  { id:11, name:'Tague',           date:'2026-02-05', source:'Local',             status:'pending',     value:2000,  prequalified:'No',      lostReason:'',                     notes:'Lives across street. Said yes then put on hold.' },
+  { id:12, name:'Caroline',        date:'2026-02-06', source:'Local',             status:'lost',        value:7000,  prequalified:'Yes',     lostReason:'Unknown - likely price',notes:'' },
+  { id:13, name:'Weiner',          date:'2026-02-11', source:'Unknown',           status:'lost',        value:11000, prequalified:'No',      lostReason:'',                     notes:'Bought new car - on hold. Likely dead.' },
+  { id:14, name:'Edge',            date:'2026-02-06', source:'Unknown',           status:'won',         value:7300,  prequalified:'Yes',     lostReason:'',                     notes:'' },
+  { id:15, name:'Howard',          date:'2026-01-12', source:'Unknown',           status:'pending',     value:3100,  prequalified:'Yes',     lostReason:'',                     notes:"Not quick decision makers. Don't chase." },
+  { id:16, name:'Alton',           date:'2026-01-19', source:'Unknown',           status:'pending',     value:6500,  prequalified:'Yes',     lostReason:'',                     notes:'Showroom visit booked.' },
+  { id:17, name:'Martha',          date:'2026-02-23', source:'Unknown',           status:'lost',        value:5500,  prequalified:'Yes',     lostReason:'Unknown - likely price',notes:'' },
+  { id:18, name:'Crompton',        date:'2026-02-24', source:'Unknown',           status:'won',         value:1600,  prequalified:'Yes',     lostReason:'',                     notes:'' },
+  { id:19, name:'Lloyd',           date:'2026-02-26', source:'Unknown',           status:'won',         value:3500,  prequalified:'No',      lostReason:'',                     notes:'' },
+  { id:20, name:'Sharron',         date:'2026-02-27', source:'Unknown',           status:'pending',     value:3600,  prequalified:'No',      lostReason:'',                     notes:"Liked quote, said will be in touch. Don't chase." },
+  { id:21, name:'Hancock',         date:'2026-03-02', source:'Referral',          status:'won',         value:2900,  prequalified:'No',      lostReason:'',                     notes:'' },
+  { id:22, name:'Manisha Natha',   date:'2026-03-05', source:'Unknown',           status:'lost',        value:9300,  prequalified:'Yes',     lostReason:'Unknown - likely price',notes:'' },
+  { id:23, name:'Zoe',             date:'2026-03-09', source:'Unknown',           status:'pending',     value:8800,  prequalified:'Yes',     lostReason:'',                     notes:"Didn't know what she wanted. Unlikely." },
+  { id:24, name:'Hughes',          date:'2026-03-11', source:'Unknown',           status:'won',         value:3300,  prequalified:'No',      lostReason:'',                     notes:'' },
+  { id:25, name:'Newby',           date:'2026-03-16', source:'Unknown',           status:'pending',     value:6700,  prequalified:'No',      lostReason:'',                     notes:'Showroom visit booked.' },
+  { id:26, name:'Godfrey',         date:'2026-03-16', source:'Referral',          status:'lost',        value:1000,  prequalified:'No',      lostReason:'Unknown - likely price',notes:'' },
+  { id:27, name:'Jackie',          date:'2026-03-18', source:'Referral',          status:'pending',     value:1650,  prequalified:'Yes',     lostReason:'',                     notes:'Remeasure booked to finalise.' },
+  { id:28, name:'Steve Laiker',    date:'2026-03-22', source:'Website',           status:'lost',        value:0,     prequalified:'Yes',     lostReason:'No reply',             notes:'' },
+  { id:29, name:'Grace',           date:'2026-03-23', source:'Facebook',          status:'pending',     value:9000,  prequalified:'No',      lostReason:'',                     notes:'Price sensitive. Showroom visit booked.' },
+  { id:30, name:'Anne-Marie Bentley',date:'2026-03-23',source:'Website',          status:'pending',     value:0,     prequalified:'Yes',     lostReason:'',                     notes:'Appointment booked.' },
+  { id:31, name:'Louise',          date:'2026-03-23', source:'Google',            status:'pending',     value:0,     prequalified:'Yes',     lostReason:'',                     notes:'Clueless husband on visit.' },
+  { id:32, name:'Alan Bates',      date:'2026-03-23', source:'Referral',          status:'pending',     value:0,     prequalified:'Yes',     lostReason:'',                     notes:'£25k budget. Considering Ikea.' },
+  { id:33, name:'Ann',             date:'2026-03-24', source:'Local',             status:'not_started', value:7000,  prequalified:'Yes',     lostReason:'',                     notes:'£6-8k all in. Appointment booked.' },
+  { id:34, name:'Paul Johnson',    date:'2026-03-24', source:'Previous customer', status:'pending',     value:0,     prequalified:'No',      lostReason:'',                     notes:'Appointment booked.' },
+  { id:35, name:'Slater',          date:'2026-03-27', source:'Local',             status:'pending',     value:9300,  prequalified:'Yes',     lostReason:'',                     notes:'Been going on for years.' },
 ];
 
-const SOURCES = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
+const SOURCES   = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
 const P_STATUSES = ['pending','not_started','won','lost'];
 const S_LABELS  = { pending:'Pending', not_started:'Not Started', won:'Won', lost:'Lost' };
 const S_COLORS  = { pending:'#e8b96a', not_started:'#7ab8e8', won:'#6ec87a', lost:'#e07070' };
 const S_BG      = { pending:'#2d2418', not_started:'#1a2230', won:'#1a2d1e', lost:'#2d1a1a' };
 const S_BORDER  = { pending:'#8b6a2e', not_started:'#2e5a8b', won:'#2e7a3a', lost:'#8b2e2e' };
-const J_COLS    = ['quotes','orders','snagging','invoices'];
-const J_LABELS  = { quotes:'Quotes to Do', orders:'Orders to Do', snagging:'Snagging', invoices:'Invoices' };
-const J_COLORS  = { quotes:'#e8b96a', orders:'#7ab8e8', snagging:'#e07070', invoices:'#6ec87a' };
-const J_BG      = { quotes:'#2d2418', orders:'#1a2230', snagging:'#2d1a1a', invoices:'#1a2d1e' };
-const J_BORDER  = { quotes:'#8b6a2e', orders:'#2e5a8b', snagging:'#8b2e2e', invoices:'#2e7a3a' };
 
-const fmt = v => v ? '£' + Number(v).toLocaleString() : '—';
+// Jobs board columns — upcoming inserted between orders and invoices
+const J_COLS   = ['quotes','orders','upcoming','snagging','invoices'];
+const J_LABELS = { quotes:'Quotes to Do', orders:'Orders to Do', upcoming:'Upcoming Jobs', snagging:'Snagging', invoices:'Invoices' };
+const J_COLORS = { quotes:'#e8b96a', orders:'#7ab8e8', upcoming:'#b88de8', snagging:'#e07070', invoices:'#6ec87a' };
+const J_BG     = { quotes:'#2d2418', orders:'#1a2230', upcoming:'#221a2d', snagging:'#2d1a1a', invoices:'#1a2d1e' };
+const J_BORDER = { quotes:'#8b6a2e', orders:'#2e5a8b', upcoming:'#6a2e8b', snagging:'#8b2e2e', invoices:'#2e7a3a' };
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const fmt  = v => v ? '£' + Number(v).toLocaleString() : '—';
 const fmtD = d => { try { return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); } catch { return d; }};
+
 const EL = { name:'', date:new Date().toISOString().split('T')[0], source:'Unknown', status:'pending', value:'', prequalified:'No', lostReason:'', notes:'' };
-const EJ = { name:'', column:'snagging', priority:'Normal', dueDate:'', value:'', notes:'' };
+const EJ = { name:'', column:'upcoming', priority:'Normal', dueDate:'', value:'', notes:'', finalProfit:'', invoicedDate:'' };
 
 function App() {
-  const [tab, setTab] = useState('pipeline');
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [sync, setSync] = useState('');
-  const [nlid, setNlid] = useState(36);
-  const [njid, setNjid] = useState(1);
-  const [lFilter, setLFilter] = useState('all');
-  const [lSearch, setLSearch] = useState('');
-  const [expL, setExpL] = useState(null);
-  const [expJ, setExpJ] = useState(null);
-  const [lModal, setLModal] = useState(null);
-  const [jModal, setJModal] = useState(null);
-  const [lForm, setLForm] = useState(EL);
-  const [jForm, setJForm] = useState(EJ);
+  const [tab,      setTab]      = useState('pipeline');
+  const [data,     setData]     = useState(null);
+  const [loading,  setLoading]  = useState(true);
+  const [sync,     setSync]     = useState('');
+  const [nlid,     setNlid]     = useState(36);
+  const [njid,     setNjid]     = useState(1);
+  const [lFilter,  setLFilter]  = useState('all');
+  const [lSearch,  setLSearch]  = useState('');
+  const [expL,     setExpL]     = useState(null);
+  const [expJ,     setExpJ]     = useState(null);
+  const [lModal,   setLModal]   = useState(null);
+  const [jModal,   setJModal]   = useState(null);
+  const [lForm,    setLForm]    = useState(EL);
+  const [jForm,    setJForm]    = useState(EJ);
+  const [revYear,  setRevYear]  = useState(new Date().getFullYear());
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -160,7 +165,7 @@ function App() {
     catch { setSync('error'); }
   }, []);
 
-  if (loading||!data) return React.createElement('div', { style:{background:'#1a1714',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Georgia,serif',color:'#c8922a',fontSize:18} }, 'Loading...');
+  if (loading||!data) return React.createElement('div',{style:{background:'#1a1714',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Georgia,serif',color:'#c8922a',fontSize:18}},'Loading...');
 
   const { leads, manualJobs } = data;
   const pinnedIds = new Set(manualJobs.filter(j=>j.leadId).map(j=>j.leadId));
@@ -169,21 +174,21 @@ function App() {
 
   const itemsFor = col => {
     const m = manualJobs.filter(j=>j.column===col);
-    if (col==='quotes') return [...autoQ.map(l=>({...l,_auto:true})), ...m];
-    if (col==='orders') return [...autoO.map(l=>({...l,_auto:true})), ...m];
+    if (col==='quotes')  return [...autoQ.map(l=>({...l,_auto:true})), ...m];
+    if (col==='orders')  return [...autoO.map(l=>({...l,_auto:true})), ...m];
     return m;
   };
 
   const pinTo = (lead, col, e) => {
     e&&e.stopPropagation();
-    const nj = { id:njid, leadId:lead.id, name:lead.name, column:col, priority:'Normal', dueDate:'', value:lead.value||0, notes:lead.notes||'' };
+    const nj = { id:njid, leadId:lead.id, name:lead.name, column:col, priority:'Normal', dueDate:'', value:lead.value||0, notes:lead.notes||'', finalProfit:'', invoicedDate:'' };
     save({...data, manualJobs:[...manualJobs,nj], nextJobId:njid+1});
     setNjid(njid+1); setExpJ(null);
   };
 
   const moveM = (id, col, e) => { e&&e.stopPropagation(); save({...data, manualJobs:manualJobs.map(j=>j.id===id?{...j,column:col}:j)}); };
 
-  const pSt = { pending:0,not_started:0,won:0,lost:0,activeVal:0 };
+  const pSt = { pending:0, not_started:0, won:0, lost:0, activeVal:0 };
   leads.forEach(l=>{ pSt[l.status]=(pSt[l.status]||0)+1; if(l.status==='pending'||l.status==='not_started') pSt.activeVal+=(Number(l.value)||0); });
 
   const filtered = leads.filter(l => (lFilter==='all'||l.status===lFilter) && (!lSearch||l.name.toLowerCase().includes(lSearch.toLowerCase())));
@@ -197,21 +202,50 @@ function App() {
     save({...data,leads:nl,nextLeadId:nid}); setLModal(null);
   };
   const delL = () => { if(!confirm('Delete?'))return; save({...data,leads:leads.filter(l=>l.id!==lModal.lead.id)}); setLModal(null); };
-  const qSt = (id,st,e) => { e&&e.stopPropagation(); save({...data,leads:leads.map(l=>l.id===id?{...l,status:st}:l)}); setExpL(null); };
+  const qSt  = (id,st,e) => { e&&e.stopPropagation(); save({...data,leads:leads.map(l=>l.id===id?{...l,status:st}:l)}); setExpL(null); };
 
-  const openAJ = (col='snagging') => { setJForm({...EJ,column:col}); setJModal({mode:'add'}); };
-  const openEJ = (j,e) => { e&&e.stopPropagation(); setJForm({...j,value:j.value||''}); setJModal({mode:'edit',job:j}); };
+  const openAJ = (col='upcoming') => { setJForm({...EJ,column:col}); setJModal({mode:'add'}); };
+  const openEJ = (j,e) => { e&&e.stopPropagation(); setJForm({...j,value:j.value||'',finalProfit:j.finalProfit||'',invoicedDate:j.invoicedDate||''}); setJModal({mode:'edit',job:j}); };
   const savJ = () => {
-    const d={...jForm,value:parseFloat(jForm.value)||0}; let nj,nid=njid;
+    const d={...jForm,value:parseFloat(jForm.value)||0,finalProfit:jForm.finalProfit===''?'':parseFloat(jForm.finalProfit)||0}; let nj,nid=njid;
     if(jModal.mode==='edit'){nj=manualJobs.map(j=>j.id===jModal.job.id?{...j,...d}:j);}
     else{nj=[...manualJobs,{...d,id:njid}];nid=njid+1;setNjid(nid);}
     save({...data,manualJobs:nj,nextJobId:nid}); setJModal(null);
   };
   const delJ = () => { if(!confirm('Delete?'))return; save({...data,manualJobs:manualJobs.filter(j=>j.id!==jModal.job.id)}); setJModal(null); };
 
-  const lf=(k,v)=>setLForm(p=>({...p,[k]:v}));
-  const jf=(k,v)=>setJForm(p=>({...p,[k]:v}));
+  const lf = (k,v) => setLForm(p=>({...p,[k]:v}));
+  const jf = (k,v) => setJForm(p=>({...p,[k]:v}));
 
+  // ---- REVENUE TRACKER DATA ----
+  // Gather all jobs with an invoicedDate and finalProfit
+  const revenueJobs = manualJobs.filter(j => j.invoicedDate && j.finalProfit !== '' && j.finalProfit !== undefined && j.finalProfit !== null);
+
+  // Group by year then month
+  const byMonth = {}; // key: "YYYY-MM" => { profit: number, jobs: [] }
+  revenueJobs.forEach(j => {
+    const d = new Date(j.invoicedDate);
+    if (isNaN(d)) return;
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    if (!byMonth[key]) byMonth[key] = { profit:0, jobs:[] };
+    byMonth[key].profit += Number(j.finalProfit)||0;
+    byMonth[key].jobs.push(j);
+  });
+
+  const availYears = [...new Set(Object.keys(byMonth).map(k=>parseInt(k.split('-')[0])))].sort((a,b)=>b-a);
+  if (availYears.length && !availYears.includes(revYear)) setRevYear(availYears[0]);
+
+  const yearData = MONTHS.map((m,i) => {
+    const key = `${revYear}-${String(i+1).padStart(2,'0')}`;
+    return { month:m, key, ...(byMonth[key]||{profit:0,jobs:[]}) };
+  });
+  const yearTotal = yearData.reduce((s,m)=>s+m.profit,0);
+  const ytdMonths = yearData.filter(m=>m.profit>0);
+  const maxProfit = Math.max(...yearData.map(m=>m.profit), 1);
+  let cumulative = 0;
+  const yearDataCum = yearData.map(m=>{ cumulative+=m.profit; return {...m,cumulative}; });
+
+  // ---- STYLES ----
   const ab = (bc,tc) => ({ fontFamily:"'Jost',sans-serif",fontSize:9,fontWeight:500,letterSpacing:'0.11em',textTransform:'uppercase',padding:'3px 9px',border:`1px solid ${bc}`,background:'transparent',color:tc||bc,cursor:'pointer' });
   const inp = { width:'100%',fontFamily:"'Jost',sans-serif",fontSize:12,fontWeight:300,padding:'6px 9px',border:'1px solid #3a3430',background:'#1a1714',color:'#faf6f0',outline:'none' };
   const tagA = { fontSize:9,fontWeight:500,letterSpacing:'0.1em',textTransform:'uppercase',padding:'2px 5px',border:'1px solid #c8922a',color:'#e8b96a' };
@@ -222,22 +256,22 @@ function App() {
     <div style={{ background:'#1a1714', minHeight:'100vh' }}>
 
       {/* TOPBAR */}
-      <div style={{ background:'#221f1b', borderBottom:'1px solid #3a3430', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
+      <div style={{ background:'#221f1b',borderBottom:'1px solid #3a3430',padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10 }}>
         <div>
-          <span style={{ fontFamily:'Georgia,serif', fontSize:19, color:'#faf6f0' }}>Gatley <span style={{ color:'#e8b96a', fontStyle:'italic' }}>Kitchens</span></span>
-          {sync && <span style={{ marginLeft:10, fontSize:10, color:'#6ec87a' }}>{sync}</span>}
+          <span style={{ fontFamily:'Georgia,serif',fontSize:19,color:'#faf6f0' }}>Gatley <span style={{ color:'#e8b96a',fontStyle:'italic' }}>Kitchens</span></span>
+          {sync && <span style={{ marginLeft:10,fontSize:10,color:'#6ec87a' }}>{sync}</span>}
         </div>
-        <div style={{ display:'flex', gap:5 }}>
-          {[['pipeline','Pipeline'],['jobs','Jobs']].map(([t,l])=>(
+        <div style={{ display:'flex',gap:5 }}>
+          {[['pipeline','Pipeline'],['jobs','Jobs'],['revenue','Revenue']].map(([t,l])=>(
             <button key={t} onClick={()=>setTab(t)} style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:'0.13em',textTransform:'uppercase',padding:'5px 12px',border:'1px solid',borderColor:tab===t?'#c8922a':'#3a3430',background:tab===t?'#c8922a':'transparent',color:tab===t?'#1a1714':'#8a7d72' }}>{l}</button>
           ))}
         </div>
       </div>
 
-      {/* PIPELINE */}
+      {/* ================================================================ PIPELINE */}
       {tab==='pipeline' && (
         <div style={{ padding:'16px 12px' }}>
-          <div style={{ display:'flex', gap:7, flexWrap:'wrap', marginBottom:16 }}>
+          <div style={{ display:'flex',gap:7,flexWrap:'wrap',marginBottom:16 }}>
             {[['Pending',pSt.pending,'#e8b96a'],['Not Started',pSt.not_started,'#7ab8e8'],['Won',pSt.won,'#6ec87a'],['Lost',pSt.lost,'#e07070'],['Active £','£'+pSt.activeVal.toLocaleString(),'#e8b96a']].map(([l,v,c])=>(
               <div key={l} style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'6px 12px',textAlign:'center',minWidth:60 }}>
                 <div style={{ fontFamily:'Georgia,serif',fontSize:typeof v==='string'?14:19,color:c,lineHeight:1 }}>{v}</div>
@@ -245,13 +279,13 @@ function App() {
               </div>
             ))}
           </div>
-          <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:14, alignItems:'center' }}>
+          <div style={{ display:'flex',gap:6,flexWrap:'wrap',marginBottom:14,alignItems:'center' }}>
             {[['all','All'],['pending','Pending'],['not_started','Not Started'],['won','Won'],['lost','Lost']].map(([f,l])=>(
               <button key={f} onClick={()=>setLFilter(f)} style={{ fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:500,letterSpacing:'0.11em',textTransform:'uppercase',padding:'4px 10px',border:'1px solid',borderColor:lFilter===f?(S_BORDER[f]||'#c8922a'):'#3a3430',background:lFilter===f?(S_BORDER[f]||'#c8922a'):'transparent',color:lFilter===f?'#faf6f0':'#8a7d72' }}>{l}</button>
             ))}
             <input value={lSearch} onChange={e=>setLSearch(e.target.value)} placeholder="Search..." style={{ marginLeft:'auto',fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:300,padding:'4px 10px',border:'1px solid #3a3430',background:'#221f1b',color:'#faf6f0',outline:'none',width:110 }} />
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, alignItems:'start' }}>
+          <div style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,alignItems:'start' }}>
             {P_STATUSES.map(col=>{
               const tc=S_COLORS[col],bc=S_BORDER[col],bg=S_BG[col];
               const cl=filtered.filter(l=>l.status===col);
@@ -300,11 +334,14 @@ function App() {
         </div>
       )}
 
-      {/* JOBS */}
+      {/* ================================================================ JOBS */}
       {tab==='jobs' && (
         <div style={{ padding:'16px 12px' }}>
           <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'8px 12px',marginBottom:16,fontSize:10,color:'#8a7d72',lineHeight:1.7 }}>
-            <span style={{ color:'#7ab8e8' }}>Not Started</span> → <span style={{ color:J_COLORS.quotes }}>Quotes</span> &nbsp;·&nbsp; <span style={{ color:'#6ec87a' }}>Won</span> → <span style={{ color:J_COLORS.orders }}>Orders</span> &nbsp;·&nbsp; Tap card to move to <span style={{ color:J_COLORS.snagging }}>Snagging</span> or <span style={{ color:J_COLORS.invoices }}>Invoices</span>
+            <span style={{ color:'#7ab8e8' }}>Not Started</span> → <span style={{ color:J_COLORS.quotes }}>Quotes</span> &nbsp;·&nbsp;
+            <span style={{ color:'#6ec87a' }}>Won</span> → <span style={{ color:J_COLORS.orders }}>Orders</span> &nbsp;·&nbsp;
+            Tap card to move between columns &nbsp;·&nbsp;
+            Add profit + invoice date to track in <span style={{ color:'#6ec87a' }}>Revenue</span>
           </div>
           <div style={{ display:'flex',gap:7,flexWrap:'wrap',marginBottom:16 }}>
             {J_COLS.map(col=>(
@@ -314,7 +351,7 @@ function App() {
               </div>
             ))}
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, alignItems:'start' }}>
+          <div style={{ display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:10,alignItems:'start' }}>
             {J_COLS.map(col=>{
               const items=itemsFor(col);
               return (
@@ -329,20 +366,24 @@ function App() {
                     const cid=isA?`a${item.id}`:`j${item.id}`;
                     const isE=expJ===cid;
                     const od=item.dueDate&&new Date(item.dueDate)<new Date();
+                    const hasProfit = item.finalProfit!==''&&item.finalProfit!==undefined&&item.finalProfit!==null;
                     return (
                       <div key={cid} onClick={()=>setExpJ(isE?null:cid)} style={{ background:J_BG[col],border:`1px solid ${J_BORDER[col]}`,padding:9,marginBottom:7,cursor:'pointer' }}>
                         <div style={{ display:'flex',justifyContent:'space-between',gap:4,marginBottom:3 }}>
                           <div style={{ fontFamily:'Georgia,serif',fontSize:13,color:'#faf6f0',lineHeight:1.2 }}>{item.name}</div>
                           {isA&&<span style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:J_COLORS[col],opacity:0.6,flexShrink:0 }}>auto</span>}
                         </div>
-                        {item.value>0&&<div style={{ fontSize:11,color:J_COLORS[col],fontWeight:500,marginBottom:3 }}>{fmt(item.value)}</div>}
+                        {item.value>0&&<div style={{ fontSize:11,color:J_COLORS[col],fontWeight:500,marginBottom:2 }}>{fmt(item.value)}</div>}
+                        {hasProfit&&<div style={{ fontSize:10,color:'#6ec87a',fontWeight:500,marginBottom:2 }}>Profit: {fmt(item.finalProfit)}</div>}
+                        {item.invoicedDate&&<div style={{ fontSize:9,color:'#8a7d72',marginBottom:2 }}>Invoiced: {fmtD(item.invoicedDate)}</div>}
                         {!isA&&item.priority&&<span style={{ fontSize:8,padding:'2px 4px',border:`1px solid ${item.priority==='High'?'#e07070':item.priority==='Low'?'#3a3430':'#8b6a2e'}`,color:item.priority==='High'?'#e07070':item.priority==='Low'?'#8a7d72':'#e8b96a',display:'inline-block',marginBottom:3 }}>{item.priority}</span>}
-                        {item.dueDate&&<div style={{ fontSize:9,color:od?'#e07070':'#8a7d72',marginTop:2 }}>Due:{fmtD(item.dueDate)}{od?' ⚠':''}</div>}
+                        {item.dueDate&&<div style={{ fontSize:9,color:od?'#e07070':'#8a7d72',marginTop:2 }}>Due: {fmtD(item.dueDate)}{od?' ⚠':''}</div>}
                         {isE&&item.notes&&<div style={{ fontSize:10,color:'#8a7d72',lineHeight:1.5,fontStyle:'italic',borderLeft:'2px solid #3a3430',paddingLeft:6,margin:'5px 0' }}>{item.notes}</div>}
                         {isE&&(
                           <div style={{ display:'flex',gap:3,flexWrap:'wrap',marginTop:6 }}>
                             {isA?(
                               <>
+                                <button onClick={e=>pinTo(item,'upcoming',e)} style={ab(J_BORDER.upcoming,J_COLORS.upcoming)}>→ Upcoming</button>
                                 <button onClick={e=>pinTo(item,'snagging',e)} style={ab(J_BORDER.snagging,J_COLORS.snagging)}>→ Snag</button>
                                 <button onClick={e=>pinTo(item,'invoices',e)} style={ab(J_BORDER.invoices,J_COLORS.invoices)}>→ Invoice</button>
                               </>
@@ -360,7 +401,7 @@ function App() {
                       </div>
                     );
                   })}
-                  {(col==='snagging'||col==='invoices')&&<button onClick={()=>openAJ(col)} style={addBtn}>+ Add</button>}
+                  {(col==='upcoming'||col==='snagging'||col==='invoices')&&<button onClick={()=>openAJ(col)} style={addBtn}>+ Add</button>}
                 </div>
               );
             })}
@@ -368,7 +409,105 @@ function App() {
         </div>
       )}
 
-      {/* LEAD MODAL */}
+      {/* ================================================================ REVENUE */}
+      {tab==='revenue' && (
+        <div style={{ padding:'16px 12px' }}>
+
+          {/* Year selector + summary */}
+          <div style={{ display:'flex',gap:10,flexWrap:'wrap',alignItems:'center',marginBottom:20 }}>
+            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginRight:8 }}>Monthly Profit Tracker</div>
+            <div style={{ display:'flex',gap:5 }}>
+              {(availYears.length ? availYears : [new Date().getFullYear()]).map(y=>(
+                <button key={y} onClick={()=>setRevYear(y)} style={{ fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:500,letterSpacing:'0.13em',padding:'4px 12px',border:'1px solid',borderColor:revYear===y?'#6ec87a':'#3a3430',background:revYear===y?'#6ec87a':'transparent',color:revYear===y?'#1a1714':'#8a7d72',cursor:'pointer' }}>{y}</button>
+              ))}
+            </div>
+            <div style={{ marginLeft:'auto',fontSize:10,color:'#8a7d72' }}>Add profit + invoice date to a job card to populate this chart</div>
+          </div>
+
+          {/* Summary tiles */}
+          <div style={{ display:'flex',gap:10,flexWrap:'wrap',marginBottom:24 }}>
+            {[
+              ['Year Profit',yearTotal>0?fmt(yearTotal):'—','#6ec87a'],
+              ['Jobs Logged',revenueJobs.filter(j=>{ const d=new Date(j.invoicedDate); return !isNaN(d)&&d.getFullYear()===revYear; }).length,'#e8b96a'],
+              ['Avg / Month',ytdMonths.length>0?fmt(Math.round(yearTotal/ytdMonths.filter(m=>m.profit>0&&new Date().getFullYear()===revYear?new Date(`${revYear}-${String(MONTHS.indexOf(m.month)+1).padStart(2,'0')}-01')<=new Date():true).length)):'—','#7ab8e8'],
+              ['Target Gap',yearTotal>0?fmt(Math.max(0,102000-yearTotal))+' to £102k':'Set jobs','#e07070'],
+            ].map(([l,v,c])=>(
+              <div key={l} style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'10px 16px',minWidth:110,flex:1 }}>
+                <div style={{ fontFamily:'Georgia,serif',fontSize:v.length>7?15:20,color:c,lineHeight:1,marginBottom:4 }}>{v}</div>
+                <div style={{ fontSize:8,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8a7d72' }}>{l}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bar chart */}
+          <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'16px',marginBottom:20 }}>
+            <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:14 }}>Monthly Profit — {revYear}</div>
+            <div style={{ display:'flex',gap:4,alignItems:'flex-end',height:120 }}>
+              {yearData.map((m,i)=>{
+                const h = m.profit>0 ? Math.max(6, Math.round((m.profit/maxProfit)*110)) : 0;
+                const isThisMonth = new Date().getMonth()===i && new Date().getFullYear()===revYear;
+                return (
+                  <div key={m.month} style={{ flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4 }}>
+                    {m.profit>0&&<div style={{ fontSize:7,color:'#6ec87a',letterSpacing:'0.05em',textAlign:'center',lineHeight:1.2 }}>{fmt(m.profit).replace('£','')}</div>}
+                    <div style={{ width:'100%',height:h||2,background:m.profit>0?'#6ec87a':'#2a2520',borderRadius:2,border:isThisMonth?'1px solid #c8922a':'none',minHeight:2,transition:'height 0.3s' }}></div>
+                    <div style={{ fontSize:8,color:isThisMonth?'#c8922a':'#8a7d72',letterSpacing:'0.05em' }}>{m.month}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Cumulative + month breakdown */}
+          <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10 }}>
+
+            {/* Cumulative */}
+            <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'16px' }}>
+              <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:14 }}>Cumulative — {revYear}</div>
+              {yearDataCum.filter(m=>m.profit>0).length===0&&(
+                <div style={{ fontSize:11,color:'#8a7d72',fontStyle:'italic' }}>No data yet for {revYear}. Edit a job card and add Final Profit + Invoice Date.</div>
+              )}
+              {yearDataCum.filter(m=>m.profit>0).map((m,i,arr)=>(
+                <div key={m.month} style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid #2a2520' }}>
+                  <div style={{ fontSize:11,color:'#faf6f0' }}>{m.month}</div>
+                  <div style={{ display:'flex',gap:16,alignItems:'center' }}>
+                    <div style={{ fontSize:11,color:'#6ec87a',fontWeight:500 }}>{fmt(m.profit)}</div>
+                    <div style={{ fontSize:10,color:'#8a7d72' }}>= {fmt(m.cumulative)}</div>
+                  </div>
+                </div>
+              ))}
+              {yearTotal>0&&(
+                <div style={{ display:'flex',justifyContent:'space-between',padding:'10px 0 0',marginTop:4 }}>
+                  <div style={{ fontSize:10,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'#8a7d72' }}>Total</div>
+                  <div style={{ fontSize:14,fontFamily:'Georgia,serif',color:'#6ec87a' }}>{fmt(yearTotal)}</div>
+                </div>
+              )}
+            </div>
+
+            {/* Job list */}
+            <div style={{ background:'#221f1b',border:'1px solid #3a3430',padding:'16px' }}>
+              <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:14 }}>Logged Jobs — {revYear}</div>
+              {revenueJobs.filter(j=>{ const d=new Date(j.invoicedDate); return !isNaN(d)&&d.getFullYear()===revYear; }).length===0&&(
+                <div style={{ fontSize:11,color:'#8a7d72',fontStyle:'italic' }}>No jobs logged for {revYear} yet.</div>
+              )}
+              {revenueJobs
+                .filter(j=>{ const d=new Date(j.invoicedDate); return !isNaN(d)&&d.getFullYear()===revYear; })
+                .sort((a,b)=>new Date(b.invoicedDate)-new Date(a.invoicedDate))
+                .map(j=>(
+                  <div key={j.id} style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid #2a2520' }}>
+                    <div>
+                      <div style={{ fontSize:11,color:'#faf6f0',fontFamily:'Georgia,serif' }}>{j.name}</div>
+                      <div style={{ fontSize:9,color:'#8a7d72' }}>{fmtD(j.invoicedDate)}</div>
+                    </div>
+                    <div style={{ fontSize:12,color:'#6ec87a',fontWeight:500 }}>{fmt(j.finalProfit)}</div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================================================================ LEAD MODAL */}
       {lModal&&(
         <div onClick={e=>{if(e.target===e.currentTarget)setLModal(null);}} style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:14 }}>
           <div style={{ background:'#2a2520',border:'1px solid #3a3430',width:'100%',maxWidth:440,maxHeight:'90vh',overflowY:'auto',padding:20 }}>
@@ -393,18 +532,35 @@ function App() {
         </div>
       )}
 
-      {/* JOB MODAL */}
+      {/* ================================================================ JOB MODAL */}
       {jModal&&(
         <div onClick={e=>{if(e.target===e.currentTarget)setJModal(null);}} style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:14 }}>
           <div style={{ background:'#2a2520',border:'1px solid #3a3430',width:'100%',maxWidth:440,maxHeight:'90vh',overflowY:'auto',padding:20 }}>
-            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginBottom:14 }}>{jModal.mode==='edit'?`Edit — ${jModal.job.name}`:'Add Task'}</div>
+            <div style={{ fontFamily:'Georgia,serif',fontSize:18,color:'#faf6f0',marginBottom:14 }}>{jModal.mode==='edit'?`Edit — ${jModal.job.name}`:'Add Job'}</div>
             <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:9 }}>
               <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Job / Customer</div><input value={jForm.name} onChange={e=>jf('name',e.target.value)} style={inp}/></div>
               <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Column</div><select value={jForm.column} onChange={e=>jf('column',e.target.value)} style={inp}>{J_COLS.map(c=><option key={c} value={c}>{J_LABELS[c]}</option>)}</select></div>
               <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Priority</div><select value={jForm.priority} onChange={e=>jf('priority',e.target.value)} style={inp}><option>High</option><option>Normal</option><option>Low</option></select></div>
               <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Due Date</div><input type="date" value={jForm.dueDate} onChange={e=>jf('dueDate',e.target.value)} style={inp}/></div>
-              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Value £</div><input type="number" value={jForm.value} onChange={e=>jf('value',e.target.value)} style={inp}/></div>
+              <div><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Job Value £</div><input type="number" value={jForm.value} onChange={e=>jf('value',e.target.value)} style={inp}/></div>
             </div>
+
+            {/* Revenue fields — highlighted section */}
+            <div style={{ marginTop:14,padding:'12px',background:'#1f1c19',border:'1px solid #2e7a3a',borderRadius:2 }}>
+              <div style={{ fontSize:9,fontWeight:600,letterSpacing:'0.16em',textTransform:'uppercase',color:'#6ec87a',marginBottom:10 }}>Revenue Tracking</div>
+              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:9 }}>
+                <div>
+                  <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Final Profit £</div>
+                  <input type="number" value={jForm.finalProfit} onChange={e=>jf('finalProfit',e.target.value)} placeholder="e.g. 3200" style={inp}/>
+                </div>
+                <div>
+                  <div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Job Invoiced Date</div>
+                  <input type="date" value={jForm.invoicedDate} onChange={e=>jf('invoicedDate',e.target.value)} style={inp}/>
+                </div>
+              </div>
+              <div style={{ fontSize:9,color:'#8a7d72',marginTop:8,lineHeight:1.5 }}>Fill both fields to include this job in the Revenue Tracker tab.</div>
+            </div>
+
             <div style={{ marginTop:9 }}><div style={{ fontSize:9,fontWeight:500,letterSpacing:'0.16em',textTransform:'uppercase',color:'#8a7d72',marginBottom:4 }}>Notes</div><textarea value={jForm.notes} onChange={e=>jf('notes',e.target.value)} rows={3} style={{...inp,resize:'vertical'}}/></div>
             <div style={{ display:'flex',gap:7,marginTop:14,justifyContent:'flex-end' }}>
               {jModal.mode==='edit'&&<button onClick={delJ} style={ab('#8b2e2e','#e07070')}>Delete</button>}
@@ -414,6 +570,7 @@ function App() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
