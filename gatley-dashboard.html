@@ -242,13 +242,16 @@ input,select,textarea{font-family:'Jost',sans-serif}
     <h3 id="leadModalTitle">Lead</h3>
     <div class="form-grid">
       <div class="form-field"><label>Name</label><input id="lf_name" type="text"></div>
-      <div class="form-field"><label>Date</label><input id="lf_date" type="date"></div>
+      <div class="form-field"><label>Date of Visit / Job</label><input id="lf_date" type="date"></div>
       <div class="form-field"><label>Source</label><select id="lf_source"></select></div>
       <div class="form-field"><label>Status</label><select id="lf_status"></select></div>
-      <div class="form-field"><label>Value £</label><input id="lf_value" type="number"></div>
-      <div class="form-field"><label>Pre-qualified?</label><select id="lf_pq"><option>No</option><option>Yes</option><option>Partial</option></select></div>
+      <div class="form-field"><label>Sell Value £</label><input id="lf_value" type="number"></div>
+      <div class="form-field"><label>Customer Budget £</label><input id="lf_budget" type="number" placeholder="What they said"></div>
       <div class="form-field"><label>Expected Profit £</label><input id="lf_exprofit" type="number" placeholder="Your margin"></div>
+      <div class="form-field"><label>Pre-qualified?</label><select id="lf_pq"><option>No</option><option>Yes</option><option>Partial</option></select></div>
+      <div class="form-field"><label>Timescale</label><select id="lf_timescale"><option value="">Unknown</option><option>ASAP</option><option>1 month</option><option>2 months+</option></select></div>
     </div>
+    <div class="form-field" style="margin-bottom:9px"><label>Address / Postcode</label><input id="lf_address" type="text" placeholder="e.g. 14 Oak Road, SK8 4EZ"></div>
     <div class="form-field" style="margin-bottom:9px"><label>Lost Reason</label><input id="lf_lost" type="text"></div>
     <div class="form-field"><label>Notes</label><textarea id="lf_notes" rows="3"></textarea></div>
     <div class="modal-footer">
@@ -475,6 +478,9 @@ function renderPipeline(){
         +'<div class="ctags"><span class="tag-a">'+h(l.source)+'</span><span class="tag-m">PQ:'+h(l.pq)+'</span></div>'
         +'<div class="cdate">'+fd(l.date)+'</div>'
         +(l.lostReason?'<div class="clost" style="color:'+tc+'">↳ '+h(l.lostReason)+'</div>':'')
+        +(isE&&l.address?'<div style="font-size:9px;color:#8a7d72;margin-top:3px">&#128205; '+h(l.address)+'</div>':'')
+        +(isE&&l.timescale?'<div style="font-size:9px;color:#e8b96a;margin-top:2px">&#9201; '+h(l.timescale)+'</div>':'')
+        +(isE&&l.budget?'<div style="font-size:9px;color:#8a7d72;margin-top:2px">Budget: '+fm(l.budget)+'</div>':'')
         +(isE&&l.notes?'<div class="cnotes">'+h(l.notes)+'</div>':'')
         +(isE&&acts?'<div class="cactions">'+acts+'</div>':'')
         +(!isE?'<div class="ctap">tap</div>':'')
@@ -763,6 +769,9 @@ function openLeadModal(id,e,defaultStatus){
   document.getElementById('lf_lost').value=lead?lead.lostReason:'';
   document.getElementById('lf_notes').value=lead?lead.notes:'';
   document.getElementById('lf_exprofit').value=lead?(lead.expectedProfit!==undefined&&lead.expectedProfit!==''?lead.expectedProfit:''):'';
+  document.getElementById('lf_budget').value=lead?(lead.budget||''):'';
+  document.getElementById('lf_address').value=lead?(lead.address||''):'';
+  document.getElementById('lf_timescale').value=lead?(lead.timescale||''):'';
   document.getElementById('delLeadBtn').style.display=lead?'block':'none';
   document.getElementById('leadModal').style.display='flex';
 }
@@ -774,7 +783,7 @@ document.getElementById('delLeadBtn').onclick=function(){
   saveDB(); closeLeadModal(); renderPipeline();
 };
 function saveLeadModal(){
-  var d={name:document.getElementById('lf_name').value,date:document.getElementById('lf_date').value,source:document.getElementById('lf_source').value,status:document.getElementById('lf_status').value,value:parseFloat(document.getElementById('lf_value').value)||0,pq:document.getElementById('lf_pq').value,lostReason:document.getElementById('lf_lost').value,notes:document.getElementById('lf_notes').value,expectedProfit:numOrEmpty(document.getElementById('lf_exprofit').value)};
+  var d={name:document.getElementById('lf_name').value,date:document.getElementById('lf_date').value,source:document.getElementById('lf_source').value,status:document.getElementById('lf_status').value,value:parseFloat(document.getElementById('lf_value').value)||0,budget:parseFloat(document.getElementById('lf_budget').value)||0,pq:document.getElementById('lf_pq').value,timescale:document.getElementById('lf_timescale').value,address:document.getElementById('lf_address').value,lostReason:document.getElementById('lf_lost').value,notes:document.getElementById('lf_notes').value,expectedProfit:numOrEmpty(document.getElementById('lf_exprofit').value)};
   if(editingLead){ db.leads=db.leads.map(function(l){ return l.id===editingLead.id?Object.assign({},l,d):l; }); }
   else{ d.id=db.nextLeadId++; db.leads.push(d); }
   saveDB(); closeLeadModal(); renderPipeline();
