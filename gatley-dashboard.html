@@ -304,7 +304,25 @@ input,select,textarea{font-family:'Jost',sans-serif}
 </div>
 
 <script>
-var SK        = 'gatley-dash-v5';
+var SK = 'gatley-dash-v5';
+
+// Migration: pull data from any previous storage key so no data is lost on upgrade
+function migrateData(){
+  var oldKeys = ['gatley-dash-v4','gatley-dash-v3','gatley-dashboard-v3','gatley-dashboard-v2','STORAGE_KEY'];
+  if(localStorage.getItem(SK)) return; // already on new key, nothing to do
+  for(var i=0;i<oldKeys.length;i++){
+    var val = localStorage.getItem(oldKeys[i]);
+    if(val){
+      try{
+        JSON.parse(val); // validate it's real JSON
+        localStorage.setItem(SK, val);
+        console.log('Migrated data from', oldKeys[i]);
+        return;
+      } catch(e){}
+    }
+  }
+}
+migrateData();
 var AUTH_HASH = 'Uml2ZXI4NSE=';
 var TARGET    = 102000;
 var SOURCES   = ['Unknown','Google','Referral','Facebook','Local','Website','Previous customer','Our fitter','Estate agent','Other'];
