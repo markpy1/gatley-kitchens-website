@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your 30-Min Gym Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --orange: #ff5c00;
+    --orange-dim: #cc4900;
+    --white: #f0ede8;
+    --muted: #888;
+    --tue: #ff5c00;
+    --wed: #00c2ff;
+    --thu: #a8ff3e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 40px 24px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #1a0a00 0%, var(--black) 100%);
+  }
+
+  header h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--white);
+  }
+
+  header h1 span { color: var(--orange); }
+
+  header p {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  .day-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .day-tab {
+    padding: 16px 28px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .day-tab.tue.active { color: var(--tue); border-color: var(--tue); }
+  .day-tab.wed.active { color: var(--wed); border-color: var(--wed); }
+  .day-tab.thu.active { color: var(--thu); border-color: var(--thu); }
+  .day-tab:hover { color: var(--white); }
+
+  .day-panel { display: none; padding: 24px; }
+  .day-panel.active { display: block; }
+
+  .day-header {
+    margin-bottom: 24px;
+  }
+
+  .day-header h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    letter-spacing: 2px;
+  }
+
+  .day-header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+
+  .exercises-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .exercise-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .exercise-card:hover { transform: translateY(-2px); }
+  .tue-card:hover { border-color: var(--tue); }
+  .wed-card:hover { border-color: var(--wed); }
+  .thu-card:hover { border-color: var(--thu); }
+
+  .anim-box {
+    height: 160px;
+    background: #0f0f0f;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .exercise-info {
+    padding: 16px;
+  }
+
+  .exercise-info h3 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .exercise-meta {
+    display: flex;
+    gap: 12px;
+    margin: 8px 0;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--border);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge.sets { background: #1f1f1f; color: var(--white); }
+
+  .exercise-info p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 6px;
+  }
+
+  .watch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--orange);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+  }
+
+  .watch-btn:hover { opacity: 0.7; }
+
+  .watch-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+  /* ========================
+     SVG ANIMATIONS
+  ======================== */
+
+  /* Stick figure base */
+  .figure { stroke: #f0ede8; stroke-width: 2.5; stroke-linecap: round; fill: none; }
+  .figure-fill { fill: #f0ede8; }
+
+  /* Bench Press Animation */
+  @keyframes bench-press {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+  }
+
+  @keyframes bar-press {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+  }
+
+  .bench-arms { animation: bench-press 1.6s ease-in-out infinite; transform-origin: 50px 55px; }
+
+  /* Incline Press */
+  @keyframes incline-arms {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-15deg); }
+  }
+
+  /* Row Animation */
+  @keyframes row-pull {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(12px); }
+  }
+
+  /* Squat Animation */
+  @keyframes squat-down {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(16px); }
+  }
+
+  /* Plank hold */
+  @keyframes plank-breathe {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(1.04); }
+  }
+
+  /* Dead bug */
+  @keyframes dead-bug-leg {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(30deg); }
+  }
+
+  @keyframes dead-bug-arm {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-30deg); }
+  }
+
+  /* Glute bridge */
+  @keyframes bridge-up {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+
+  /* HIIT bike */
+  @keyframes pedal {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes row-machine {
+    0%, 100% { transform: translateX(0) rotate(10deg); }
+    50% { transform: translateX(-20px) rotate(-20deg); }
+  }
+
+  /* Hip flexor */
+  @keyframes hip-flex {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-10deg); }
+  }
+
+  /* Hang knee raise */
+  @keyframes knee-raise {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+
+  /* Thoracic rotation */
+  @keyframes thoracic-rotate {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(25deg); }
+  }
+
+  /* RDL */
+  @keyframes rdl-hinge {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(30deg); }
+  }
+
+  /* Cable fly */
+  @keyframes fly-arms {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-30deg); }
+  }
+
+  /* World's greatest stretch */
+  @keyframes wgs {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    50% { transform: rotate(-15deg) translateY(4px); }
+  }
+
+  /* Cable crunch */
+  @keyframes crunch {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(20deg); }
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 480px;
+    width: 100%;
+    padding: 28px;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--border);
+    border: none;
+    color: var(--white);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal h3 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .modal .steps {
+    list-style: none;
+    margin: 12px 0;
+  }
+
+  .modal .steps li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: #ccc;
+    display: flex;
+    gap: 10px;
+    line-height: 1.4;
+  }
+
+  .modal .steps li:last-child { border: none; }
+
+  .step-num {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    color: var(--orange);
+    flex-shrink: 0;
+    width: 20px;
+  }
+
+  .modal-anim {
+    height: 120px;
+    background: #0f0f0f;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  footer {
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .tip-bar {
+    background: #1a0a00;
+    border-left: 3px solid var(--orange);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    color: #ccc;
+  }
+
+  .tip-bar strong { color: var(--orange); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>YOUR <span>30-MIN</span><br>PROGRAMME</h1>
+  <p>Tue · Wed · Thu — Tap any exercise for full instructions</p>
+</header>
+
+<div class="day-tabs">
+  <button class="day-tab tue active" onclick="showDay('tue')">TUE — Push + Core</button>
+  <button class="day-tab wed" onclick="showDay('wed')">WED — Compounds + Mobility</button>
+  <button class="day-tab thu" onclick="showDay('thu')">THU — HIIT + Abs</button>
+</div>
+
+<!-- TUESDAY -->
+<div class="day-panel active" id="panel-tue">
+  <div class="day-header">
+    <h2 style="color:var(--tue)">Tuesday — Push + Core</h2>
+    <p>Focus: Rebuild chest, strengthen core · ~30 mins</p>
+  </div>
+  <div class="tip-bar"><strong>Tip:</strong> Rest 60 sec between sets. Control the weight down slowly — 2 seconds down, press up.</div>
+  <div class="exercises-grid">
+
+    <!-- Incline DB Press -->
+    <div class="exercise-card tue-card" onclick="openModal('incline')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <!-- Bench at incline -->
+          <rect x="30" y="95" width="120" height="8" rx="3" fill="#2a2a2a"/>
+          <rect x="28" y="88" width="60" height="10" rx="3" fill="#333" transform="rotate(-30, 58, 88)"/>
+          <!-- Legs of bench -->
+          <line x1="40" y1="103" x2="36" y2="125" class="figure" stroke="#444"/>
+          <line x1="140" y1="103" x2="144" y2="125" class="figure" stroke="#444"/>
+          <!-- Person lying on incline -->
+          <g transform="rotate(-28, 95, 80)">
+            <!-- Body -->
+            <ellipse cx="95" cy="82" rx="18" ry="8" fill="#222" class="figure" stroke="#444"/>
+            <!-- Head -->
+            <circle cx="120" cy="75" r="9" class="figure-fill" fill="#f0ede8"/>
+            <!-- Arms animating -->
+            <g class="bench-arms">
+              <line x1="90" y1="78" x2="70" y2="60" class="figure" stroke="#f0ede8" stroke-width="3"/>
+              <line x1="100" y1="78" x2="120" y2="60" class="figure" stroke="#f0ede8" stroke-width="3"/>
+              <!-- Bar -->
+              <line x1="65" y1="58" x2="125" y2="58" class="figure" stroke="#ff5c00" stroke-width="3"/>
+              <circle cx="65" cy="58" r="5" fill="#ff5c00"/>
+              <circle cx="125" cy="58" r="5" fill="#ff5c00"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Incline Dumbbell Press</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 10</span>
+          <span class="badge">Upper Chest</span>
+        </div>
+        <p>Sets the upper pec shelf. Bench at 30–45°. Controls the drop.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=incline+dumbbell+press+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Flat DB Press -->
+    <div class="exercise-card tue-card" onclick="openModal('flatpress')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <rect x="20" y="95" width="160" height="8" rx="3" fill="#2a2a2a"/>
+          <line x1="40" y1="103" x2="36" y2="125" class="figure" stroke="#444"/>
+          <line x1="160" y1="103" x2="164" y2="125" class="figure" stroke="#444"/>
+          <circle cx="100" cy="87" r="9" class="figure-fill" fill="#f0ede8"/>
+          <ellipse cx="100" cy="103" rx="20" ry="7" fill="#222" class="figure" stroke="#444"/>
+          <g class="bench-arms">
+            <line x1="88" y1="98" x2="65" y2="78" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="112" y1="98" x2="135" y2="78" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="58" y1="76" x2="142" y2="76" class="figure" stroke="#ff5c00" stroke-width="3"/>
+            <circle cx="58" cy="76" r="5" fill="#ff5c00"/>
+            <circle cx="142" cy="76" r="5" fill="#ff5c00"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Flat Dumbbell Press</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 10</span>
+          <span class="badge">Chest Mass</span>
+        </div>
+        <p>Main chest builder. Elbows at 45° — not flared out wide.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=flat+dumbbell+bench+press+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Cable Fly -->
+    <div class="exercise-card tue-card" onclick="openModal('fly')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <!-- Cable lines -->
+          <line x1="20" y1="30" x2="75" y2="70" stroke="#444" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="180" y1="30" x2="125" y2="70" stroke="#444" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <!-- Person standing -->
+          <circle cx="100" cy="52" r="10" class="figure-fill" fill="#f0ede8"/>
+          <line x1="100" y1="62" x2="100" y2="100" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <line x1="100" y1="105" x2="88" y2="125" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <line x1="100" y1="105" x2="112" y2="125" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <!-- Arms flying in -->
+          <g style="animation: fly-arms 1.8s ease-in-out infinite; transform-origin: 100px 72px;">
+            <line x1="100" y1="72" x2="68" y2="65" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="72" x2="132" y2="65" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <circle cx="66" cy="64" r="4" fill="#ff5c00"/>
+            <circle cx="134" cy="64" r="4" fill="#ff5c00"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Cable Fly / Pec Deck</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">2 × 12</span>
+          <span class="badge">Chest Squeeze</span>
+        </div>
+        <p>Isolation finisher. Squeeze hard at centre. Light weight, feel the chest.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=cable+chest+fly+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Plank -->
+    <div class="exercise-card tue-card" onclick="openModal('plank')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="115" x2="190" y2="115" stroke="#222" stroke-width="2"/>
+          <g style="animation: plank-breathe 2s ease-in-out infinite; transform-origin: 100px 95px;">
+            <circle cx="160" cy="82" r="10" class="figure-fill" fill="#f0ede8"/>
+            <line x1="150" y1="88" x2="50" y2="98" class="figure" stroke="#f0ede8" stroke-width="4"/>
+            <line x1="148" y1="94" x2="130" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="148" y1="94" x2="165" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <!-- Forearm -->
+            <line x1="50" y1="98" x2="42" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <circle cx="42" cy="115" r="5" fill="#f0ede8"/>
+            <!-- straight body line -->
+          </g>
+          <text x="100" y="135" text-anchor="middle" fill="#444" font-size="10" font-family="DM Sans">Hold · Breathe · Don't sag</text>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Plank</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 45 sec</span>
+          <span class="badge">Core</span>
+        </div>
+        <p>Squeeze glutes + abs. Straight line head to heels. Don't hold your breath.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=perfect+plank+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Dead Bug -->
+    <div class="exercise-card tue-card" onclick="openModal('deadbug')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="115" x2="190" y2="115" stroke="#222" stroke-width="2"/>
+          <!-- Lying on back -->
+          <circle cx="100" cy="88" r="10" class="figure-fill" fill="#f0ede8"/>
+          <line x1="100" y1="98" x2="100" y2="120" class="figure" stroke="#f0ede8" stroke-width="4"/>
+          <!-- Left arm up -->
+          <g style="animation: dead-bug-arm 2s ease-in-out infinite; transform-origin: 100px 102px;">
+            <line x1="100" y1="102" x2="68" y2="80" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <circle cx="66" cy="78" r="4" fill="#ff5c00"/>
+          </g>
+          <!-- Right arm static -->
+          <line x1="100" y1="102" x2="132" y2="80" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <circle cx="134" cy="78" r="4" fill="#f0ede8"/>
+          <!-- Right leg extending -->
+          <g style="animation: dead-bug-leg 2s ease-in-out infinite; transform-origin: 100px 115px;">
+            <line x1="100" y1="115" x2="130" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          </g>
+          <!-- Left leg static -->
+          <line x1="100" y1="115" x2="70" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Dead Bug</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">2 × 10 each</span>
+          <span class="badge">Core / Back</span>
+        </div>
+        <p>Opposite arm + leg extends slowly. Lower back stays flat on floor the whole time.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=dead+bug+exercise+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- WEDNESDAY -->
+<div class="day-panel" id="panel-wed">
+  <div class="day-header">
+    <h2 style="color:var(--wed)">Wednesday — Compounds + Mobility</h2>
+    <p>Focus: Full body strength, fix stiffness · ~30 mins</p>
+  </div>
+  <div class="tip-bar"><strong>Tip:</strong> This day will fix your floor mobility more than anything. Don't rush the stretches.</div>
+  <div class="exercises-grid">
+
+    <!-- Goblet Squat -->
+    <div class="exercise-card wed-card" onclick="openModal('goblet')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="128" x2="190" y2="128" stroke="#222" stroke-width="2"/>
+          <g style="animation: squat-down 1.8s ease-in-out infinite; transform-origin: 100px 90px;">
+            <circle cx="100" cy="52" r="10" class="figure-fill" fill="#f0ede8"/>
+            <!-- Dumbbell held at chest -->
+            <rect x="88" y="62" width="24" height="10" rx="3" fill="#00c2ff" opacity="0.8"/>
+            <line x1="100" y1="72" x2="100" y2="95" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="92" y1="74" x2="80" y2="67" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="108" y1="74" x2="120" y2="67" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="100" y1="95" x2="80" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="95" x2="120" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Goblet Squat</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 12</span>
+          <span class="badge">Legs / Hips</span>
+        </div>
+        <p>Dumbbell at chest. Heels down, knees out. This directly improves getting up off the floor.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=goblet+squat+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Romanian Deadlift -->
+    <div class="exercise-card wed-card" onclick="openModal('rdl')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="128" x2="190" y2="128" stroke="#222" stroke-width="2"/>
+          <g style="animation: rdl-hinge 2s ease-in-out infinite; transform-origin: 100px 90px;">
+            <circle cx="100" cy="48" r="10" class="figure-fill" fill="#f0ede8"/>
+            <line x1="100" y1="58" x2="100" y2="90" class="figure" stroke="#f0ede8" stroke-width="4"/>
+            <line x1="100" y1="68" x2="78" y2="80" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="100" y1="68" x2="122" y2="80" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="100" y1="90" x2="85" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="90" x2="115" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <!-- Dumbbells hanging -->
+            <rect x="70" y="80" width="12" height="18" rx="3" fill="#00c2ff" opacity="0.8"/>
+            <rect x="118" y="80" width="12" height="18" rx="3" fill="#00c2ff" opacity="0.8"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Romanian Deadlift</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 10</span>
+          <span class="badge">Hamstrings</span>
+        </div>
+        <p>Hinge at hips, soft knees. Feel the stretch in the back of the legs. Key for back stiffness.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=romanian+deadlift+dumbbell+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Seated Cable Row -->
+    <div class="exercise-card wed-card" onclick="openModal('row')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="115" x2="190" y2="115" stroke="#222" stroke-width="2"/>
+          <!-- Machine -->
+          <rect x="10" y="60" width="15" height="55" rx="3" fill="#222" stroke="#444" stroke-width="1"/>
+          <circle cx="17" cy="68" r="8" fill="#333" stroke="#555" stroke-width="1"/>
+          <!-- Cable -->
+          <line x1="25" y1="68" x2="72" y2="85" stroke="#444" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <!-- Person sitting, rowing -->
+          <g style="animation: row-pull 1.6s ease-in-out infinite; transform-origin: 90px 85px;">
+            <circle cx="120" cy="62" r="10" class="figure-fill" fill="#f0ede8"/>
+            <line x1="120" y1="72" x2="120" y2="100" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="120" y1="100" x2="100" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="120" y1="100" x2="140" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="120" y1="78" x2="90" y2="85" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="120" y1="78" x2="90" y2="88" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <circle cx="88" cy="86" r="4" fill="#00c2ff"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Seated Cable Row</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 10</span>
+          <span class="badge">Back / Posture</span>
+        </div>
+        <p>Pull elbows back, squeeze shoulder blades. Fixes posture which reduces back stiffness.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=seated+cable+row+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Hip Flexor Stretch -->
+    <div class="exercise-card wed-card" onclick="openModal('hipflex')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="128" x2="190" y2="128" stroke="#222" stroke-width="2"/>
+          <g style="animation: hip-flex 3s ease-in-out infinite; transform-origin: 100px 90px;">
+            <circle cx="100" cy="52" r="10" class="figure-fill" fill="#f0ede8"/>
+            <line x1="100" y1="62" x2="100" y2="90" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="70" x2="80" y2="78" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="100" y1="70" x2="120" y2="78" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <!-- Front leg lunging -->
+            <line x1="100" y1="90" x2="125" y2="105" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="125" y1="105" x2="125" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <!-- Back knee down -->
+            <line x1="100" y1="90" x2="75" y2="110" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <circle cx="75" cy="112" r="4" fill="#00c2ff"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Hip Flexor Stretch</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">2 × 45 sec</span>
+          <span class="badge">Mobility</span>
+        </div>
+        <p>Kneeling lunge. Back knee on floor, push hips forward gently. THIS fixes getting off the floor.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=kneeling+hip+flexor+stretch" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- World's Greatest Stretch -->
+    <div class="exercise-card wed-card" onclick="openModal('wgs')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="128" x2="190" y2="128" stroke="#222" stroke-width="2"/>
+          <g style="animation: wgs 2.5s ease-in-out infinite; transform-origin: 100px 100px;">
+            <circle cx="75" cy="55" r="10" class="figure-fill" fill="#f0ede8"/>
+            <!-- Torso rotated up -->
+            <line x1="80" y1="64" x2="100" y2="95" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <!-- Arm raised -->
+            <line x1="80" y1="72" x2="60" y2="55" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <circle cx="58" cy="53" r="4" fill="#00c2ff"/>
+            <!-- Other arm down -->
+            <line x1="80" y1="72" x2="100" y2="80" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <!-- Lunge -->
+            <line x1="100" y1="95" x2="125" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="95" x2="70" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="70" y1="115" x2="45" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>World's Greatest Stretch</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">2 × 5 each</span>
+          <span class="badge">Full Body</span>
+        </div>
+        <p>Lunge + rotate. Opens hips, thoracic spine, hamstrings all at once. Best bang-for-buck stretch.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=world's+greatest+stretch+tutorial" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- THURSDAY -->
+<div class="day-panel" id="panel-thu">
+  <div class="day-header">
+    <h2 style="color:var(--thu)">Thursday — HIIT + Abs</h2>
+    <p>Focus: Burn fat, hit the abs hard · ~30 mins</p>
+  </div>
+  <div class="tip-bar"><strong>Tip:</strong> The HIIT comes first while you're fresh. Go hard on the 40-sec bursts — that's what burns the belly fat.</div>
+  <div class="exercises-grid">
+
+    <!-- Rowing / Bike HIIT -->
+    <div class="exercise-card thu-card" onclick="openModal('hiit')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="118" x2="190" y2="118" stroke="#222" stroke-width="2"/>
+          <!-- Rowing machine simplified -->
+          <line x1="20" y1="110" x2="170" y2="110" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+          <g style="animation: row-machine 1.2s ease-in-out infinite; transform-origin: 100px 85px;">
+            <circle cx="130" cy="68" r="10" class="figure-fill" fill="#f0ede8"/>
+            <line x1="130" y1="78" x2="120" y2="100" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="120" y1="100" x2="100" y2="110" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="120" y1="100" x2="140" y2="110" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="130" y1="82" x2="95" y2="88" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <circle cx="93" cy="88" r="4" fill="#a8ff3e"/>
+          </g>
+          <text x="100" y="135" text-anchor="middle" fill="#555" font-size="9" font-family="DM Sans">40 SEC HARD / 20 SEC REST</text>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Rowing / Bike HIIT</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">15 mins</span>
+          <span class="badge">Fat Burn</span>
+        </div>
+        <p>40 sec all-out effort, 20 sec easy. This is where you burn the belly fat. Don't half-arse the hard intervals.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=rowing+machine+HIIT+intervals+beginner" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Hanging Knee Raise -->
+    <div class="exercise-card thu-card" onclick="openModal('kneeraise')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <!-- Bar -->
+          <rect x="50" y="18" width="100" height="7" rx="3" fill="#333"/>
+          <line x1="75" y1="25" x2="75" y2="10" stroke="#444" stroke-width="2"/>
+          <line x1="125" y1="25" x2="125" y2="10" stroke="#444" stroke-width="2"/>
+          <!-- Person hanging -->
+          <circle cx="100" cy="38" r="10" class="figure-fill" fill="#f0ede8"/>
+          <line x1="100" y1="48" x2="100" y2="80" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <line x1="100" y1="52" x2="80" y2="38" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+          <line x1="100" y1="52" x2="120" y2="38" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+          <!-- Knees raising -->
+          <g style="animation: knee-raise 1.6s ease-in-out infinite; transform-origin: 100px 80px;">
+            <line x1="100" y1="80" x2="85" y2="105" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="80" x2="115" y2="105" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="85" y1="105" x2="83" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="115" y1="105" x2="117" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Hanging Knee Raises</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 12</span>
+          <span class="badge">Lower Abs</span>
+        </div>
+        <p>Hang from pull-up bar. Raise knees to chest slowly. Control the drop — don't swing.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=hanging+knee+raise+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Cable Crunch -->
+    <div class="exercise-card thu-card" onclick="openModal('cablecrunch')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="128" x2="190" y2="128" stroke="#222" stroke-width="2"/>
+          <!-- Cable from above -->
+          <rect x="88" y="5" width="24" height="8" rx="2" fill="#333"/>
+          <line x1="100" y1="13" x2="100" y2="35" stroke="#444" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <!-- Person kneeling, crunching -->
+          <g style="animation: crunch 1.8s ease-in-out infinite; transform-origin: 100px 90px;">
+            <circle cx="100" cy="55" r="10" class="figure-fill" fill="#f0ede8"/>
+            <line x1="100" y1="65" x2="100" y2="95" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="68" x2="82" y2="55" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="100" y1="68" x2="118" y2="55" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <circle cx="80" cy="53" r="4" fill="#a8ff3e"/>
+            <circle cx="120" cy="53" r="4" fill="#a8ff3e"/>
+            <!-- Knees on floor -->
+            <line x1="100" y1="95" x2="78" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="100" y1="95" x2="122" y2="115" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="78" y1="115" x2="62" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="122" y1="115" x2="138" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Cable Crunches</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 15</span>
+          <span class="badge">Abs</span>
+        </div>
+        <p>Kneel, hold rope at head. Crunch elbows to knees. Weighted = better abs than floor crunches.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=cable+crunch+form+kneeling" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Glute Bridge -->
+    <div class="exercise-card thu-card" onclick="openModal('glutebridge')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="128" x2="190" y2="128" stroke="#222" stroke-width="2"/>
+          <circle cx="60" cy="95" r="10" class="figure-fill" fill="#f0ede8"/>
+          <line x1="40" y1="128" x2="55" y2="105" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <line x1="55" y1="105" x2="45" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <g style="animation: bridge-up 1.6s ease-in-out infinite; transform-origin: 90px 110px;">
+            <line x1="60" y1="102" x2="100" y2="108" class="figure" stroke="#f0ede8" stroke-width="4"/>
+            <line x1="100" y1="108" x2="130" y2="95" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="130" y1="95" x2="155" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <!-- Arms flat -->
+            <line x1="60" y1="108" x2="30" y2="118" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <line x1="60" y1="108" x2="90" y2="120" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+          </g>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Glute Bridge</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">3 × 15</span>
+          <span class="badge">Glutes / Hips</span>
+        </div>
+        <p>Lie on back, feet flat, drive hips up. Squeeze glutes at top. Directly fixes lower back + hip stiffness.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=glute+bridge+form" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+    <!-- Thoracic Rotation -->
+    <div class="exercise-card thu-card" onclick="openModal('thoracic')">
+      <div class="anim-box">
+        <svg width="200" height="140" viewBox="0 0 200 140">
+          <line x1="10" y1="128" x2="190" y2="128" stroke="#222" stroke-width="2"/>
+          <!-- On all fours, rotating -->
+          <g style="animation: thoracic-rotate 2.5s ease-in-out infinite; transform-origin: 100px 95px;">
+            <circle cx="130" cy="68" r="10" class="figure-fill" fill="#f0ede8"/>
+            <line x1="130" y1="78" x2="100" y2="90" class="figure" stroke="#f0ede8" stroke-width="3"/>
+            <line x1="130" y1="78" x2="118" y2="60" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+            <circle cx="116" cy="58" r="4" fill="#a8ff3e"/>
+          </g>
+          <!-- Static arm down -->
+          <line x1="100" y1="90" x2="78" y2="105" class="figure" stroke="#f0ede8" stroke-width="2.5"/>
+          <circle cx="76" cy="107" r="4" fill="#f0ede8"/>
+          <!-- Legs -->
+          <line x1="100" y1="90" x2="80" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+          <line x1="100" y1="90" x2="120" y2="128" class="figure" stroke="#f0ede8" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="exercise-info">
+        <h3>Thoracic Rotation</h3>
+        <div class="exercise-meta">
+          <span class="badge sets">2 × 8 each</span>
+          <span class="badge">Spine Mobility</span>
+        </div>
+        <p>On all fours, hand behind head, rotate elbow to ceiling. Fixes upper back stiffness fast.</p>
+        <a class="watch-btn" href="https://www.youtube.com/results?search_query=thoracic+rotation+exercise+floor" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Watch on YouTube
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>Tap any card for cues · YouTube links open form tutorials · Built for your 30-min window</p>
+</footer>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-anim" id="modal-anim"></div>
+    <h3 id="modal-title"></h3>
+    <ul class="steps" id="modal-steps"></ul>
+  </div>
+</div>
+
+<script>
+const exercises = {
+  incline: {
+    title: "Incline Dumbbell Press",
+    steps: [
+      "Set bench to 30–45°. Sit, dumbbells on thighs.",
+      "Kick dumbbells up as you lie back — elbows at 45° from body.",
+      "Lower slowly (2 seconds) until chest level.",
+      "Press up and slightly inward — don't lock out elbows fully.",
+      "Feel the squeeze in your upper chest at the top."
+    ]
+  },
+  flatpress: {
+    title: "Flat Dumbbell Press",
+    steps: [
+      "Lie flat on bench. Dumbbells above chest, palms facing feet.",
+      "Elbows at 45° — NOT flared out wide (protects shoulders).",
+      "Lower controlled until elbows just below bench level.",
+      "Drive up explosively. Don't bounce off chest.",
+      "3-second descent, 1-second press = max results."
+    ]
+  },
+  fly: {
+    title: "Cable Fly / Pec Deck",
+    steps: [
+      "Set cables at chest height (or use pec deck machine).",
+      "Slight forward lean, slight bend in elbows throughout.",
+      "Bring hands together slowly — think 'hugging a tree'.",
+      "SQUEEZE hard at centre for 1 second.",
+      "Open arms slowly back. Don't let weight drag you — control it."
+    ]
+  },
+  plank: {
+    title: "Plank",
+    steps: [
+      "Forearms on floor, elbows under shoulders.",
+      "Body in a straight line — don't let hips sag or raise.",
+      "Squeeze your glutes AND your abs at the same time.",
+      "Breathe normally — don't hold your breath.",
+      "If 45 sec is easy, go to 60. If it's burning, you're doing it right."
+    ]
+  },
+  deadbug: {
+    title: "Dead Bug",
+    steps: [
+      "Lie on your back. Arms straight up, knees bent at 90°.",
+      "PRESS your lower back into the floor — keep it there the whole time.",
+      "Slowly extend opposite arm + leg toward floor.",
+      "Stop before your back arches. Return and swap sides.",
+      "This is about CONTROL not range. Slow and steady."
+    ]
+  },
+  goblet: {
+    title: "Goblet Squat",
+    steps: [
+      "Hold dumbbell vertically at chest with both hands.",
+      "Feet shoulder-width, toes slightly out.",
+      "Sit DOWN between your heels — not back like a chair squat.",
+      "Chest up, elbows inside knees at the bottom.",
+      "Drive through heels to stand. This directly trains getting up off the floor."
+    ]
+  },
+  rdl: {
+    title: "Romanian Deadlift",
+    steps: [
+      "Stand with dumbbells in front of thighs, slight knee bend.",
+      "Hinge at the hips — push your bum backwards.",
+      "Lower the weights close to your legs. Feel the stretch in hamstrings.",
+      "Stop when you feel a strong pull (usually shin level).",
+      "Drive hips forward to stand. Squeeze glutes at top."
+    ]
+  },
+  row: {
+    title: "Seated Cable Row",
+    steps: [
+      "Sit at cable machine, feet on platform, slight knee bend.",
+      "Grab handle with straight arms — don't round your back.",
+      "Pull elbows back past your body — squeeze shoulder blades TOGETHER.",
+      "Hold 1 second at peak. Return slowly.",
+      "Upright torso throughout — don't rock back and forth."
+    ]
+  },
+  hipflex: {
+    title: "Hip Flexor Stretch",
+    steps: [
+      "Kneel on one knee (use a mat). Other foot flat in front.",
+      "Upright torso. Push hips FORWARD gently until you feel a stretch at front of back hip.",
+      "Don't lean forward — it's a hip push, not a lean.",
+      "Hold 45 seconds. Breathe and relax into it.",
+      "This is the #1 fix for stiffness getting up off the floor with your daughter."
+    ]
+  },
+  wgs: {
+    title: "World's Greatest Stretch",
+    steps: [
+      "Start in a lunge — right foot forward, left knee down.",
+      "Place right hand on the floor inside right foot.",
+      "Rotate left arm up to ceiling, following with your eyes.",
+      "Hold 2 seconds at top. Return hand to floor.",
+      "5 reps, then swap legs. Opens EVERYTHING — hips, spine, hamstrings."
+    ]
+  },
+  hiit: {
+    title: "Rowing / Bike HIIT",
+    steps: [
+      "2 minutes easy warm-up to get loose.",
+      "40 seconds: go HARD — 80-90% max effort. Push through it.",
+      "20 seconds: easy pace or stop. Recover.",
+      "Repeat for 15 minutes total.",
+      "On a rower: drive with legs first, then pull arms. Don't yank with your arms."
+    ]
+  },
+  kneeraise: {
+    title: "Hanging Knee Raises",
+    steps: [
+      "Hang from pull-up bar. Shoulder-width grip.",
+      "Let yourself hang fully — decompress your spine.",
+      "Raise both knees to chest. No swinging.",
+      "Lower SLOWLY — 3 seconds down. That's where it works.",
+      "If you can't yet: do lying leg raises on a bench instead."
+    ]
+  },
+  cablecrunch: {
+    title: "Cable Crunches",
+    steps: [
+      "Attach rope to high cable. Kneel facing the machine.",
+      "Hold rope at sides of head. Elbows pointing down.",
+      "Crunch DOWN — elbows to knees. Round your back.",
+      "Don't pull with arms — it's your ABS doing the work.",
+      "Slow return. Feel the stretch at top. Don't sit up fully."
+    ]
+  },
+  glutebridge: {
+    title: "Glute Bridge",
+    steps: [
+      "Lie on back. Feet flat on floor, hip-width, close to your bum.",
+      "Drive through heels — push hips straight up.",
+      "Squeeze glutes HARD at the top. Hold 1 second.",
+      "Lower slowly. Don't let your back arch — it's glutes doing the work.",
+      "Add a dumbbell across hips for extra resistance when 15 reps feels easy."
+    ]
+  },
+  thoracic: {
+    title: "Thoracic Rotation",
+    steps: [
+      "On all fours — hands under shoulders, knees under hips.",
+      "Place one hand behind your head.",
+      "Rotate that elbow DOWN toward the opposite knee.",
+      "Then rotate UP toward the ceiling as far as you can.",
+      "8 reps each side. This fixes the upper back stiffness you feel with your daughter."
+    ]
+  }
+};
+
+function showDay(day) {
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + day).classList.add('active');
+  document.querySelector('.day-tab.' + day).classList.add('active');
+}
+
+function openModal(id) {
+  const ex = exercises[id];
+  if (!ex) return;
+  document.getElementById('modal-title').textContent = ex.title;
+  const stepsEl = document.getElementById('modal-steps');
+  stepsEl.innerHTML = ex.steps.map((s, i) => 
+    `<li><span class="step-num">${i+1}</span><span>${s}</span></li>`
+  ).join('');
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+</script>
+</body>
+</html>
