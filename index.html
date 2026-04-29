@@ -868,6 +868,7 @@
         if (res.ok) {
           this.style.display = 'none';
           document.getElementById('homeFormSuccess').style.display = 'block';
+          gtag('event', 'generate_lead', { event_category: 'Contact Form', event_label: 'Homepage' });
         } else {
           btn.textContent = 'Send Message';
           btn.disabled = false;
