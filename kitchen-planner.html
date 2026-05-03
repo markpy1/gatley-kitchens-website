@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-013W04141C"></script>
+  <script src="/analytics.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-013W04141C');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Planner | Gatley Kitchens &amp; Bedrooms</title>
+  <meta name="description" content="Plan your new kitchen with our free interactive room planner. Draw your space, place cabinets, and request a free no-obligation quote from Gatley Kitchens.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #f9f6f1;
+  --dark: #1c1a17;
+  --mid: #4a4540;
+  --accent: #8b6f47;
+  --light-accent: #c9a97a;
+  --border: #ddd8cf;
+  --white: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  background: var(--cream);
+  color: var(--dark);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--dark);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  align-items: center;
+}
+.nav-links a {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--mid);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-cta {
+  background: var(--dark);
+  color: var(--white) !important;
+  padding: 8px 20px;
+  border-radius: 2px;
+}
+.nav-cta:hover { background: var(--accent) !important; }
+.nav-dropdown { position: relative; }
+.nav-dropdown > a::after { content: ' ▾'; font-size: 0.7em; opacity: 0.5; }
+.dropdown-menu {
+  display: none !important;
+  position: absolute;
+  top: 100%; left: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  min-width: 200px;
+  padding: 8px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.nav-dropdown:hover .dropdown-menu { display: block !important; }
+.dropdown-menu a {
+  display: block;
+  padding: 10px 20px;
+  font-size: 0.78rem;
+  color: var(--mid);
+  text-transform: none;
+  letter-spacing: 0.05em;
+}
+.dropdown-menu a:hover { background: var(--cream); color: var(--accent); }
+.nav-burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+.nav-burger span { display: block; width: 24px; height: 2px; background: var(--dark); border-radius: 2px; transition: all 0.25s; }
+.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 800px) {
+  nav { padding: 0 20px; }
+  .nav-burger { display: flex; }
+  .nav-links { display: none !important; flex-direction: column; gap: 0; position: absolute; top: 70px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 99; }
+  .nav-links.open { display: flex !important; }
+  .nav-links li { width: 100%; }
+  .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; }
+  .nav-dropdown .dropdown-menu { position: static; box-shadow: none; border: none; background: var(--cream); margin: 0; padding: 4px 0; }
+  .nav-dropdown > a::after { content: ''; }
+  .nav-dropdown:hover .dropdown-menu { display: none; }
+  .nav-dropdown.mobile-open .dropdown-menu { display: block; }
+  .nav-cta { margin: 8px 24px 12px !important; display: block; text-align: center; }
+}
+
+/* PAGE HERO */
+.page-hero {
+  background: var(--dark);
+  padding: 52px 24px 44px;
+  text-align: center;
+}
+.page-hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 5vw, 46px);
+  font-weight: 400;
+  color: var(--white);
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+.page-hero p {
+  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+  font-weight: 300;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* PLANNER WRAP */
+.planner-wrap {
+  max-width: 800px;
+  margin: 32px auto 72px;
+  padding: 0 16px;
+}
+
+/* STEP BAR */
+.step-bar {
+  display: flex;
+  background: var(--dark);
+  border-radius: 3px 3px 0 0;
+  overflow: hidden;
+}
+.step {
+  flex: 1;
+  padding: 13px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  text-align: center;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.step.active { color: var(--light-accent); border-bottom-color: var(--light-accent); }
+.step.done { color: rgba(255,255,255,0.42); }
+
+/* PANELS */
+.panel {
+  display: none;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-top: none;
+  padding: 22px 24px 28px;
+  border-radius: 0 0 3px 3px;
+}
+.panel.active { display: block; }
+
+/* UTILITIES */
+.hint {
+  font-size: 12px;
+  color: #aaa;
+  font-style: italic;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* BUTTONS */
+.btn {
+  background: var(--dark);
+  color: var(--white);
+  border: none;
+  padding: 8px 16px;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  transition: background 0.15s;
+  display: inline-block;
+  text-decoration: none;
+}
+.btn:hover { background: #333; }
+.btn.accent { background: var(--accent); }
+.btn.accent:hover { background: var(--light-accent); }
+.btn.outline { background: transparent; color: var(--dark); border: 1px solid var(--border); }
+.btn.outline:hover { background: var(--cream); }
+.btn.sm { padding: 5px 10px; font-size: 11px; }
+
+/* DIM ROW */
+.dim-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--cream);
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--mid);
+}
+.dim-row label { font-weight: 500; }
+.dim-row input {
+  width: 70px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  text-align: center;
+  border-radius: 2px;
+  background: var(--white);
+  color: var(--dark);
+}
+.dim-row input:focus { outline: none; border-color: var(--accent); }
+.dim-unit { color: #bbb; margin-right: 8px; }
+
+/* TOOLBAR */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+
+/* CANVAS */
+canvas {
+  border: 1px solid var(--border);
+  background: #FAFAF7;
+  cursor: crosshair;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+.info-bar { font-size: 11px; color: #bbb; margin-top: 6px; min-height: 16px; }
+
+/* MODE BUTTONS */
+.mode-btns { display: flex; gap: 6px; margin-bottom: 10px; }
+.mode-btn {
+  padding: 7px 18px;
+  font-size: 11px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: var(--white);
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  color: var(--mid);
+}
+.mode-btn.active-mode { background: var(--dark); color: var(--white); border-color: var(--dark); }
+
+/* CABINET GRID */
+.cabinet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.cab-btn {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: 'Jost', sans-serif;
+  color: var(--dark);
+  border-radius: 2px;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+.cab-btn:hover { border-color: var(--accent); background: var(--cream); }
+.cab-btn.selected-cab { border-color: var(--accent); background: #fdf8f2; font-weight: 500; }
+.cab-icon { font-size: 15px; display: block; margin-bottom: 2px; }
+
+/* LEGEND */
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #999; }
+.leg-swatch { width: 12px; height: 12px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
+
+/* NAV ROW */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* SUMMARY */
+.summary-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  border-radius: 2px;
+  margin-bottom: 18px;
+}
+.summary-box h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  color: var(--mid);
+}
+.summary-row:last-child { border-bottom: none; }
+
+/* TRUST BAR */
+.trust-bar {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--mid); }
+.trust-icon { color: var(--accent); }
+
+/* FORM */
+.form-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 520px) { .form-cols { grid-template-columns: 1fr; } }
+.form-row { margin-bottom: 14px; }
+.form-row label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--mid);
+  margin-bottom: 5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.form-row input,
+.form-row textarea,
+.form-row select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--dark);
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus { border-color: var(--accent); }
+.form-row textarea { height: 90px; resize: vertical; }
+.form-error {
+  color: #8b3a3a;
+  font-size: 12px;
+  margin-bottom: 12px;
+  display: none;
+  padding: 8px 12px;
+  background: #fff0f0;
+  border-radius: 2px;
+  border: 1px solid #e8c8c8;
+}
+
+/* SUBMIT */
+.submit-btn {
+  width: 100%;
+  background: var(--dark);
+  color: var(--white);
+  border: none;
+  padding: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+.submit-btn:hover { background: var(--accent); }
+.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+/* SPINNER */
+.spinner {
+  display: inline-block;
+  width: 13px; height: 13px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SUCCESS */
+.success-msg { text-align: center; padding: 48px 20px; }
+.success-icon {
+  width: 56px; height: 56px;
+  background: #eaf3de;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 22px; color: #3b6d11;
+}
+.success-msg h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px; font-weight: 400;
+  color: var(--dark); margin-bottom: 12px;
+}
+.success-msg p { font-size: 14px; color: var(--mid); line-height: 1.7; max-width: 420px; margin: 0 auto 8px; }
+.success-contact {
+  margin-top: 22px;
+  padding: 14px 22px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: inline-block;
+  font-size: 13px;
+  color: var(--mid);
+}
+.success-contact strong { color: var(--dark); }
+
+/* FOOTER NOTE */
+.footer-note { text-align: center; font-size: 12px; color: #bbb; margin-top: 24px; }
+.footer-note a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Gatley <span>Kitchens</span> &amp; Bedrooms</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="gatley-kitchens-our-work.html">Our Work</a></li>
+    <li class="nav-dropdown">
+      <a href="gatley-kitchens-doors.html">Doors</a>
+      <div class="dropdown-menu">
+        <a href="gatley-kitchens-doors.html">Kitchen &amp; Bedroom Doors</a>
+        <a href="gatley-kitchens-sliding-wardrobes.html">Sliding Wardrobes</a>
+      </div>
+    </li>
+    <li><a href="gatley-kitchens-worktops.html">Worktops</a></li>
+    <li><a href="gatley-kitchens-blog.html">Blog</a></li>
+    <li><a href="gatley-kitchens-about.html">About</a></li>
+    <li><a href="kitchen-planner.html" style="color:var(--accent);font-weight:600;">Kitchen Planner</a></li>
+    <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Free Quote</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <h1>Plan Your Kitchen</h1>
+  <p>Draw your room, place your cabinets, and send us your layout — we'll be in touch to arrange a free consultation.</p>
+</div>
+
+<!-- PLANNER -->
+<div class="planner-wrap">
+
+  <div class="step-bar">
+    <div class="step active" id="step-0">1. Draw your room</div>
+    <div class="step" id="step-1">2. Place cabinets</div>
+    <div class="step" id="step-2">3. Get a quote</div>
+  </div>
+
+  <!-- Step 1: Room -->
+  <div class="panel active" id="panel-0">
+    <p class="hint">Enter your room dimensions and click "Set room" for a rectangle, or click points on the canvas to draw an L-shape or any custom outline. Best used on desktop or tablet.</p>
+
+    <div class="dim-row">
+      <label>Width</label>
+      <input type="number" id="guide-w" value="400" min="100" max="900">
+      <span class="dim-unit">cm</span>
+      <label>Depth</label>
+      <input type="number" id="guide-d" value="350" min="100" max="700">
+      <span class="dim-unit">cm</span>
+      <button class="btn accent sm" onclick="applyGuide()">Set room</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn outline sm" onclick="loadExample()">L-shape example</button>
+      <button class="btn outline sm" onclick="undoPoint()">Undo point</button>
+      <button class="btn outline sm" onclick="clearRoom()">Clear</button>
+      <button class="btn sm" onclick="finishRoom()">Finish outline</button>
+    </div>
+
+    <canvas id="room-canvas" width="752" height="420"></canvas>
+    <div class="info-bar" id="room-info">Enter your dimensions above, or click on the canvas to draw a custom room shape</div>
+
+    <div class="nav-row">
+      <span></span>
+      <button class="btn accent" onclick="nextStep(1)">Next: Place cabinets &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Cabinets -->
+  <div class="panel" id="panel-1">
+    <div class="mode-btns">
+      <button class="mode-btn active-mode" id="mode-add" onclick="setMode('add')">Add</button>
+      <button class="mode-btn" id="mode-move" onclick="setMode('move')">Move</button>
+      <button class="mode-btn" id="mode-delete" onclick="setMode('delete')">Delete</button>
+    </div>
+    <p class="hint" id="mode-hint">Select a cabinet type below, then click in the room to place it.</p>
+
+    <div class="cabinet-grid" id="cab-grid"></div>
+
+    <div class="legend">
+      <div class="leg-item"><div class="leg-swatch" style="background:#4A7C59"></div>Base units</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#4A6FA5"></div>Wall units</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#8B5E3C"></div>Tall / larder</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#B85C5C"></div>Appliance space</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#6B6B8A"></div>Island</div>
+    </div>
+
+    <canvas id="cab-canvas" width="752" height="400"></canvas>
+    <div class="info-bar" id="cab-info">0 cabinets placed</div>
+
+    <div class="nav-row">
+      <button class="btn outline" onclick="nextStep(0)">&larr; Back</button>
+      <button class="btn accent" onclick="nextStep(2)">Next: Get a quote &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Quote form -->
+  <div class="panel" id="panel-2">
+
+    <div class="summary-box">
+      <h3>Your layout</h3>
+      <div id="summary-content"></div>
+    </div>
+
+    <div class="trust-bar">
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> Free home visit or showroom appointment</div>
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> No obligation quote</div>
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> Family business, established 2007</div>
+    </div>
+
+    <form id="quote-form" action="https://formspree.io/f/xojkwner" method="POST">
+      <input type="hidden" name="_subject" value="Kitchen Planner Enquiry">
+      <input type="hidden" name="layout_summary" id="hidden-layout">
+      <input type="hidden" name="room_dimensions" id="hidden-dims">
+
+      <div class="form-cols">
+        <div class="form-row">
+          <label>Your name</label>
+          <input type="text" name="name" id="f-name" placeholder="e.g. Sarah Johnson" required>
+        </div>
+        <div class="form-row">
+          <label>Phone number</label>
+          <input type="tel" name="phone" id="f-phone" placeholder="07xxx xxxxxx" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Email address</label>
+        <input type="email" name="email" id="f-email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-cols">
+        <div class="form-row">
+          <label>Postcode</label>
+          <input type="text" name="postcode" id="f-post" placeholder="SK8, M20...">
+        </div>
+        <div class="form-row">
+          <label>Rough budget</label>
+          <select name="budget">
+            <option value="">Prefer not to say</option>
+            <option>Under £5,000</option>
+            <option>£5,000 – £10,000</option>
+            <option>£10,000 – £20,000</option>
+            <option>£20,000+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Anything else?</label>
+        <textarea name="message" placeholder="Timescale, full renovation or just the kitchen, any specific requirements..."></textarea>
+      </div>
+
+      <div class="form-error" id="form-error"></div>
+      <button type="submit" class="submit-btn" id="submit-btn">Request a free consultation</button>
+    </form>
+
+    <div class="nav-row">
+      <button class="btn outline" onclick="nextStep(1)">&larr; Back to layout</button>
+      <span></span>
+    </div>
+  </div>
+
+  <!-- Step 4: Success -->
+  <div class="panel" id="panel-3">
+    <div class="success-msg">
+      <div class="success-icon">&#10003;</div>
+      <h2>Thanks — we'll be in touch</h2>
+      <p>We've received your kitchen plan and will be in touch within one working day to arrange a free home visit or showroom appointment.</p>
+      <div class="success-contact">
+        Call us: <strong>0161 437 8899</strong> &nbsp;&nbsp;|&nbsp;&nbsp; <strong>info@gatleykitchens.co.uk</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="footer-note">Prefer to talk? Call us on <a href="tel:01614378899">0161 437 8899</a> or <a href="gatley-kitchens-quote.html">fill in our quote form</a>.</p>
+
+
+<script>
+const SCALE = 0.125;
+const CAB_TYPES = [
+  {id:'base-600', label:'Base 600',    w:600,  h:580,  color:'#4A7C59', cat:'base'},
+  {id:'base-500', label:'Base 500',    w:500,  h:580,  color:'#4A7C59', cat:'base'},
+  {id:'base-400', label:'Base 400',    w:400,  h:580,  color:'#4A7C59', cat:'base'},
+  {id:'base-300', label:'Base 300',    w:300,  h:580,  color:'#4A7C59', cat:'base'},
+  {id:'base-crn', label:'Corner base', w:950,  h:950,  color:'#3D6B4A', cat:'base'},
+  {id:'sink-800', label:'Sink unit',   w:800,  h:580,  color:'#5B8C6B', cat:'base'},
+  {id:'wall-600', label:'Wall 600',    w:600,  h:320,  color:'#4A6FA5', cat:'wall'},
+  {id:'wall-500', label:'Wall 500',    w:500,  h:320,  color:'#4A6FA5', cat:'wall'},
+  {id:'wall-300', label:'Wall 300',    w:300,  h:320,  color:'#4A6FA5', cat:'wall'},
+  {id:'wall-crn', label:'Corner wall', w:600,  h:600,  color:'#3D5F8A', cat:'wall'},
+  {id:'tall-600', label:'Tall larder', w:600,  h:2150, color:'#8B5E3C', cat:'tall'},
+  {id:'tall-300', label:'Tall 300',    w:300,  h:2150, color:'#8B5E3C', cat:'tall'},
+  {id:'oven-600', label:'Oven housing',w:600,  h:1200, color:'#B85C5C', cat:'appliance'},
+  {id:'fridge',   label:'Fridge space',w:600,  h:1800, color:'#B85C5C', cat:'appliance'},
+  {id:'island',   label:'Island',      w:1200, h:900,  color:'#6B6B8A', cat:'island'},
+];
+
+let roomPts=[], roomClosed=false;
+let cabinets=[], selectedCabType=CAB_TYPES[0];
+let mode='add', dragging=null, dragOX=0, dragOY=0;
+let sc={sx:1,sy:1};
+
+const RC=document.getElementById('room-canvas'), CC=document.getElementById('cab-canvas');
+const rctx=RC.getContext('2d'), cctx=CC.getContext('2d');
+
+function nextStep(n){
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+  document.querySelectorAll('.step').forEach((s,i)=>{s.classList.toggle('active',i===n);s.classList.toggle('done',i<n);});
+  if(n===1){sc.sx=CC.width/RC.width;sc.sy=CC.height/RC.height;drawCab();}
+  if(n===2){buildSummary();}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function gridLines(ctx,W,H){
+  ctx.strokeStyle='#ede9e0';ctx.lineWidth=0.5;
+  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+}
+
+function drawRoom(){
+  const W=RC.width,H=RC.height;
+  rctx.clearRect(0,0,W,H);rctx.fillStyle='#FAFAF7';rctx.fillRect(0,0,W,H);
+  gridLines(rctx,W,H);
+  if(!roomPts.length)return;
+  rctx.beginPath();rctx.moveTo(roomPts[0].x,roomPts[0].y);
+  roomPts.slice(1).forEach(p=>rctx.lineTo(p.x,p.y));
+  if(roomClosed){rctx.closePath();rctx.fillStyle='rgba(249,246,241,0.9)';rctx.fill();}
+  rctx.strokeStyle='#1c1a17';rctx.lineWidth=2.5;rctx.stroke();
+  if(roomClosed&&roomPts.length>=2){
+    const dx=roomPts[1].x-roomPts[0].x,dy=roomPts[1].y-roomPts[0].y;
+    rctx.fillStyle='#aaa';rctx.font='11px Jost,sans-serif';rctx.textAlign='center';
+    rctx.fillText(Math.round(Math.sqrt(dx*dx+dy*dy)/SCALE/10)+'cm',(roomPts[0].x+roomPts[1].x)/2,(roomPts[0].y+roomPts[1].y)/2-8);
+  }
+  roomPts.forEach((p,i)=>{rctx.beginPath();rctx.arc(p.x,p.y,5,0,Math.PI*2);rctx.fillStyle=i===0?'#8b6f47':'#1c1a17';rctx.fill();});
+  if(!roomClosed&&roomPts.length>2){rctx.beginPath();rctx.arc(roomPts[0].x,roomPts[0].y,15,0,Math.PI*2);rctx.strokeStyle='rgba(139,111,71,0.35)';rctx.lineWidth=1.5;rctx.stroke();}
+}
+
+function applyGuide(){
+  const gw=(parseInt(document.getElementById('guide-w').value)||400)*10;
+  const gd=(parseInt(document.getElementById('guide-d').value)||350)*10;
+  const sw=gw*SCALE,sh=gd*SCALE,ox=(RC.width-sw)/2,oy=(RC.height-sh)/2;
+  roomPts=[{x:ox,y:oy},{x:ox+sw,y:oy},{x:ox+sw,y:oy+sh},{x:ox,y:oy+sh}];
+  roomClosed=true;drawRoom();
+  document.getElementById('room-info').textContent='Room set to '+Math.round(gw/10)+'cm × '+Math.round(gd/10)+'cm';
+}
+
+function loadExample(){
+  roomPts=[{x:60,y:60},{x:RC.width-70,y:60},{x:RC.width-70,y:220},{x:330,y:220},{x:330,y:360},{x:60,y:360}];
+  roomClosed=true;drawRoom();
+  document.getElementById('room-info').textContent='L-shaped example loaded';
+}
+
+function finishRoom(){if(roomPts.length<3){alert('Place at least 3 points first');return;}roomClosed=true;drawRoom();document.getElementById('room-info').textContent='Room outline complete';}
+function undoPoint(){if(roomPts.length){roomPts.pop();roomClosed=false;drawRoom();}}
+function clearRoom(){roomPts=[];roomClosed=false;drawRoom();document.getElementById('room-info').textContent='Click the canvas to place room corners';}
+
+RC.addEventListener('click',function(e){
+  if(roomClosed)return;
+  const r=RC.getBoundingClientRect();
+  const x=(e.clientX-r.left)*(RC.width/r.width),y=(e.clientY-r.top)*(RC.height/r.height);
+  if(roomPts.length>2){const dx=x-roomPts[0].x,dy=y-roomPts[0].y;if(Math.sqrt(dx*dx+dy*dy)<18){finishRoom();return;}}
+  roomPts.push({x,y});drawRoom();
+  document.getElementById('room-info').textContent=roomPts.length+' point'+(roomPts.length!==1?'s':'')+' — click the gold dot to close, or use Finish outline';
+});
+
+/* Cabinet canvas */
+function cW(c){return c.type.w*SCALE*sc.sx;}
+function cH(c){return Math.min(c.type.h,700)*SCALE*sc.sy;}
+
+function drawCab(){
+  const W=CC.width,H=CC.height;
+  cctx.clearRect(0,0,W,H);cctx.fillStyle='#FAFAF7';cctx.fillRect(0,0,W,H);
+  gridLines(cctx,W,H);
+  if(roomPts.length>2){
+    cctx.beginPath();cctx.moveTo(roomPts[0].x*sc.sx,roomPts[0].y*sc.sy);
+    roomPts.slice(1).forEach(p=>cctx.lineTo(p.x*sc.sx,p.y*sc.sy));
+    if(roomClosed){cctx.closePath();cctx.fillStyle='rgba(249,246,241,0.8)';cctx.fill();}
+    cctx.strokeStyle='#1c1a17';cctx.lineWidth=2;cctx.stroke();
+  }
+  cabinets.forEach(c=>{
+    const w=cW(c),h=cH(c);
+    cctx.fillStyle=c.type.color+'BB';cctx.fillRect(c.x-w/2,c.y-h/2,w,h);
+    cctx.strokeStyle=c.type.color;cctx.lineWidth=1.5;cctx.strokeRect(c.x-w/2,c.y-h/2,w,h);
+    cctx.fillStyle='#fff';cctx.font=Math.max(8,Math.min(10,w/7))+'px Jost,sans-serif';
+    cctx.textAlign='center';cctx.textBaseline='middle';cctx.fillText(c.type.label,c.x,c.y);
+  });
+}
+
+/* Build cabinet grid */
+(function(){
+  const icons={base:'▭',wall:'▬',tall:'▮',appliance:'⬚',island:'⬜'};
+  const g=document.getElementById('cab-grid');
+  CAB_TYPES.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='cab-btn'+(c===selectedCabType?' selected-cab':'');
+    const dim=c.cat==='tall'?c.w+'mm':c.w+'×'+Math.min(c.h,600)+'mm';
+    btn.innerHTML='<span class="cab-icon" style="color:'+c.color+'">'+(icons[c.cat]||'▭')+'</span>'+c.label+'<br><span style="color:#ccc;font-size:9px">'+dim+'</span>';
+    btn.onclick=()=>{selectedCabType=c;document.querySelectorAll('.cab-btn').forEach(b=>b.classList.remove('selected-cab'));btn.classList.add('selected-cab');setMode('add');};
+    g.appendChild(btn);
+  });
+})();
+
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active-mode'));
+  const el=document.getElementById('mode-'+m);if(el)el.classList.add('active-mode');
+  const h={add:'Select a cabinet below then click in the room to place it.',move:'Click and drag a cabinet to reposition it.',delete:'Click a cabinet to remove it.'};
+  document.getElementById('mode-hint').textContent=h[m]||'';
+  CC.style.cursor=m==='move'?'grab':m==='delete'?'not-allowed':'crosshair';
+}
+
+function getXY(canvas,e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};}
+function findCab(x,y){for(let i=cabinets.length-1;i>=0;i--){const c=cabinets[i],w=cW(c),h=cH(c);if(x>=c.x-w/2&&x<=c.x+w/2&&y>=c.y-h/2&&y<=c.y+h/2)return i;}return -1;}
+
+CC.addEventListener('mousedown',function(e){
+  const {x,y}=getXY(CC,e);
+  if(mode==='add'){cabinets.push({type:selectedCabType,x,y});drawCab();document.getElementById('cab-info').textContent=cabinets.length+' cabinet'+(cabinets.length!==1?'s':'')+' placed';}
+  else if(mode==='delete'){const i=findCab(x,y);if(i>=0){cabinets.splice(i,1);drawCab();}}
+  else if(mode==='move'){const i=findCab(x,y);if(i>=0){dragging=i;dragOX=x-cabinets[i].x;dragOY=y-cabinets[i].y;CC.style.cursor='grabbing';}}
+});
+CC.addEventListener('mousemove',function(e){if(dragging===null)return;const {x,y}=getXY(CC,e);cabinets[dragging].x=x-dragOX;cabinets[dragging].y=y-dragOY;drawCab();});
+CC.addEventListener('mouseup',()=>{dragging=null;if(mode==='move')CC.style.cursor='grab';});
+
+/* Summary */
+function buildSummary(){
+  const counts={};cabinets.forEach(c=>{counts[c.type.label]=(counts[c.type.label]||0)+1;});
+  const el=document.getElementById('summary-content');
+  el.innerHTML=Object.keys(counts).length
+    ?Object.entries(counts).map(([k,v])=>'<div class="summary-row"><span>'+k+'</span><span>&times;'+v+'</span></div>').join('')
+    :'<div class="summary-row"><span>No cabinets placed — we can discuss the layout in person.</span></div>';
+  document.getElementById('hidden-layout').value=Object.entries(counts).map(([k,v])=>k+' \xd7'+v).join(', ')||'None';
+  document.getElementById('hidden-dims').value=document.getElementById('guide-w').value+'cm \xd7 '+document.getElementById('guide-d').value+'cm';
+}
+
+/* Formspree submit */
+document.getElementById('quote-form').addEventListener('submit',async function(e){
+  e.preventDefault();
+  const btn=document.getElementById('submit-btn'),err=document.getElementById('form-error');
+  err.style.display='none';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Sending\u2026';
+  try{
+    const res=await fetch(this.action,{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}});
+    if(res.ok){nextStep(3);}else{throw new Error();}
+  }catch{
+    err.textContent='Something went wrong \u2014 please try again or call us on 0161 437 8899.';
+    err.style.display='block';btn.disabled=false;btn.textContent='Request a free consultation';
+  }
+});
+
+/* Mobile nav */
+const burger=document.getElementById('navBurger'),navLinks=document.querySelector('.nav-links');
+if(burger&&navLinks){
+  burger.addEventListener('click',()=>{burger.classList.toggle('open');navLinks.classList.toggle('open');});
+  navLinks.querySelectorAll('a').forEach(a=>{a.addEventListener('click',()=>{if(!a.parentElement.classList.contains('nav-dropdown')){burger.classList.remove('open');navLinks.classList.remove('open');}});});
+  const dd=document.querySelector('.nav-dropdown');
+  if(dd&&window.innerWidth<=800){dd.querySelector('a').addEventListener('click',e=>{e.preventDefault();dd.classList.toggle('mobile-open');});}
+}
+
+/* Init */
+sc.sx=CC.width/RC.width;sc.sy=CC.height/RC.height;
+applyGuide();
+drawCab();
+</script>
+</body>
+</html>
