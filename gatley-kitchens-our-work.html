@@ -466,11 +466,11 @@
 
 <div class="contact-bar">
   <span>📞 <a href="tel:01614378899">0161 437 8899</a></span>
-  <span>✉️ <a href="/cdn-cgi/l/email-protection#573e393138173036233b322e3c3e23343f32392479343879223c"><span class="__cf_email__" data-cfemail="89e0e7efe6c9eee8fde5ecf0e2e0fdeae1ece7faa7eae6a7fce2">[email&#160;protected]</span></a></span>
+  <span>✉️ <a href="mailto:info@gatleykitchens.co.uk">info@gatleykitchens.co.uk</a></span>
   <span>💬 <a href="https://wa.me/447871643157" target="_blank">WhatsApp</a></span>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Mobile nav
   const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
@@ -539,4 +539,10 @@
     const lightbox = document.getElementById('lightbox');
     if (lightbox.classList.contains('active')) {
       if (e.key === 'Escape') closeLightbox({ target: lightbox });
-   
+      if (e.key === 'ArrowLeft') navigateLightbox(-1, { stopPropagation: () => {} });
+      if (e.key === 'ArrowRight') navigateLightbox(1, { stopPropagation: () => {} });
+    }
+  });
+</script>
+</body>
+</html>
