@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gatley Kitchens — Dashboard</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMWExNzE0Ii8+CiAgPHRleHQgeD0iMTYiIHk9IjIzIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIyMiIgZm9udC13ZWlnaHQ9ImJvbGQiIAogICAgICAgIGZpbGw9IiNjODkyMmEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkc8L3RleHQ+Cjwvc3ZnPg==">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -144,16 +145,28 @@ input,select,textarea{font-family:'Jost',sans-serif}
 /* Next 3 months highlight */
 .next3{background:#1a1f2d;border:1px solid #2e5a8b;padding:14px;margin-bottom:16px}
 .next3 h4{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#7ab8e8;margin-bottom:12px}
-.next3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.next3-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
 .next3-card{background:#1a1714;border:1px solid #2e5a8b;padding:10px 12px}
 .next3-card .n3m{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#7ab8e8;margin-bottom:6px}
 .next3-card .n3v{font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1;margin-bottom:3px}
 .next3-card .n3sub{font-size:9px;color:#8a7d72}
 
+/* Statement Cards */
+.stmt-section{background:#221f1b;border:1px solid #3a3430;padding:14px;margin-bottom:16px}
+.stmt-section h4{font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d72;margin-bottom:12px}
+.stmt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stmt-card{background:#1a1714;border:1px solid #3a3430;padding:10px 12px;cursor:pointer}
+.stmt-card:hover{border-color:#8a7d72}
+.stmt-card .sc-name{font-family:'Cormorant Garamond',serif;font-size:14px;margin-bottom:6px;color:#faf6f0}
+.stmt-card .sc-row{display:flex;justify-content:space-between;font-size:9px;margin-bottom:3px;color:#8a7d72}
+.stmt-card .sc-row .sc-label{color:#8a7d72}
+.stmt-card .sc-row .sc-val{color:#faf6f0;font-weight:500}
+
 @media(max-width:900px){
   .rev-tiles{grid-template-columns:repeat(3,1fr)}
   .rev-bottom{grid-template-columns:1fr 1fr}
   .next3-grid{grid-template-columns:1fr}
+  .stmt-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:700px){
   .kboard.cols4{grid-template-columns:repeat(2,1fr)}
@@ -161,6 +174,7 @@ input,select,textarea{font-family:'Jost',sans-serif}
   .rev-tiles{grid-template-columns:repeat(2,1fr)}
   .rev-bottom{grid-template-columns:1fr}
   .form-grid{grid-template-columns:1fr}
+  .stmt-grid{grid-template-columns:1fr}
 }
 @media(max-width:420px){
   .kboard.cols4,.kboard.cols5{grid-template-columns:1fr}
@@ -215,7 +229,7 @@ input,select,textarea{font-family:'Jost',sans-serif}
     </div>
     <div class="rev-tiles" id="revTiles"></div>
     <div class="next3" id="next3Wrap">
-      <h4>&#9654; Next 3 Months — Expected Profit</h4>
+      <h4 id="next3Heading">&#9654; Monthly Overview</h4>
       <div class="next3-grid" id="next3Grid"></div>
     </div>
     <div class="chart-wrap">
@@ -228,6 +242,10 @@ input,select,textarea{font-family:'Jost',sans-serif}
       </div>
       <div class="bars" id="barChart"></div>
     </div>
+    <div class="stmt-section">
+      <h4>Job Statements — Click to Edit</h4>
+      <div class="stmt-grid" id="statementCards"></div>
+    </div>
     <div class="rev-bottom">
       <div class="rev-box">
         <h4 id="cumLabel">Cumulative Actual</h4>
@@ -238,7 +256,7 @@ input,select,textarea{font-family:'Jost',sans-serif}
         <div id="expectedList"></div>
       </div>
       <div class="rev-box">
-        <h4 id="invoicedLabel">Invoiced Jobs</h4>
+        <h4 id="invoicedLabel">Statements Jobs</h4>
         <div id="invoicedList"></div>
       </div>
     </div>
@@ -290,17 +308,25 @@ input,select,textarea{font-family:'Jost',sans-serif}
         <div class="form-field"><label>Expected Profit £</label><input id="jf_exprofit" type="number" placeholder="e.g. 3500"></div>
         <div class="form-field"><label>Job Start Date</label><input id="jf_startdate" type="date"></div>
       </div>
-      <div class="rev-hint">Enter when job is booked in. Appears on Revenue chart as expected until invoiced.</div>
+      <div class="form-grid" style="margin-top:9px">
+        <div class="form-field"><label>Deposit Amount £</label><input id="jf_deposit" type="number" placeholder="e.g. 1000"></div>
+        <div class="form-field"><label>Deposit Date</label><input id="jf_depositdate" type="date"></div>
+      </div>
+      <div class="rev-hint">Enter when job is booked in. Appears on Revenue chart as expected until statementd.</div>
     </div>
 
-    <!-- FINAL PROFIT (invoiced jobs) -->
+    <!-- FINAL PROFIT (statementd jobs) -->
     <div class="rev-section">
-      <div class="rs-label">&#10003; Actual / Invoiced</div>
+      <div class="rs-label">&#10003; Actual / Statements</div>
       <div class="form-grid">
         <div class="form-field"><label>Final Profit £</label><input id="jf_profit" type="number" placeholder="e.g. 3200"></div>
-        <div class="form-field"><label>Invoice Date</label><input id="jf_invdate" type="date"></div>
+        <div class="form-field"><label>Statement Date</label><input id="jf_invdate" type="date"></div>
       </div>
-      <div class="rev-hint">Once final profit + invoice date are entered, this replaces the expected figure on the chart.</div>
+      <div class="form-grid" style="margin-top:9px">
+        <div class="form-field"><label>Statement Amount £</label><input id="jf_statementamt" type="number" placeholder="e.g. 2500"></div>
+        <div class="form-field"></div>
+      </div>
+      <div class="rev-hint">Once final profit + statement date are entered, this replaces the expected figure on the chart.</div>
     </div>
 
     <div class="form-field" style="margin-top:10px"><label>Notes</label><textarea id="jf_notes" rows="3"></textarea></div>
@@ -536,7 +562,7 @@ function renderJobs(){
   document.getElementById('jobsInfo').innerHTML=
     '<span style="color:#7ab8e8">Not Started</span> → <span style="color:#e8b96a">Quotes</span> &nbsp;·&nbsp; '
     +'<span style="color:#6ec87a">Won</span> → <span style="color:#7ab8e8">Orders</span> &nbsp;·&nbsp; '
-    +'Tap card to move · Add Expected Profit + Start Date when booking · Add Final Profit + Invoice Date when complete';
+    +'Tap card to move · Add Expected Profit + Start Date when booking · Add Final Profit + Statement Date when complete';
   var tilesEl=document.getElementById('jobsTiles'); tilesEl.innerHTML='';
   J_COLS.forEach(function(col){
     var div=document.createElement('div'); div.className='tile';
@@ -555,7 +581,7 @@ function renderJobs(){
       var cid=isA?'a'+item.id:'j'+item.id;
       var isE=expandedJ===cid;
       var od=item.dueDate&&new Date(item.dueDate)<new Date();
-      var hasFinal=hasNum(item.finalProfit)&&item.invoicedDate;
+      var hasFinal=hasNum(item.finalProfit)&&item.statementDate;
       var hasExp=hasNum(item.expectedProfit)&&item.startDate;
       var priCol=item.priority==='High'?'#e07070':item.priority==='Low'?'#3a3430':'#8b6a2e';
       var priTxt=item.priority==='High'?'#e07070':item.priority==='Low'?'#8a7d72':'#e8b96a';
@@ -576,7 +602,7 @@ function renderJobs(){
         +(item.value>0?'<div class="cval" style="color:'+tc+'">'+fm(item.value)+'</div>':'')
         +(hasFinal?'<div class="cprofit">Profit: '+fm(item.finalProfit)+'</div>':'')
         +(!hasFinal&&hasExp?'<div class="cexpected">Expected: '+fm(item.expectedProfit)+'</div>':'')
-        +(hasFinal&&item.invoicedDate?'<div class="cinv">Invoiced: '+fd(item.invoicedDate)+'</div>':'')
+        +(hasFinal&&item.statementDate?'<div class="cinv">Statements: '+fd(item.statementDate)+'</div>':'')
         +(!hasFinal&&item.startDate?'<div class="cstart">Starts: '+fd(item.startDate)+'</div>':'')
         +(!isA&&item.priority?'<span class="cpri" style="border-color:'+priCol+';color:'+priTxt+'">'+item.priority+'</span>':'')
         +(item.dueDate?'<div class="cdue" style="color:'+(od?'#e07070':'#8a7d72')+'">Due: '+fd(item.dueDate)+(od?' ⚠':'')+'</div>':'')
@@ -586,7 +612,7 @@ function renderJobs(){
         +'</div>';
     });
     var canAdd=col==='upcoming'||col==='snagging'||col==='invoices';
-    colEl.innerHTML=head+cards+(canAdd?'<button class="add-btn" onclick="openJobModal(0,event,\''+col+'\')">+ Add</button>':'');
+    colEl.innerHTML=head+cards+(canAdd?'<button class="add-btn" onclick="openJobModal(null,event,\''+col+'\')">+ Add</button>':'');
     board.appendChild(colEl);
   });
 }
@@ -594,7 +620,7 @@ function toggleJob(cid){ expandedJ=expandedJ===cid?null:cid; renderJobs(); }
 function pinJobTo(leadId,col,e){
   e.stopPropagation();
   var lead=db.leads.find(function(l){ return l.id===leadId; }); if(!lead) return;
-  db.manualJobs.push({id:db.nextJobId++,leadId:leadId,name:lead.name,column:col,priority:'Normal',dueDate:'',value:lead.value||0,notes:lead.notes||'',expectedProfit:'',startDate:'',finalProfit:'',invoicedDate:''});
+  db.manualJobs.push({id:db.nextJobId++,leadId:leadId,name:lead.name,column:col,priority:'Normal',dueDate:'',value:lead.value||0,notes:lead.notes||'',expectedProfit:'',startDate:'',finalProfit:'',statementDate:''});
   saveDB(); expandedJ=null; renderJobs();
 }
 function moveJob(id,col,e){ e.stopPropagation(); db.manualJobs=db.manualJobs.map(function(j){ return j.id===id?Object.assign({},j,{column:col}):j; }); saveDB(); renderJobs(); }
@@ -606,10 +632,10 @@ function renderRevenue(){
   var now=new Date();
 
   // ---- Build data sets ----
-  // 1. Manual jobs with FINAL profit + invoice date → actual
-  var actualJobs=db.manualJobs.filter(function(j){ return j.invoicedDate&&hasNum(j.finalProfit); });
+  // 1. Manual jobs with FINAL profit + statement date → actual
+  var actualJobs=db.manualJobs.filter(function(j){ return hasNum(j.finalProfit)&&(j.startDate||j.statementDate); });
   // 2. Manual jobs with EXPECTED profit + start date but NO final yet → expected
-  var expectedJobs=db.manualJobs.filter(function(j){ return j.startDate&&hasNum(j.expectedProfit)&&!(j.invoicedDate&&hasNum(j.finalProfit)); });
+  var expectedJobs=db.manualJobs.filter(function(j){ return j.startDate&&hasNum(j.expectedProfit)&&!hasNum(j.finalProfit); });
   // 3. Won leads with expectedProfit set and no manual job card taking over
   var pinnedLeadIds={};
   db.manualJobs.forEach(function(j){ if(j.leadId) pinnedLeadIds[j.leadId]=true; });
@@ -617,7 +643,7 @@ function renderRevenue(){
 
   // ---- Year list ----
   var years=[];
-  actualJobs.forEach(function(j){ var y=new Date(j.invoicedDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
+  actualJobs.forEach(function(j){ var y=new Date(j.startDate||j.statementDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
   expectedJobs.forEach(function(j){ var y=new Date(j.startDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
   if(years.indexOf(now.getFullYear())<0) years.push(now.getFullYear());
   if(years.indexOf(now.getFullYear()+1)<0) years.push(now.getFullYear()+1);
@@ -637,7 +663,7 @@ function renderRevenue(){
   for(var i=0;i<12;i++){ actByMonth[i]={total:0,jobs:[]}; expByMonth[i]={total:0,jobs:[]}; }
 
   actualJobs.forEach(function(j){
-    var d=new Date(j.invoicedDate); if(isNaN(d)||d.getFullYear()!==revYear) return;
+    var d=new Date(j.startDate||j.statementDate); if(isNaN(d)||d.getFullYear()!==revYear) return;
     var mi=d.getMonth(); actByMonth[mi].total+=Number(j.finalProfit)||0; actByMonth[mi].jobs.push(j);
   });
   expectedJobs.forEach(function(j){
@@ -654,42 +680,52 @@ function renderRevenue(){
   // ---- Summary figures ----
   var ytdActual=0, totalExpected=0;
   for(var i=0;i<12;i++){ ytdActual+=actByMonth[i].total; totalExpected+=expByMonth[i].total; }
-  var totalJobs=actualJobs.filter(function(j){ return new Date(j.invoicedDate).getFullYear()===revYear; }).length;
-  var gap=Math.max(0,TARGET-ytdActual);
+  var totalJobs=actualJobs.filter(function(j){ return new Date(j.startDate||j.statementDate).getFullYear()===revYear; }).length;
+  var gap=Math.max(0,TARGET-(ytdActual+totalExpected));
 
   // ---- Summary tiles ----
   document.getElementById('revTiles').innerHTML='';
   [
-    ['YTD Actual Profit', ytdActual>0?fm(ytdActual):'—', '#6ec87a'],
+    ['YTD Profit (Actual + Booked)', (ytdActual+totalExpected)>0?fm(ytdActual+totalExpected):'—', '#b88de8'],
+    ['YTD Invoiced', ytdActual>0?fm(ytdActual):'—', '#6ec87a'],
     ['Expected / Booked', totalExpected>0?fm(totalExpected):'—', '#7ab8e8'],
-    ['Combined View', (ytdActual+totalExpected)>0?fm(ytdActual+totalExpected):'—', '#b88de8'],
     ['Jobs Invoiced', totalJobs, '#e8b96a'],
-    ['Gap to £102k', ytdActual>0?(gap>0?fm(gap):'✓ Hit!'):'Log jobs', gap===0?'#6ec87a':'#e07070']
+    ['Gap to £102k', (ytdActual+totalExpected)>0?(gap>0?fm(gap):'✓ Hit!'):'Log jobs', gap===0?'#6ec87a':'#e07070']
   ].forEach(function(t){
     var div=document.createElement('div'); div.className='rev-tile';
     div.innerHTML='<div class="rtv" style="color:'+t[2]+'">'+t[1]+'</div><div class="rtl">'+t[0]+'</div>';
     document.getElementById('revTiles').appendChild(div);
   });
 
-  // ---- Next 3 months ----
+  // ---- Monthly Overview (all months with data) ----
   var next3El=document.getElementById('next3Grid'); next3El.innerHTML='';
+  var headEl=document.getElementById('next3Heading');
+  if(headEl) headEl.innerHTML='&#9654; Monthly Overview — '+revYear;
   var shown=0;
-  for(var offset=0;offset<12&&shown<3;offset++){
-    var mi=(now.getMonth()+offset)%12;
-    var yr=revYear+(now.getMonth()+offset>=12?1:0);
-    if(yr!==revYear) continue; // only show within selected year for simplicity
+  for(var mi=0;mi<12;mi++){
     var expTotal=expByMonth[mi].total;
     var actTotal=actByMonth[mi].total;
-    if(expTotal>0||actTotal>0||offset<3){
+    var isCurrent=mi===now.getMonth()&&revYear===now.getFullYear();
+    if(expTotal>0||actTotal>0||isCurrent){
       var card=document.createElement('div'); card.className='next3-card';
-      var isActual=actTotal>0;
-      card.innerHTML='<div class="n3m">'+MONTHS[mi]+(yr!==now.getFullYear()?' '+yr:'')+'</div>'
-        +'<div class="n3v" style="color:'+(isActual?'#6ec87a':'#7ab8e8')+'">'+(isActual?fm(actTotal):expTotal>0?fm(expTotal):'Nothing yet')+'</div>'
-        +'<div class="n3sub">'+(isActual?'Actual (invoiced)':(expTotal>0?expByMonth[mi].jobs.length+' job'+(expByMonth[mi].jobs.length!==1?'s':'')+' booked':'No jobs booked'))+'</div>';
+      if(isCurrent) card.style.borderColor='#c8922a';
+      var hasAct=actTotal>0; var hasExp=expTotal>0;
+      var displayVal='Nothing yet'; var displayColor='#8a7d72';
+      if(hasAct&&hasExp){ displayVal=fm(actTotal+expTotal); displayColor='#b88de8'; }
+      else if(hasAct){ displayVal=fm(actTotal); displayColor='#6ec87a'; }
+      else if(hasExp){ displayVal=fm(expTotal); displayColor='#7ab8e8'; }
+      var subText='';
+      if(hasAct&&hasExp) subText='<span style="color:#6ec87a">'+fm(actTotal)+' inv</span> + <span style="color:#7ab8e8">'+fm(expTotal)+' bkd</span>';
+      else if(hasAct) subText='Invoiced';
+      else if(hasExp) subText=expByMonth[mi].jobs.length+' job'+(expByMonth[mi].jobs.length!==1?'s':'')+' booked';
+      else subText='Current month';
+      card.innerHTML='<div class="n3m" style="color:'+(isCurrent?'#c8922a':'#7ab8e8')+'">'+MONTHS[mi]+(isCurrent?' ●':'')+'</div>'
+        +'<div class="n3v" style="color:'+displayColor+'">'+displayVal+'</div>'
+        +'<div class="n3sub">'+subText+'</div>';
       next3El.appendChild(card); shown++;
     }
   }
-  if(shown===0){ next3El.innerHTML='<div style="font-size:11px;color:#8a7d72;font-style:italic">No jobs booked for the next 3 months. Add Expected Profit + Start Date to job cards to see them here.</div>'; }
+  if(shown===0){ next3El.innerHTML='<div style="font-size:11px;color:#8a7d72;font-style:italic">No jobs logged yet. Add Expected Profit + Start Date to job cards.</div>'; }
 
   // ---- Bar chart ----
   document.getElementById('chartLabel').textContent='Monthly Profit — '+revYear;
@@ -715,27 +751,54 @@ function renderRevenue(){
   }
 
   // ---- Cumulative actual ----
-  document.getElementById('cumLabel').textContent='Cumulative Actual — '+revYear;
+  document.getElementById('cumLabel').textContent='Monthly Breakdown — '+revYear;
   var cumEl=document.getElementById('cumList'); cumEl.innerHTML='';
-  var actMonths=[];
-  for(var i=0;i<12;i++){ if(actByMonth[i].total>0) actMonths.push(i); }
-  if(actMonths.length===0){
-    cumEl.innerHTML='<div class="rev-empty">No invoiced jobs in '+revYear+' yet. Add Final Profit + Invoice Date to job cards.</div>';
+  var allMonths=[];
+  for(var i=0;i<12;i++){ if(actByMonth[i].total>0||expByMonth[i].total>0) allMonths.push(i); }
+  if(allMonths.length===0){
+    cumEl.innerHTML='<div class="rev-empty">No jobs in '+revYear+' yet. Add Expected Profit + Start Date to job cards.</div>';
   } else {
     var cum=0;
-    actMonths.forEach(function(i){
-      cum+=actByMonth[i].total;
+    allMonths.forEach(function(i){
+      var act=actByMonth[i].total;
+      var exp=expByMonth[i].total;
+      var total=act+exp;
+      cum+=total;
       var row=document.createElement('div'); row.className='rev-row';
       row.innerHTML='<div class="rn">'+MONTHS[i]+'</div>'
         +'<div style="display:flex;gap:12px;align-items:center">'
-        +'<div class="rp" style="color:#6ec87a">'+fm(actByMonth[i].total)+'</div>'
+        +(act>0?'<div class="rp" style="color:#6ec87a">'+fm(act)+'</div>':'')
+        +(exp>0?'<div class="rp" style="color:#7ab8e8">'+fm(exp)+'</div>':'')
         +'<div style="font-size:10px;color:#8a7d72">'+fm(cum)+'</div>'
         +'</div>';
       cumEl.appendChild(row);
     });
     var tot=document.createElement('div'); tot.className='rev-total';
-    tot.innerHTML='<span>Total</span><strong style="color:#6ec87a">'+fm(ytdActual)+'</strong>';
+    tot.innerHTML='<span>Total</span><strong style="color:#b88de8">'+fm(ytdActual+totalExpected)+'</strong>';
     cumEl.appendChild(tot);
+  }
+
+  // ---- Statement Cards for Won Jobs ----
+  var stmtEl=document.getElementById('statementCards'); stmtEl.innerHTML='';
+  var wonLeads=db.leads.filter(function(l){ return l.status==='won'; });
+  wonLeads.forEach(function(lead){
+    // Try to find matching job by leadId first, then by name
+    var job=db.manualJobs.find(function(j){ return j.leadId===lead.id; });
+    if(!job) job=db.manualJobs.find(function(j){ return j.name===lead.name; });
+    
+    var card=document.createElement('div'); card.className='stmt-card';
+    if(job) card.onclick=function(){ openJobModal(job.id); };
+    
+    var html='<div class="sc-name">'+h(lead.name)+'</div>';
+    html+='<div class="sc-row"><span class="sc-label">Job Total:</span><span class="sc-val">'+(job&&job.value?fm(job.value):(lead.value?fm(lead.value):'—'))+'</span></div>';
+    html+='<div class="sc-row"><span class="sc-label">Start Date:</span><span class="sc-val">'+(job&&job.startDate?fd(job.startDate):(lead.date?fd(lead.date):'—'))+'</span></div>';
+    html+='<div class="sc-row"><span class="sc-label">Deposit:</span><span class="sc-val">'+(job&&job.depositAmount?fm(job.depositAmount)+(job.depositDate?' ('+fd(job.depositDate)+')':''):'—')+'</span></div>';
+    html+='<div class="sc-row"><span class="sc-label">Statement:</span><span class="sc-val">'+(job&&job.statementAmount?fm(job.statementAmount)+(job.statementDate?' ('+fd(job.statementDate)+')':''):'—')+'</span></div>';
+    card.innerHTML=html;
+    stmtEl.appendChild(card);
+  });
+  if(wonLeads.length===0){
+    stmtEl.innerHTML='<div style="font-size:11px;color:#8a7d72;font-style:italic;grid-column:1/-1">No won jobs yet. Mark leads as "won" to see them here.</div>';
   }
 
   // ---- Expected jobs list ----
@@ -762,17 +825,17 @@ function renderRevenue(){
     expEl.appendChild(expTot);
   }
 
-  // ---- Invoiced jobs list ----
-  document.getElementById('invoicedLabel').textContent='Invoiced Jobs — '+revYear;
+  // ---- Statements jobs list ----
+  document.getElementById('invoicedLabel').textContent='Statements Jobs — '+revYear;
   var invEl=document.getElementById('invoicedList'); invEl.innerHTML='';
-  var invJobs=actualJobs.filter(function(j){ return new Date(j.invoicedDate).getFullYear()===revYear; })
-    .sort(function(a,b){ return new Date(b.invoicedDate)-new Date(a.invoicedDate); });
+  var invJobs=actualJobs.filter(function(j){ return new Date(j.statementDate).getFullYear()===revYear; })
+    .sort(function(a,b){ return new Date(b.statementDate)-new Date(a.statementDate); });
   if(invJobs.length===0){
     invEl.innerHTML='<div class="rev-empty">No invoiced jobs for '+revYear+' yet.</div>';
   } else {
     invJobs.forEach(function(j){
       var row=document.createElement('div'); row.className='rev-row';
-      row.innerHTML='<div class="rn">'+h(j.name)+'<small>'+fd(j.invoicedDate)+'</small></div>'
+      row.innerHTML='<div class="rn">'+h(j.name)+'<small>'+fd(j.statementDate)+'</small></div>'
         +'<div class="rp" style="color:#6ec87a">'+fm(j.finalProfit)+'</div>';
       invEl.appendChild(row);
     });
@@ -821,7 +884,8 @@ function saveLeadModal(){
 // =========================================================
 function openJobModal(id,e,defaultCol){
   e&&e.stopPropagation();
-  var job=id?db.manualJobs.find(function(j){ return j.id===id; }):null;
+  editingJob=null;
+  var job=(id||id===0&&id!==null)?db.manualJobs.find(function(j){ return j.id===id; }):null;
   editingJob=job||null;
   document.getElementById('jobModalTitle').textContent=job?'Edit — '+job.name:'Add Job';
   document.getElementById('jf_name').value=job?job.name:'';
@@ -831,8 +895,11 @@ function openJobModal(id,e,defaultCol){
   document.getElementById('jf_val').value=job?(job.value||''):'';
   document.getElementById('jf_exprofit').value=job?(job.expectedProfit!==undefined&&job.expectedProfit!==''?job.expectedProfit:''):'';
   document.getElementById('jf_startdate').value=job?(job.startDate||''):'';
+  document.getElementById('jf_deposit').value=job?(job.depositAmount!==undefined&&job.depositAmount!==''?job.depositAmount:''):'';
+  document.getElementById('jf_depositdate').value=job?(job.depositDate||''):'';
   document.getElementById('jf_profit').value=job?(job.finalProfit!==undefined&&job.finalProfit!==''?job.finalProfit:''):'';
-  document.getElementById('jf_invdate').value=job?(job.invoicedDate||''):'';
+  document.getElementById('jf_invdate').value=job?(job.statementDate||''):'';
+  document.getElementById('jf_statementamt').value=job?(job.statementAmount!==undefined&&job.statementAmount!==''?job.statementAmount:''):'';
   document.getElementById('jf_notes').value=job?(job.notes||''):'';
   document.getElementById('delJobBtn').style.display=job?'block':'none';
   document.getElementById('jobModal').style.display='flex';
@@ -845,6 +912,7 @@ document.getElementById('delJobBtn').onclick=function(){
   saveDB(); closeJobModal(); renderJobs(); renderRevenue();
 };
 function saveJobModal(){
+  console.log('saveJobModal called, editingJob:', editingJob, 'manualJobs count:', db.manualJobs.length);
   var d={
     name:document.getElementById('jf_name').value,
     column:document.getElementById('jf_col').value,
@@ -853,13 +921,24 @@ function saveJobModal(){
     value:parseFloat(document.getElementById('jf_val').value)||0,
     expectedProfit:numOrEmpty(document.getElementById('jf_exprofit').value),
     startDate:document.getElementById('jf_startdate').value,
+    depositAmount:numOrEmpty(document.getElementById('jf_deposit').value),
+    depositDate:document.getElementById('jf_depositdate').value,
     finalProfit:numOrEmpty(document.getElementById('jf_profit').value),
-    invoicedDate:document.getElementById('jf_invdate').value,
+    statementDate:document.getElementById('jf_invdate').value,
+    statementAmount:numOrEmpty(document.getElementById('jf_statementamt').value),
     notes:document.getElementById('jf_notes').value
   };
-  if(editingJob){ db.manualJobs=db.manualJobs.map(function(j){ return j.id===editingJob.id?Object.assign({},j,d):j; }); }
-  else{ d.id=db.nextJobId++; db.manualJobs.push(d); }
-  saveDB(); closeJobModal(); renderJobs(); renderRevenue();
+  if(editingJob){ 
+    console.log('Updating existing job:', editingJob.id);
+    db.manualJobs=db.manualJobs.map(function(j){ return j.id===editingJob.id?Object.assign({},j,d):j; }); 
+  } else{ 
+    d.id=db.nextJobId++; 
+    db.manualJobs.push(d); 
+    console.log('Added new job, total now:', db.manualJobs.length);
+  }
+  saveDB(); 
+  console.log('After saveDB, localStorage has:', JSON.parse(localStorage.getItem('gatley-dash-v5')).manualJobs.length, 'jobs');
+  closeJobModal(); renderJobs(); renderRevenue();
 }
 
 // =========================================================
@@ -879,20 +958,20 @@ document.getElementById('exportBtn').onclick=function(){
     // Calculate booked/expected profit
     var totalBooked=0;
     parsed.manualJobs.forEach(function(j){
-      if(j.startDate&&j.expectedProfit!==undefined&&j.expectedProfit!==''&&!j.invoicedDate){
+      if(j.startDate&&j.expectedProfit!==undefined&&j.expectedProfit!==''&&!j.statementDate){
         totalBooked+=parseFloat(j.expectedProfit)||0;
       }
     });
     console.log('Total Booked/Expected Profit: £'+totalBooked.toFixed(2));
     
     // Calculate actual invoiced
-    var totalInvoiced=0;
+    var totalStatements=0;
     parsed.manualJobs.forEach(function(j){
-      if(j.invoicedDate&&j.finalProfit!==undefined&&j.finalProfit!==''){
-        totalInvoiced+=parseFloat(j.finalProfit)||0;
+      if(j.statementDate&&j.finalProfit!==undefined&&j.finalProfit!==''){
+        totalStatements+=parseFloat(j.finalProfit)||0;
       }
     });
-    console.log('Total Invoiced Profit: £'+totalInvoiced.toFixed(2));
+    console.log('Total Statements Profit: £'+totalStatements.toFixed(2));
     console.log('=====================================');
   }catch(e){}
   
@@ -932,6 +1011,19 @@ document.getElementById('importFile').onchange=function(e){
   reader.readAsText(file);
   e.target.value=''; // Reset file input
 };
+
+// =========================================================
+// INITIAL DATA LOAD (April 23, 2026 backup)
+// =========================================================
+(function initializeData(){
+  // Only run if storage is empty
+  if(localStorage.getItem(SK)) return;
+  
+  var initialData = {"leads":[{"id":1,"name":"Heather","date":"2026-01-06","source":"Unknown","status":"lost","value":2900,"pq":"No","lostReason":"","notes":"Tricky job - don't really want it."},{"id":2,"name":"Blunt","date":"2026-01-07","source":"Unknown","status":"lost","value":8800,"pq":"No","lostReason":"Roof first","notes":"Pretty much dead for now."},{"id":3,"name":"Morris","date":"2026-03-23","source":"Google","status":"won","value":8000,"pq":"No","lostReason":"","notes":"","expectedProfit":4000},{"id":4,"name":"Jason","date":"2026-01-13","source":"Unknown","status":"lost","value":4800,"pq":"No","lostReason":"Unknown - likely price","notes":""},{"id":5,"name":"Donna Early","date":"2026-01-14","source":"Local","status":"lost","value":4700,"pq":"No","lostReason":"Too expensive","notes":""},{"id":6,"name":"Alexandra Patteson","date":"2026-01-05","source":"Referral","status":"pending","value":3200,"pq":"No","lostReason":"","notes":"Don't chase - said will come back."},{"id":7,"name":"Evans","date":"2026-01-16","source":"Previous customer","status":"lost","value":4200,"pq":"No","lostReason":"","notes":"Don't chase - think too pricey now."},{"id":8,"name":"George","date":"2026-01-13","source":"Google","status":"lost","value":2200,"pq":"No","lostReason":"Unknown - likely price","notes":""},{"id":9,"name":"Platt","date":"2026-11-20","source":"Facebook","status":"lost","value":9600,"pq":"No","lostReason":"","notes":"On hold - pipe work. Reminder in a couple months."},{"id":10,"name":"Grimes","date":"2026-01-27","source":"Our fitter","status":"lost","value":7000,"pq":"No","lostReason":"Unknown - likely price","notes":""},{"id":11,"name":"Tague","date":"2026-02-05","source":"Local","status":"pending","value":2000,"pq":"No","lostReason":"","notes":"Lives across street. Said yes then put on hold."},{"id":12,"name":"Caroline","date":"2026-02-06","source":"Local","status":"lost","value":7000,"pq":"Yes","lostReason":"Unknown - likely price","notes":""},{"id":13,"name":"Weiner","date":"2026-02-11","source":"Unknown","status":"lost","value":11000,"pq":"No","lostReason":"","notes":"Bought new car - on hold. Likely dead."},{"id":14,"name":"Edge","date":"2026-04-13","source":"Unknown","status":"won","value":7300,"pq":"Yes","lostReason":"","notes":"","expectedProfit":3200},{"id":15,"name":"Howard","date":"2026-01-12","source":"Unknown","status":"pending","value":3100,"pq":"Yes","lostReason":"","notes":"Not quick decision makers. Don't chase."},{"id":16,"name":"Alton","date":"2026-01-19","source":"Unknown","status":"pending","value":6500,"pq":"Yes","lostReason":"","notes":"alton got back to me saying had updated price and when can she come in, i replied mon-fri 9.5 an she not replied since 220426","budget":0,"timescale":"","address":"","expectedProfit":""},{"id":17,"name":"Martha","date":"2026-02-23","source":"Unknown","status":"lost","value":5500,"pq":"Yes","lostReason":"Unknown - likely price","notes":""},{"id":18,"name":"Crompton","date":"2026-03-30","source":"Unknown","status":"won","value":1600,"pq":"Yes","lostReason":"","notes":"","expectedProfit":840},{"id":20,"name":"Sharron","date":"2026-02-27","source":"Unknown","status":"pending","value":3600,"pq":"No","lostReason":"","notes":"Liked quote, said will be in touch. Don't chase."},{"id":21,"name":"Hancock","date":"2026-04-23","source":"Referral","status":"won","value":2900,"pq":"No","lostReason":"","notes":"","expectedProfit":1450,"budget":0,"timescale":"","address":""},{"id":22,"name":"Manisha Natha","date":"2026-03-05","source":"Unknown","status":"lost","value":9300,"pq":"Yes","lostReason":"Unknown - likely price","notes":""},{"id":23,"name":"Zoe","date":"2026-03-09","source":"Facebook","status":"lost","value":8800,"pq":"Yes","lostReason":"Says job situation changed so delaying til Autumn. I smell bollocks. Deading it.","notes":"Didn't know what she wanted. Unlikely.\nWhatsapped saying i sent quote, just because its decent value.\nShe has quote but job situation changed so delaying til Autumn. I smell bollocks. Deading it.","budget":0,"timescale":"","address":"","expectedProfit":""},{"id":24,"name":"Hughes","date":"2026-04-30","source":"Unknown","status":"won","value":3300,"pq":"No","lostReason":"","notes":"","expectedProfit":1500},{"id":25,"name":"Newby","date":"2026-05-06","source":"Unknown","status":"won","value":6700,"pq":"No","lostReason":"","notes":"Ordered glazed doors already. Plug sockets?","budget":0,"timescale":"","address":"","expectedProfit":2830},{"id":26,"name":"Godfrey","date":"2026-03-16","source":"Referral","status":"lost","value":1000,"pq":"No","lostReason":"Unknown - likely price","notes":""},{"id":27,"name":"Jackie","date":"2026-05-14","source":"Referral","status":"won","value":1990,"pq":"Yes","lostReason":"","notes":"await deposit","budget":0,"timescale":"","address":"","expectedProfit":990},{"id":28,"name":"Steve Laiker","date":"2026-03-22","source":"Website","status":"lost","value":0,"pq":"Yes","lostReason":"No reply","notes":""},{"id":29,"name":"Grace","date":"2026-03-23","source":"Facebook","status":"pending","value":9000,"pq":"No","lostReason":"","notes":"Price sensitive. Showroom visit booked."},{"id":30,"name":"Anne-Marie Bentley","date":"2026-03-23","source":"Website","status":"pending","value":4400,"pq":"Yes","lostReason":"","notes":"quoted.","budget":0,"timescale":"","address":"","expectedProfit":1900},{"id":31,"name":"Louise","date":"2026-03-23","source":"Google","status":"pending","value":0,"pq":"Yes","lostReason":"","notes":"Clueless husband on visit."},{"id":32,"name":"Alan Bates","date":"2026-05-18","source":"Referral","status":"won","value":9500,"pq":"Yes","lostReason":"","notes":"£25k budget. Considering Ikea. showroom visit booked 02/04","expectedProfit":4350,"budget":0,"timescale":"ASAP","address":""},{"id":34,"name":"Paul Johnson","date":"2026-03-24","source":"Previous customer","status":"pending","value":4600,"pq":"No","lostReason":"","notes":"quoted both new and refurb.\n\"As we are a charity our trustees have to approve any large expenditure.\"","budget":0,"timescale":"ASAP","address":"39 Oakfield Ave, Cheadle SK8 1EF","expectedProfit":2300},{"id":35,"name":"Slater","date":"2026-03-27","source":"Local","status":"pending","value":9300,"pq":"Yes","lostReason":"","notes":"Been going on for years."},{"name":"Paul James","date":"2026-04-01","source":"Google","status":"not_started","value":0,"budget":0,"pq":"Yes","timescale":"","address":"50, Abingdon Road, Bramhall, Stockport SK7 3HA","lostReason":"","notes":"switched on. has multiple visits from all in one companies. load bearing wall/chimney breast removed. int stud wall. new opening to create where a window is, brick up door. move WC. Awaiting scope over whatsapp to send to Simon Ferrario","expectedProfit":"","id":36},{"name":"Steve Laiker","date":"2026-04-07","source":"Google","status":"pending","value":7350,"budget":12000,"pq":"Yes","timescale":"2 months+","address":"5 Hyacinth Cl, Stockport SK3 8QQ","lostReason":"","notes":"Had Howdens quote years ago but knows prices increased. Falling out with other trades due to time completion. Red flag.  ","expectedProfit":3980,"id":37},{"name":"Brian Husband","date":"2026-05-26","source":"Google","status":"won","value":9390,"budget":17000,"pq":"Yes","timescale":"","address":"20 Field Vale Dr, Stockport SK5 6XZ,","lostReason":"","notes":"17k for everything. woking/basel in cashmere matt, artic shimmer quartz and thin lam quote.","expectedProfit":6570,"id":38},{"name":"John Broderick","date":"2026-04-08","source":"Google","status":"lost","value":0,"budget":0,"pq":"Yes","timescale":"","address":"The Willows, Woodacres Ct, Wilmslow SK9 6BB","lostReason":"Pre-qualified - price too high.","notes":"Gave him ballpark prices - £2k being cheapest we'd do it for and he ruled himself out. not worth doing smaller jobs than that. ","expectedProfit":"","id":39},{"name":"Claire","date":"2026-04-14","source":"Google","status":"pending","value":2225,"budget":0,"pq":"Partial","timescale":"","address":"27 Pendlebury Rd, Gatley, Cheadle SK8 4BU","lostReason":"","notes":"tried to prequalify but think she just ignored me, kept mentioning budget on visit.","expectedProfit":1120,"id":40},{"name":"Cohen","date":"2026-04-23","source":"Facebook","status":"pending","value":7445,"budget":0,"pq":"Partial","timescale":"1 month","address":"","lostReason":"","notes":"","expectedProfit":3700,"id":41},{"name":"Neil","date":"2026-04-23","source":"Google","status":"not_started","value":0,"budget":0,"pq":"Partial","timescale":"","address":"25 New Hey","lostReason":"","notes":"","expectedProfit":"","id":42},{"name":"Jane Beswick","date":"2026-04-23","source":"Google","status":"pending","value":5900,"budget":0,"pq":"Partial","timescale":"","address":"","lostReason":"","notes":"price shopping and had quote from mayfield interiors who are more premium than us. her feedback was it was more expensive than they thought so probably dead now. ","expectedProfit":3100,"id":43},{"name":"Jackie's son","date":"2026-04-23","source":"Referral","status":"not_started","value":0,"budget":0,"pq":"No","timescale":"","address":"","lostReason":"","notes":"jackie's son, so just gotta ballpark supply only","expectedProfit":"","id":44},{"name":"Diana Rose","date":"2026-04-23","source":"Google","status":"not_started","value":0,"budget":0,"pq":"No","timescale":"","address":"","lostReason":"","notes":"Hi Mark, there are 6 doors which are 210cm x 58cm \nThe overall height is 232cm and overall width is 356cm\nI look forward to receiving your estimate \nRegards, Dianne","expectedProfit":"","id":45},{"name":"Robin Farthing","date":"2026-04-23","source":"Referral","status":"not_started","value":0,"budget":0,"pq":"Partial","timescale":"ASAP","address":"15 Oakdene Ave","lostReason":"","notes":"Neighbour - steve turner.\nhad wren out, waiting for their quote so that was kinda my prequal really.","expectedProfit":"","id":46}],"manualJobs":[{"id":1,"leadId":3,"name":"Morris","column":"snagging","priority":"Normal","dueDate":"","value":8000,"notes":"SNAGGING - PEEL & STICK, DRAWER RUNNERS, DOORS, FRONTS, TAP HOSE","expectedProfit":"","startDate":"","finalProfit":"","statementDate":""},{"id":2,"leadId":18,"name":"Crompton","column":"snagging","priority":"Normal","dueDate":"","value":1600,"notes":"","expectedProfit":"","startDate":"","finalProfit":"","statementDate":""},{"name":"Annie","column":"snagging","priority":"Normal","dueDate":"","value":0,"expectedProfit":"","startDate":"","finalProfit":"","statementDate":"","notes":"silicone","id":3},{"id":4,"leadId":24,"name":"Hughes","column":"upcoming","priority":"Normal","dueDate":"","value":3300,"notes":"","expectedProfit":1500,"startDate":"2026-04-30","finalProfit":"","statementDate":""},{"id":5,"leadId":21,"name":"Hancock","column":"upcoming","priority":"Normal","dueDate":"2026-05-11","value":2900,"notes":"","expectedProfit":1450,"startDate":"2026-05-11","finalProfit":"","statementDate":""},{"id":6,"leadId":14,"name":"Edge","column":"upcoming","priority":"Normal","dueDate":"2026-04-13","value":7300,"notes":"","expectedProfit":2760,"startDate":"2026-04-13","finalProfit":"","statementDate":""},{"name":"McKnight","column":"snagging","priority":"Normal","dueDate":"","value":0,"expectedProfit":"","startDate":"","finalProfit":"","statementDate":"","notes":"worktop","id":7},{"id":8,"leadId":25,"name":"Newby","column":"upcoming","priority":"Normal","dueDate":"","value":6700,"notes":"Ordered glazed doors already. Plug sockets?","expectedProfit":"","startDate":"","finalProfit":"","statementDate":""},{"id":9,"leadId":27,"name":"Jackie","column":"upcoming","priority":"Normal","dueDate":"","value":1990,"notes":"await deposit","expectedProfit":"","startDate":"","finalProfit":"","statementDate":""}],"nextLeadId":47,"nextJobId":10};
+  
+  localStorage.setItem(SK, JSON.stringify(initialData));
+  console.log('Dashboard v2 initialized with April 23, 2026 backup data');
+})();
 
 </script>
 </body>
