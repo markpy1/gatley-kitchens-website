@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mark's Training Programme — Posture Focus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--cream:#f5f0e8;--dark:#1a1a1a;--amber:#c8922a;--muted:#6b6560;--card-bg:#ffffff;--border:#e8e2d9;--push:#c8922a;--pull:#2a7a8c;--legs:#5a7a2a;--posture:#7a3a8c;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--cream);color:var(--dark);font-family:'Jost',sans-serif;font-weight:300;min-height:100vh;}
+    .hero{background:var(--dark);color:var(--cream);padding:40px 24px 32px;text-align:center;}
+    .hero-label{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:12px;}
+    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:600;line-height:1.1;margin-bottom:12px;}
+    .hero-sub{font-size:12px;color:#a09890;letter-spacing:1px;}
+    .hero-sub span{color:var(--amber);font-weight:500;}
+    .week-banner{background:var(--amber);color:var(--dark);text-align:center;padding:9px 24px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;}
+    .tab-nav{display:flex;border-bottom:2px solid var(--border);background:var(--cream);position:sticky;top:0;z-index:100;}
+    .tab-btn{flex:1;padding:14px 6px;border:none;background:transparent;cursor:pointer;font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;}
+    .tab-btn.active{color:var(--dark);border-bottom-color:var(--amber);}
+    .tab-btn .day-dot{display:block;font-size:9px;margin-top:2px;opacity:0.6;}
+    .day-panel{display:none;padding:20px 14px 100px;max-width:600px;margin:0 auto;}
+    .day-panel.active{display:block;animation:fadeIn 0.2s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+    .day-header{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+    .day-focus-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:2px;margin-bottom:10px;}
+    .tag-push{background:rgba(200,146,42,0.15);color:var(--push);}
+    .tag-pull{background:rgba(42,122,140,0.15);color:var(--pull);}
+    .tag-legs{background:rgba(90,122,42,0.15);color:var(--legs);}
+    .tag-posture{background:rgba(122,58,140,0.15);color:var(--posture);}
+    .tag-recomp{background:rgba(180,60,60,0.12);color:#b43c3c;}
+    .day-header h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;margin-bottom:4px;}
+    .day-meta{font-size:11px;color:var(--muted);}
+    .tip-box{background:var(--dark);color:var(--cream);border-radius:6px;padding:12px 14px;margin-bottom:16px;font-size:12px;line-height:1.6;}
+    .tip-box strong{color:var(--amber);font-weight:500;}
+    .rule-box{border:1px solid var(--posture);border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:11px;color:var(--posture);font-weight:500;letter-spacing:0.5px;text-align:center;}
+    .rack-note{background:rgba(200,146,42,0.06);border:1px dashed rgba(200,146,42,0.4);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+    .rack-note strong{color:var(--amber);}
+    .posture-note{background:rgba(122,58,140,0.06);border:1px dashed rgba(122,58,140,0.4);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--posture);margin-bottom:16px;line-height:1.6;}
+    .exercise-card{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:box-shadow 0.2s;}
+    .exercise-card:hover{box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+    .card-header{display:flex;align-items:center;justify-content:space-between;padding:14px;}
+    .card-left{flex:1;}
+    .card-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:2px;}
+    .card-target{font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+    .card-kit{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;margin-top:4px;display:inline-block;}
+    .kit-bench{background:rgba(200,146,42,0.12);color:var(--amber);}
+    .kit-dumbbell{background:rgba(42,122,140,0.1);color:var(--pull);}
+    .kit-cable{background:rgba(90,122,42,0.1);color:var(--legs);}
+    .kit-bodyweight{background:rgba(100,100,100,0.1);color:#666;}
+    .kit-machine{background:rgba(120,60,120,0.1);color:#7a3a8c;}
+    .kit-barbell{background:rgba(180,60,60,0.1);color:#b43c3c;}
+    .card-right{text-align:right;flex-shrink:0;}
+    .card-sets{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;line-height:1;}
+    .card-sets-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+    .card-chevron{width:18px;height:18px;margin-left:10px;color:var(--muted);transition:transform 0.2s;flex-shrink:0;}
+    .exercise-card.open .card-chevron{transform:rotate(180deg);}
+    .card-body{display:none;padding:12px 14px 14px;border-top:1px solid var(--border);}
+    .exercise-card.open .card-body{display:block;}
+    .card-cue{font-size:12px;line-height:1.7;color:#444;margin-bottom:12px;}
+    .card-cue strong{color:var(--dark);font-weight:500;}
+    .progression-note{background:rgba(200,146,42,0.08);border-left:3px solid var(--amber);padding:9px 11px;font-size:11px;color:var(--dark);margin-bottom:12px;line-height:1.5;}
+    .yt-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--amber);text-decoration:none;}
+    .section-divider{text-align:center;margin:22px 0 16px;position:relative;}
+    .section-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border);}
+    .section-divider span{position:relative;background:var(--cream);padding:0 10px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+    .weight-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 11px;background:rgba(200,146,42,0.05);border-radius:6px;border:1px solid rgba(200,146,42,0.2);}
+    .weight-label{font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--amber);flex-shrink:0;}
+    .weight-input{flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'Jost',sans-serif;font-size:13px;font-weight:500;background:var(--card-bg);color:var(--dark);max-width:100px;}
+    .weight-input:focus{outline:none;border-color:var(--amber);}
+    .weight-save-btn{padding:6px 12px;background:var(--dark);color:var(--cream);border:none;border-radius:4px;font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:1px;cursor:pointer;text-transform:uppercase;flex-shrink:0;}
+    .weight-save-btn:hover{background:var(--amber);color:var(--dark);}
+    .weight-save-btn.saved{background:var(--legs);}
+    .weight-unit{font-size:11px;color:var(--muted);flex-shrink:0;}
+    .weight-history{font-size:10px;color:var(--muted);margin-top:3px;font-style:italic;}
+    .tracker-section{margin-top:28px;background:var(--dark);border-radius:8px;padding:18px;}
+    .tracker-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:4px;}
+    .tracker-sub{font-size:11px;color:#a09890;margin-bottom:14px;}
+    .week-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
+    .week-cell{aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:10px;color:#a09890;cursor:pointer;user-select:none;}
+    .week-cell.done{background:var(--amber);color:var(--dark);font-weight:600;}
+    .week-label{font-size:9px;color:#706860;margin-top:7px;letter-spacing:1px;text-transform:uppercase;}
+    .footer-note{text-align:center;padding:20px 14px;font-size:11px;color:var(--muted);}
+    .posture-block{background:rgba(122,58,140,0.04);border:1px solid rgba(122,58,140,0.2);border-radius:8px;padding:14px;margin-top:8px;}
+    .posture-block-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--posture);margin-bottom:10px;}
+    .posture-exercise{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(122,58,140,0.1);}
+    .posture-exercise:last-child{border-bottom:none;}
+    .posture-dot{width:6px;height:6px;border-radius:50%;background:var(--posture);margin-top:5px;flex-shrink:0;}
+    .posture-text{font-size:12px;color:var(--dark);line-height:1.5;flex:1;}
+    .posture-text strong{color:var(--posture);font-weight:500;}
+    .posture-text a{color:var(--posture);font-size:11px;}
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="hero-label">Posture Priority — Recomp Approach</div>
+    <h1>Mark's Training Programme</h1>
+    <div class="hero-sub">Weeks 1–12 · Glute-Driven · <span>Fat Loss + Muscle Building</span></div>
+  </div>
+
+  <div class="week-banner">12-Week Posture & Recomp Focus — Tue / Wed / Thu</div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('tue')">Tuesday<div class="day-dot">PUSH</div></button>
+    <button class="tab-btn" onclick="switchTab('wed')">Wednesday<div class="day-dot">LEGS</div></button>
+    <button class="tab-btn" onclick="switchTab('thu')">Thursday<div class="day-dot">PULL</div></button>
+    <button class="tab-btn" onclick="switchTab('stack')">Stack &amp; Tracker</button>
+  </div>
+
+  <!-- TUESDAY — PUSH + POSTURE CORE -->
+  <div class="day-panel active" id="panel-tue">
+    <div class="day-header">
+      <div class="day-focus-tag tag-push">Push + Core</div>
+      <h2>Tuesday — Chest, Shoulders, Triceps, Core</h2>
+      <div class="day-meta">35–40 mins · Barbell · Dumbbells · Cable</div>
+    </div>
+
+    <div class="rule-box">POSTURE FIRST: Keep shoulder blades DOWN and BACK during all pressing. If they round, reduce weight.</div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Barbell Bench Press</div><div class="card-target">Chest — Primary</div><span class="card-kit kit-barbell">Barbell</span></div>
+        <div class="card-right"><div class="card-sets">4×8</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue"><strong>Chest up, shoulders locked back on bench.</strong> Lower to chest, pause 1 second, explosive up. Full control. <strong>Scapula stays pinned — don't let shoulders hunch up.</strong></div>
+        <div class="progression-note">📈 Track every session. Add 2.5kg when you hit 4×8 cleanly two sessions in a row.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="2.5" id="w-tue-bench" placeholder="kg" oninput="markUnsaved('tue-bench')" onclick="event.stopPropagation()"><span class="weight-unit">kg total</span><button class="weight-save-btn" id="btn-tue-bench" onclick="saveWeight('tue-bench',event)">Save</button></div>
+        <div class="weight-history" id="hist-tue-bench"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=barbell+bench+press+form+scapula" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Dumbbell Shoulder Press</div><div class="card-target">Shoulders — Vertical Push</div><span class="card-kit kit-dumbbell">Dumbbells</span></div>
+        <div class="card-right"><div class="card-sets">3×10</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Seated, back upright. Dumbbells at ear height, elbows out. <strong>Press straight up</strong> — slight forward angle is fine. Lower with control. <strong>Ribs stay down, don't arch the lower back.</strong></div>
+        <div class="progression-note">📈 Wide shoulders reduce visual belly prominence. Strict form over heavy weight.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="0.5" id="w-tue-shpress" placeholder="kg" oninput="markUnsaved('tue-shpress')" onclick="event.stopPropagation()"><span class="weight-unit">kg each</span><button class="weight-save-btn" id="btn-tue-shpress" onclick="saveWeight('tue-shpress',event)">Save</button></div>
+        <div class="weight-history" id="hist-tue-shpress"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=seated+dumbbell+shoulder+press+form" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Lateral Raises</div><div class="card-target">Side Delts — Width</div><span class="card-kit kit-dumbbell">Dumbbells</span></div>
+        <div class="card-right"><div class="card-sets">3×12</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Light dumbbells, standing. <strong>Lead with elbows.</strong> Raise to shoulder height only — no higher. Squeeze at top, lower slowly. <strong>Back stays neutral — don't lean back.</strong></div>
+        <div class="progression-note">📈 Wider shoulders = better silhouette. Control every rep, tempo 2 sec up, 2 sec down.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="0.5" id="w-tue-lat" placeholder="kg" oninput="markUnsaved('tue-lat')" onclick="event.stopPropagation()"><span class="weight-unit">kg each</span><button class="weight-save-btn" id="btn-tue-lat" onclick="saveWeight('tue-lat',event)">Save</button></div>
+        <div class="weight-history" id="hist-tue-lat"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=lateral+raise+proper+form" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Cable Tricep Pushdown</div><div class="card-target">Triceps</div><span class="card-kit kit-cable">Cable Machine</span></div>
+        <div class="card-right"><div class="card-sets">3×12</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue"><strong>Elbows PINNED to sides — never move.</strong> Push down to full extension, squeeze triceps hard, return slowly 2 seconds. <strong>Elbows stay locked in position.</strong></div>
+        <div class="progression-note">📈 Triceps are ⅔ of arm size — this is the fastest route to bigger arms.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="0.5" id="w-tue-tri" placeholder="kg" oninput="markUnsaved('tue-tri')" onclick="event.stopPropagation()"><span class="weight-unit">kg</span><button class="weight-save-btn" id="btn-tue-tri" onclick="saveWeight('tue-tri',event)">Save</button></div>
+        <div class="weight-history" id="hist-tue-tri"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=cable+tricep+pushdown+form" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="section-divider"><span>Posture Core</span></div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Dead Bug</div><div class="card-target">Core Stability — Anti-Tilt</div><span class="card-kit kit-bodyweight">Bodyweight</span></div>
+        <div class="card-right"><div class="card-sets">3×10 each</div><div class="card-sets-label">sets × reps (per side)</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Lie on back, arms straight up toward ceiling, hips and knees 90°. <strong>Lower right arm overhead + left leg straight</strong> — stop 2 inches above ground. Return, repeat opposite side. <strong>Lower back MUST stay flat on floor.</strong> This fixes anterior pelvic tilt.</div>
+        <div class="progression-note">📈 THE most important posture exercise. If your lower back lifts, you've gone too far — scale back. Slow, controlled, lower back NEVER leaves floor.</div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=dead+bug+exercise+form+core+stability" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="posture-block">
+      <div class="posture-block-title">Tuesday Posture Cues</div>
+      <div class="posture-exercise"><div class="posture-dot"></div><div class="posture-text"><strong>Thoracic foam roller</strong> — 5 mins pre-session. <a href="https://www.youtube.com/watch?v=I7SeOmS4AdQ" target="_blank">▶ Watch</a></div></div>
+      <div class="posture-exercise"><div class="posture-dot"></div><div class="posture-text"><strong>Wall angels progression</strong> — after session (see Stack tab for progression). Start with arms bent at 90/90, don't force full extension.</div></div>
+    </div>
+  </div>
+
+  <!-- WEDNESDAY — LEGS & GLUTES -->
+  <div class="day-panel" id="panel-wed">
+    <div class="day-header">
+      <div class="day-focus-tag tag-legs">Legs + Glutes</div>
+      <h2>Wednesday — Glute-Dominant Lower Body</h2>
+      <div class="day-meta">40–45 mins · Barbell · Machines · Dumbbells</div>
+    </div>
+
+    <div class="tip-box"><strong>Tip:</strong> Leg training raises testosterone and growth hormone. Strong glutes fix anterior pelvic tilt. Hip thrust is your posture priority — load it heavy and squeeze hard at the top.</div>
+    <div class="rule-box">STRONG GLUTES = BETTER POSTURE + FIXED PELVIC TILT + MORE FAT BURNED</div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Barbell Hip Thrust</div><div class="card-target">Glutes — PRIORITY #1</div><span class="card-kit kit-barbell">Bench + Barbell + Pad</span></div>
+        <div class="card-right"><div class="card-sets">4×12</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Upper back on bench, barbell across hips with pad. Feet flat, shoulder width. <strong>Drive hips up by SQUEEZING GLUTES HARD at the top</strong> — 1 second pause, squeeze like you're trying to crack walnuts. Lower slowly 2 seconds. <strong>Ribs down, core tight — no lower back hyperextension.</strong></div>
+        <div class="progression-note">📈 This is the single best posterior chain exercise and directly fixes anterior pelvic tilt. You're at 20kg — aim to add 5kg every 2-3 weeks. Real glute activation only happens with proper load.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="5" id="w-wed-hipthrust" placeholder="kg" oninput="markUnsaved('wed-hipthrust')" onclick="event.stopPropagation()"><span class="weight-unit">kg total</span><button class="weight-save-btn" id="btn-wed-hipthrust" onclick="saveWeight('wed-hipthrust',event)">Save</button></div>
+        <div class="weight-history" id="hist-wed-hipthrust"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=barbell+hip+thrust+glute+squeeze+form" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Leg Press</div><div class="card-target">Quad + Glute Mass</div><span class="card-kit kit-machine">Leg Press Machine</span></div>
+        <div class="card-right"><div class="card-sets">4×10</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Feet shoulder-width, mid-platform. Lower to 90° knee angle — <strong>lower back STAYS on seat, doesn't peel off.</strong> Press through whole foot, don't lock knees at top. Controlled range given your knee history.</div>
+        <div class="progression-note">📈 More leg muscle raises resting metabolic rate — you burn more fat at rest. You're at 57kg — maintain form and add 5kg per week if possible.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="5" id="w-wed-legpress" placeholder="kg" oninput="markUnsaved('wed-legpress')" onclick="event.stopPropagation()"><span class="weight-unit">kg total</span><button class="weight-save-btn" id="btn-wed-legpress" onclick="saveWeight('wed-legpress',event)">Save</button></div>
+        <div class="weight-history" id="hist-wed-legpress"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=leg+press+form+knee+safety" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Romanian Deadlift</div><div class="card-target">Hamstrings + Glutes</div><span class="card-kit kit-barbell">Barbell</span></div>
+        <div class="card-right"><div class="card-sets">3×8</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Stand tall, barbell in hands, soft knees. <strong>Hinge at hips</strong> — push hips back, not knees down. Feel deep hamstring stretch at bottom. <strong>Drive hips forward to stand, squeeze glutes hard at top.</strong> Back flat throughout — no rounding.</div>
+        <div class="progression-note">📈 You're at 40kg barbell — solid starting point. Add 2.5kg each week as you build confidence. Strict form only.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="2.5" id="w-wed-rdl" placeholder="kg" oninput="markUnsaved('wed-rdl')" onclick="event.stopPropagation()"><span class="weight-unit">kg (barbell)</span><button class="weight-save-btn" id="btn-wed-rdl" onclick="saveWeight('wed-rdl',event)">Save</button></div>
+        <div class="weight-history" id="hist-wed-rdl"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=romanian+deadlift+barbell+form" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="section-divider"><span>Core</span></div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Cable Crunch</div><div class="card-target">Abs — Weighted</div><span class="card-kit kit-cable">Cable Machine — Rope</span></div>
+        <div class="card-right"><div class="card-sets">3×12</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Kneel facing cable, rope at head height. <strong>Crunch elbows to knees — abs only, not arms or hips.</strong> Curl ribcage toward pelvis, squeeze hard at bottom, full stretch at top. <strong>No hip flexor involvement.</strong></div>
+        <div class="progression-note">📈 Building abs under belly fat means they appear faster as fat reduces. Strict form, full range.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="0.5" id="w-wed-crunch" placeholder="kg" oninput="markUnsaved('wed-crunch')" onclick="event.stopPropagation()"><span class="weight-unit">kg</span><button class="weight-save-btn" id="btn-wed-crunch" onclick="saveWeight('wed-crunch',event)">Save</button></div>
+        <div class="weight-history" id="hist-wed-crunch"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=cable+crunch+form+core" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="posture-block">
+      <div class="posture-block-title">Wednesday Posture Cues</div>
+      <div class="posture-exercise"><div class="posture-dot"></div><div class="posture-text"><strong>Thoracic foam roller</strong> — 5 mins pre-session. <a href="https://www.youtube.com/watch?v=I7SeOmS4AdQ" target="_blank">▶ Watch</a></div></div>
+      <div class="posture-exercise"><div class="posture-dot"></div><div class="posture-text"><strong>Glute squeeze emphasis</strong> — on every hip thrust rep, pause 1 second and <strong>actively think "squeeze"</strong>. This retrains neuromuscular connection.</div></div>
+    </div>
+  </div>
+
+  <!-- THURSDAY — PULL + CORE -->
+  <div class="day-panel" id="panel-thu">
+    <div class="day-header">
+      <div class="day-focus-tag tag-pull">Pull + Core</div>
+      <h2>Thursday — Back, Rear Delts, Biceps, Core</h2>
+      <div class="day-meta">40–45 mins · Barbell · Dumbbells · Cable</div>
+    </div>
+
+    <div class="rule-box">SCAPULAR PULL: Every back movement — think about pulling shoulder blades DOWN and BACK. This counteracts rounded shoulders.</div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Barbell Row</div><div class="card-target">Back — Primary</div><span class="card-kit kit-barbell">Barbell</span></div>
+        <div class="card-right"><div class="card-sets">4×8</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Feet shoulder-width, knees soft. Bar at mid-shin. <strong>Chest up, shoulders back.</strong> Drive elbows to hips, pull bar to chest/lower ribcage. <strong>Squeeze shoulder blades hard at the top</strong> — hold 1 second. Lower with control. <strong>Back stays neutral — no rounding.</strong></div>
+        <div class="progression-note">📈 The best antidote to rounded shoulders. Track weight session to session — add 2.5kg when you hit 4×8 cleanly.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="2.5" id="w-thu-row" placeholder="kg" oninput="markUnsaved('thu-row')" onclick="event.stopPropagation()"><span class="weight-unit">kg total</span><button class="weight-save-btn" id="btn-thu-row" onclick="saveWeight('thu-row',event)">Save</button></div>
+        <div class="weight-history" id="hist-thu-row"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=barbell+row+form+chest+up" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Lat Pulldown</div><div class="card-target">Lats — Width</div><span class="card-kit kit-cable">Cable Machine</span></div>
+        <div class="card-right"><div class="card-sets">3×10</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Seated, chest up. <strong>Pull bar down to upper chest</strong> — elbows to sides. Squeeze lats hard at bottom, control the return. <strong>Think "elbows to hips"</strong> — that fires the lats more than arms.</div>
+        <div class="progression-note">📈 Wide back = bigger silhouette. Strict form, full range. Feel the lats working, not the arms.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="2.5" id="w-thu-pulldown" placeholder="kg" oninput="markUnsaved('thu-pulldown')" onclick="event.stopPropagation()"><span class="weight-unit">kg</span><button class="weight-save-btn" id="btn-thu-pulldown" onclick="saveWeight('thu-pulldown',event)">Save</button></div>
+        <div class="weight-history" id="hist-thu-pulldown"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=lat+pulldown+form+chest+up" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Face Pull</div><div class="card-target">Rear Delts — Posture</div><span class="card-kit kit-cable">Cable Machine — Rope</span></div>
+        <div class="card-right"><div class="card-sets">3×15</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Stand facing cable, rope at face height. <strong>Pull rope to face, elbows high and out</strong> — wrists stay neutral. <strong>Squeeze shoulder blades hard at the top.</strong> This is a posture priority. <strong>LOAD IT PROPERLY — light weight defeats the purpose.</strong></div>
+        <div class="progression-note">📈 Most important posture exercise after hip thrusts. Fights rounded shoulders. Load should feel challenging by rep 12–15 — not bodyweight.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="0.5" id="w-thu-facepull" placeholder="kg" oninput="markUnsaved('thu-facepull')" onclick="event.stopPropagation()"><span class="weight-unit">kg</span><button class="weight-save-btn" id="btn-thu-facepull" onclick="saveWeight('thu-facepull',event)">Save</button></div>
+        <div class="weight-history" id="hist-thu-facepull"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=face+pull+rear+delt+form+scapular" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Dumbbell Row</div><div class="card-target">Back — Unilateral</div><span class="card-kit kit-dumbbell">Dumbbells</span></div>
+        <div class="card-right"><div class="card-sets">3×10 each</div><div class="card-sets-label">sets × reps (per arm)</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Knee on bench, dumbbell in one hand, arm extended. <strong>Row elbow to ribcage, squeeze back hard at the top</strong> — 1 second pause. Lower slowly. <strong>Shoulders stay square — no twisting.</strong> Repeat other side.</div>
+        <div class="progression-note">📈 Unilateral work fixes imbalances. One arm must catch up if weaker — this builds balanced strength.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="1" id="w-thu-dbrow" placeholder="kg" oninput="markUnsaved('thu-dbrow')" onclick="event.stopPropagation()"><span class="weight-unit">kg each</span><button class="weight-save-btn" id="btn-thu-dbrow" onclick="saveWeight('thu-dbrow',event)">Save</button></div>
+        <div class="weight-history" id="hist-thu-dbrow"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=dumbbell+row+single+arm+form" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Incline Dumbbell Curl</div><div class="card-target">Biceps</div><span class="card-kit kit-dumbbell">Dumbbells</span></div>
+        <div class="card-right"><div class="card-sets">3×10</div><div class="card-sets-label">sets × reps</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Incline bench, dumbbells at sides, elbows locked back. <strong>Curl dumbbells up, elbows stay fixed</strong> — movement is forearm only. Squeeze biceps hard at top, lower slowly 2 seconds. <strong>No swinging.</strong></div>
+        <div class="progression-note">📈 Incline position removes momentum — forces strict form and better bicep contraction.</div>
+        <div class="weight-row"><span class="weight-label">Weight</span><input class="weight-input" type="number" step="0.5" id="w-thu-curl" placeholder="kg" oninput="markUnsaved('thu-curl')" onclick="event.stopPropagation()"><span class="weight-unit">kg each</span><button class="weight-save-btn" id="btn-thu-curl" onclick="saveWeight('thu-curl',event)">Save</button></div>
+        <div class="weight-history" id="hist-thu-curl"></div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=incline+dumbbell+curl+form+bicep" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="section-divider"><span>Posture Core</span></div>
+
+    <div class="exercise-card" onclick="toggleCard(this)">
+      <div class="card-header">
+        <div class="card-left"><div class="card-name">Dead Bug</div><div class="card-target">Core Stability — Anti-Tilt</div><span class="card-kit kit-bodyweight">Bodyweight</span></div>
+        <div class="card-right"><div class="card-sets">3×10 each</div><div class="card-sets-label">sets × reps (per side)</div></div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cue">Lie on back, arms straight up toward ceiling, hips and knees 90°. <strong>Lower right arm overhead + left leg straight</strong> — stop 2 inches above ground. Return, repeat opposite side. <strong>Lower back MUST stay flat on floor.</strong></div>
+        <div class="progression-note">📈 THE most important posture exercise for fixing anterior pelvic tilt. Do not let lower back lift — scale back if it does.</div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=dead+bug+exercise+form" target="_blank">▶ Form Tutorial</a>
+      </div>
+    </div>
+
+    <div class="posture-block">
+      <div class="posture-block-title">Thursday Posture Cues</div>
+      <div class="posture-exercise"><div class="posture-dot"></div><div class="posture-text"><strong>Thoracic foam roller</strong> — 5 mins pre-session. <a href="https://www.youtube.com/watch?v=I7SeOmS4AdQ" target="_blank">▶ Watch</a></div></div>
+      <div class="posture-exercise"><div class="posture-dot"></div><div class="posture-text"><strong>Pull emphasis</strong> — on every pulling movement (rows, lat pulldown, face pulls), actively squeeze shoulder blades at the end range. Think "down and back."</div></div>
+    </div>
+  </div>
+
+  <!-- STACK & TRACKER -->
+  <div class="day-panel" id="panel-stack">
+    <div class="day-header">
+      <div class="day-focus-tag tag-recomp">Recomp Stack</div>
+      <h2>Nutrition, Mobility &amp; Progress</h2>
+      <div class="day-meta">Daily Reference · Week-by-week tracker</div>
+    </div>
+
+    <div class="tip-box"><strong>Recomp approach:</strong> Lose fat while building muscle. Requires a small calorie deficit (200–300 below maintenance), adequate protein, and consistent training.</div>
+
+    <div style="background:linear-gradient(135deg,#1a1a1a 0%,#2a2420 100%);border:1px solid rgba(200,146,42,0.3);border-radius:8px;padding:16px;margin-bottom:16px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--amber);margin-bottom:6px;">Nutrition Targets</div>
+      <div style="font-size:10px;color:#807870;margin-bottom:12px;letter-spacing:0.5px;text-transform:uppercase;">Based on your weight — adjust as needed</div>
+      <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--amber);margin-top:6px;flex-shrink:0;"></div>
+        <div style="font-size:12px;color:#c0b8b0;line-height:1.6;"><span style="color:var(--cream);font-weight:500;">Daily Calories:</span> 2,500–2,600 kcal (small deficit)</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--amber);margin-top:6px;flex-shrink:0;"></div>
+        <div style="font-size:12px;color:#c0b8b0;line-height:1.6;"><span style="color:var(--cream);font-weight:500;">Protein:</span> 170–180g daily (non-negotiable)</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--amber);margin-top:6px;flex-shrink:0;"></div>
+        <div style="font-size:12px;color:#c0b8b0;line-height:1.6;"><span style="color:var(--cream);font-weight:500;">Carbs:</span> 250–300g (refuel training)</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:9px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--amber);margin-top:6px;flex-shrink:0;"></div>
+        <div style="font-size:12px;color:#c0b8b0;line-height:1.6;"><span style="color:var(--cream);font-weight:500;">Fats:</span> 70–80g (hormone support)</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;margin-bottom:12px;">Maintenance Calculator</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+        <div style="font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);width:80px;flex-shrink:0;">Your Weight</div>
+        <input class="calc-input" type="number" id="weightInput" placeholder="kg" onclick="event.stopPropagation()">
+      </div>
+      <button class="calc-btn" onclick="calculate()">Calculate</button>
+      <div id="calcResult" class="calc-result"></div>
+    </div>
+
+    <div style="background:rgba(122,58,140,0.04);border:1px solid rgba(122,58,140,0.2);border-radius:8px;padding:14px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--posture);margin-bottom:10px;">Daily Mobility (5 mins)</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(122,58,140,0.1);">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--posture);margin-top:5px;flex-shrink:0;"></div>
+        <div style="font-size:12px;color:var(--dark);line-height:1.5;flex:1;"><span style="color:var(--posture);font-weight:500;">Thoracic foam roller:</span> Pre-session, every session. 90 seconds.</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(122,58,140,0.1);">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--posture);margin-top:5px;flex-shrink:0;"></div>
+        <div style="font-size:12px;color:var(--dark);line-height:1.5;flex:1;"><span style="color:var(--posture);font-weight:500;">90/90 stretch (progression):</span> Tuesday & Thursday post-session. Work toward wall angels.</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--posture);margin-top:5px;flex-shrink:0;"></div>
+        <div style="font-size:12px;color:var(--dark);line-height:1.5;flex:1;"><span style="color:var(--posture);font-weight:500;">Cat-cow:</span> 10 reps, daily morning. Wakes up thoracic spine.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--dark);border-radius:8px;padding:18px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:4px;">12-Week Tracker</div>
+      <div style="font-size:11px;color:#a09890;margin-bottom:14px;">Click each week as you complete it</div>
+      <div class="week-grid" id="weekGrid"></div>
+      <div class="week-label">Consistency is everything. Aim for 11–12 weeks complete.</div>
+    </div>
+
+    <div style="margin-top:20px;background:rgba(122,58,140,0.04);border:1px solid rgba(122,58,140,0.2);border-radius:8px;padding:14px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--posture);margin-bottom:10px;">Progress Tracking</div>
+      <div style="font-size:12px;color:var(--dark);line-height:1.6;">
+        <strong>Weekly check-in:</strong> Take waist measurement same time each week. Track in Notes app or spreadsheet. Target: 1–2cm loss per week.<br><br>
+        <strong>Fortnightly photos:</strong> Mirror selfie, same time of day, same clothing. Posture changes are visible before scale moves.<br><br>
+        <strong>Strength tracking:</strong> Already built into cards — save weights after each session. Progressive overload = muscle growth.<br><br>
+        <strong>Expected 12-week outcome:</strong> 3–5kg fat loss, 1–2kg muscle gain, noticeably better posture (shoulders back, less belly prominence, taller stance).
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">Tap any card for cues · Progressive overload every session · Posture work is NOT optional · David Lloyd · Tue / Wed / Thu</div>
+
+  <script>
+    var DEFAULTS={
+      'tue-bench':40,'tue-shpress':18,'tue-lat':10,'tue-tri':13.75,
+      'wed-hipthrust':20,'wed-legpress':57,'wed-rdl':40,'wed-crunch':36.25,
+      'thu-row':50,'thu-pulldown':45,'thu-facepull':null,'thu-dbrow':28,'thu-curl':null
+    };
+
+    function getWeights(){try{return JSON.parse(localStorage.getItem('exerciseWeights')||'{}')}catch(e){return{}}}
+    function saveWeights(w){try{localStorage.setItem('exerciseWeights',JSON.stringify(w))}catch(e){}}
+    function getHistory(){try{return JSON.parse(localStorage.getItem('weightHistory')||'{}')}catch(e){return{}}}
+    function saveHistory(h){try{localStorage.setItem('weightHistory',JSON.stringify(h))}catch(e){}}
+
+    function loadAllWeights(){
+      var stored=getWeights();
+      Object.keys(DEFAULTS).forEach(function(key){
+        var inp=document.getElementById('w-'+key);
+        var btn=document.getElementById('btn-'+key);
+        var hist=document.getElementById('hist-'+key);
+        if(!inp)return;
+        var val=stored[key]!==undefined?stored[key]:DEFAULTS[key];
+        if(val!==null&&val!==undefined){
+          inp.value=val;
+          if(btn){btn.textContent='Saved ✓';btn.className='weight-save-btn saved';}
+        }
+        if(hist){
+          var h=getHistory();
+          if(h[key]&&h[key].length>1){
+            hist.textContent='History: '+h[key].slice(-3).map(function(e){return e.val+'kg ('+e.date+')'}).join(' → ');
+          }
+        }
+      });
+    }
+
+    function markUnsaved(key){
+      var btn=document.getElementById('btn-'+key);
+      if(btn){btn.textContent='Save';btn.className='weight-save-btn';}
+    }
+
+    function saveWeight(key,event){
+      event.stopPropagation();
+      var inp=document.getElementById('w-'+key);
+      var btn=document.getElementById('btn-'+key);
+      var hist=document.getElementById('hist-'+key);
+      if(!inp)return;
+      var val=parseFloat(inp.value);
+      if(isNaN(val)){alert('Please enter a valid weight');return;}
+      var w=getWeights();w[key]=val;saveWeights(w);
+      var h=getHistory();if(!h[key])h[key]=[];
+      var today=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+      var last=h[key][h[key].length-1];
+      if(!last||last.val!==val){h[key].push({val:val,date:today});if(h[key].length>10)h[key]=h[key].slice(-10);}
+      saveHistory(h);
+      if(btn){btn.textContent='Saved ✓';btn.className='weight-save-btn saved';}
+      if(hist&&h[key].length>1){hist.textContent='History: '+h[key].slice(-3).map(function(e){return e.val+'kg ('+e.date+')'}).join(' → ');}
+    }
+
+    function switchTab(day){
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+      document.querySelectorAll('.day-panel').forEach(function(p){p.classList.remove('active')});
+      var days=['tue','wed','thu','stack'];
+      document.querySelectorAll('.tab-btn')[days.indexOf(day)].classList.add('active');
+      document.getElementById('panel-'+day).classList.add('active');
+    }
+
+    function toggleCard(card){card.classList.toggle('open');}
+
+    function calculate(){
+      var kg=parseFloat(document.getElementById('weightInput').value);
+      if(!kg||kg<40||kg>250){alert('Please enter a valid weight');return;}
+      var maintenance=Math.round(kg*2.205*15);
+      var recomp=maintenance-250;
+      var protein=Math.round(kg*2);
+      document.getElementById('calcResult').innerHTML=
+        '<div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:12px;background:var(--cream);border-radius:4px;border:1px solid var(--border);"><span style="font-size:11px;text-transform:uppercase;color:var(--muted);">Maintenance</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:700;color:var(--amber);">'+maintenance+' kcal</span></div>'+
+        '<div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:12px;background:var(--cream);border-radius:4px;border:1px solid var(--border);"><span style="font-size:11px;text-transform:uppercase;color:var(--muted);">Recomp target</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:700;color:var(--dark);">'+recomp+' kcal</span></div>'+
+        '<div style="display:flex;justify-content:space-between;padding:12px;background:var(--cream);border-radius:4px;border:1px solid var(--border);"><span style="font-size:11px;text-transform:uppercase;color:var(--muted);">Protein daily</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:700;color:var(--amber);">'+protein+'g</span></div>';
+      document.getElementById('calcResult').classList.add('show');
+    }
+
+    var grid=document.getElementById('weekGrid');
+    var saved=JSON.parse(localStorage.getItem('gymWeeks')||'[]');
+    for(var i=1;i<=12;i++){
+      (function(week){
+        var cell=document.createElement('div');
+        cell.className='week-cell'+(saved.includes(week)?' done':'');
+        cell.textContent='W'+week;
+        cell.onclick=function(){
+          var weeks=JSON.parse(localStorage.getItem('gymWeeks')||'[]');
+          var idx=weeks.indexOf(week);
+          if(idx===-1)weeks.push(week);else weeks.splice(idx,1);
+          localStorage.setItem('gymWeeks',JSON.stringify(weeks));
+          cell.classList.toggle('done');
+        };
+        grid.appendChild(cell);
+      })(i);
+    }
+
+    loadAllWeights();
+  </script>
+
+  <style>
+    .calc-input{background:var(--card-bg);color:var(--dark);}
+    .calc-btn{width:100%;padding:10px;background:var(--dark);color:var(--cream);border:none;border-radius:4px;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:4px;}
+    .calc-btn:hover{background:var(--amber);color:var(--dark);}
+    .calc-result{margin-top:14px;display:none;}
+    .calc-result.show{display:block;}
+  </style>
+</body>
+</html>
