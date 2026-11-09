@@ -114,7 +114,7 @@
   .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.93); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
   .lightbox.open { display: flex; }
   .lb-inner { position: relative; display: flex; align-items: center; gap: 16px; max-width: 100%; }
-  .lightbox img { max-width: 88vw; max-height: 88vh; border-radius: 3px; box-shadow: 0 16px 64px rgba(0,0,0,0.8); display: block; }
+  .lightbox img { min-width: min(480px, 88vw); object-fit: contain; max-width: 88vw; max-height: 88vh; border-radius: 3px; box-shadow: 0 16px 64px rgba(0,0,0,0.8); display: block; }
   .lb-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; flex: 0 0 auto; }
   .lb-btn:hover { background: rgba(255,255,255,0.22); }
   .lb-btn:disabled { opacity: 0.2; cursor: default; }
@@ -949,7 +949,9 @@
   // Swatch cards -> lightbox (single image)
   document.querySelectorAll('.stone-card.swatch').forEach(card => {
     card.addEventListener('click', () => {
-      openLightbox([card.dataset.img], 0, card.dataset.name);
+      const shown = card.querySelector('.stone-img');
+      // use whichever size actually loaded in the grid, so the zoom never shows a broken image
+      openLightbox([shown.currentSrc || shown.src], 0, card.dataset.name);
     });
   });
 
