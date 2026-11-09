@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-013W04141C"></script>
-    <script src="/analytics.js"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-013W04141C');
-    </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quartz Worktops – Gatley Kitchens & Bedrooms</title>
@@ -28,61 +19,11 @@
   nav { position: sticky; top: 0; z-index: 100; background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 70px; }
   .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--dark); text-decoration: none; }
   .nav-logo span { color: var(--accent); }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-    align-items: center;
-  }
-
-  .nav-links a {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--mid);
-    transition: color 0.2s;
-  }
-
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--mid); transition: color 0.2s; }
   .nav-links a:hover { color: var(--accent); }
-
-  .nav-cta {
-    background: var(--dark);
-    color: var(--white) !important;
-    padding: 8px 20px;
-    border-radius: 2px;
-  }
-
+  .nav-cta { background: var(--dark); color: var(--white) !important; padding: 8px 20px; border-radius: 2px; }
   .nav-cta:hover { background: var(--accent) !important; }
-
-  /* Dropdown menu */
-  .nav-dropdown { position: relative; }
-  .nav-dropdown > a::after { content: ' ▾'; font-size: 0.7em; opacity: 0.5; }
-  .dropdown-menu { 
-    display: none !important; 
-    position: absolute; 
-    top: 100%; 
-    left: 0; 
-    background: var(--white); 
-    border: 1px solid var(--border); 
-    border-radius: 2px; 
-    min-width: 200px; 
-    padding: 8px 0; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-  }
-  .nav-dropdown:hover .dropdown-menu { display: block !important; }
-  .dropdown-menu a { 
-    display: block; 
-    padding: 10px 20px; 
-    font-size: 0.78rem; 
-    color: var(--mid); 
-    text-transform: none; 
-    letter-spacing: 0.05em; 
-  }
-  .dropdown-menu a:hover { background: var(--cream); color: var(--accent); }
-  
 
   /* HERO */
   .page-hero { background: var(--dark); color: var(--white); padding: 80px 40px 0; text-align: center; position: relative; overflow: hidden; }
@@ -106,20 +47,40 @@
   .why-item h4 { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 4px; }
   .why-item p { font-size: 0.75rem; color: var(--mid); line-height: 1.6; }
 
-  /* FILTER BAR */
+  /* VIEW TOGGLE */
+  .view-toggle-wrap { max-width: 1200px; margin: 0 auto; padding: 40px 32px 4px; text-align: center; }
+  .view-toggle { display: inline-flex; background: var(--white); border: 1px solid var(--border); border-radius: 30px; padding: 4px; gap: 4px; }
+  .view-btn { padding: 10px 26px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; background: none; border: none; border-radius: 24px; color: var(--mid); cursor: pointer; transition: all 0.2s; }
+  .view-btn.active { background: var(--dark); color: var(--white); }
+  .view-btn:hover:not(.active) { color: var(--accent); }
+  .availability-line { max-width: 1200px; margin: 0 auto; padding: 16px 32px 0; font-size: 0.85rem; color: var(--mid); text-align: center; }
 
-  /* STONE GRID */
-  .stone-grid { max-width: 1200px; margin: 0 auto; padding: 8px 32px 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
 
-  /* STONE CARD */
+  /* RANGE SECTIONS (swatches) */
+  .range-section { max-width: 1200px; margin: 0 auto; padding: 36px 32px 8px; }
+  .range-heading { display: flex; align-items: baseline; gap: 14px; margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .range-heading h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 300; }
+  .range-count { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 24px; padding-bottom: 20px; }
+  .stone-card.swatch { background: var(--white); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: box-shadow 0.25s, transform 0.25s; cursor: zoom-in; }
+  .stone-card.swatch:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.1); transform: translateY(-3px); }
+  .stone-card.swatch .stone-img-wrap { aspect-ratio: 4/3; }
+  .stone-card.swatch .stone-info { padding: 14px 16px 16px; }
+  .stone-card.swatch .stone-info h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; }
+
+  /* KITCHENS GRID (real installs) */
+  .stone-grid { max-width: 1200px; margin: 0 auto; padding: 8px 32px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
   .stone-card { background: var(--white); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: box-shadow 0.25s, transform 0.25s; }
   .stone-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.1); transform: translateY(-3px); }
 
-  .stone-img-wrap { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #e8e4df; }
+  .stone-img-wrap { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #e8e4df; cursor: zoom-in; }
   .stone-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
   .stone-card:hover .stone-img { transform: scale(1.03); }
+  .stone-card:hover .stone-img[style*="rotate(180deg)"] { transform: rotate(180deg) scale(1.03) !important; }
 
-  /* card nav arrows */
   .stone-prev, .stone-next {
     position: absolute; top: 50%; transform: translateY(-50%);
     background: rgba(0,0,0,0.38); border: none; color: #fff;
@@ -129,13 +90,11 @@
     z-index: 2; line-height: 1;
   }
   .stone-prev { left: 10px; }
-  .stone-next { right: 46px; }
+  .stone-next { right: 10px; }
   .stone-img-wrap:hover .stone-prev,
   .stone-img-wrap:hover .stone-next { opacity: 1; }
   .stone-prev:hover, .stone-next:hover { background: rgba(0,0,0,0.65); }
 
-
-  /* dot indicators */
   .dot-row {
     position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
     display: flex; gap: 5px; z-index: 2;
@@ -149,14 +108,7 @@
 
   .stone-info { padding: 20px 22px 22px; }
   .stone-info h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 6px; }
-  .stone-info p { font-size: 0.8rem; color: var(--mid); line-height: 1.65; margin-bottom: 16px; }
-  .stone-cta {
-    display: inline-block; font-size: 0.72rem; font-weight: 500;
-    letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
-    color: var(--accent); border-bottom: 1px solid var(--light-accent);
-    padding-bottom: 1px; transition: color 0.2s, border-color 0.2s;
-  }
-  .stone-cta:hover { color: var(--dark); border-color: var(--dark); }
+  .stone-info p { font-size: 0.8rem; color: var(--mid); line-height: 1.65; }
 
   /* LIGHTBOX */
   .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.93); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
@@ -169,9 +121,10 @@
   .lb-close { position: absolute; top: -40px; right: 0; background: none; border: none; color: rgba(255,255,255,0.55); font-size: 2rem; cursor: pointer; line-height: 1; }
   .lb-close:hover { color: #fff; }
   .lb-counter { position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); font-size: 0.72rem; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; white-space: nowrap; }
+  .lb-name { position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); font-family: 'Cormorant Garamond', serif; color: #fff; font-size: 1.1rem; white-space: nowrap; }
 
   /* CTA SECTION */
-  .cta-section { background: var(--dark); color: var(--white); text-align: center; padding: 72px 40px; }
+  .cta-section { background: var(--dark); color: var(--white); text-align: center; padding: 72px 40px; margin-top: 24px; }
   .cta-section h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 300; margin-bottom: 12px; }
   .cta-section p { color: rgba(255,255,255,0.48); font-size: 0.9rem; margin-bottom: 36px; max-width: 500px; margin-left: auto; margin-right: auto; }
   .btn { display: inline-block; padding: 14px 36px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: all 0.25s; border: none; cursor: pointer; }
@@ -190,9 +143,12 @@
     .why-strip { padding: 28px 20px; gap: 20px; }
     .why-item { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 20px; max-width: 100%; }
     .why-item:last-child { border-bottom: none; padding-bottom: 0; }
-      .stone-grid { grid-template-columns: 1fr; gap: 20px; }
+    .swatch-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .stone-grid { grid-template-columns: 1fr; gap: 20px; padding-left: 16px; padding-right: 16px; }
     .stone-prev, .stone-next { opacity: 1; }
     .hero-stats { gap: 28px; padding: 20px; }
+    .range-section { padding: 28px 16px 0; }
+    .view-toggle-wrap { padding: 28px 16px 4px; }
   }
 
   .nav-burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
@@ -203,7 +159,7 @@
   @media (max-width: 800px) {
     .nav-burger { display: flex; }
     .nav-links { display: none !important; flex-direction: column; gap: 0; position: absolute; top: 70px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 99; }
-    .nav-links.open { display: flex !important; }   .nav-links li { width: 100%; } .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; } .nav-dropdown .dropdown-menu { position: static; box-shadow: none; border: none; background: var(--cream); margin: 0; padding: 4px 0; } .nav-dropdown > a::after { content: ''; } .nav-dropdown:hover .dropdown-menu { display: none; } .nav-dropdown.mobile-open .dropdown-menu { display: block; }
+    .nav-links.open { display: flex !important; }
     .nav-links li a { display: block; padding: 12px 24px; font-size: 0.85rem; }
     .nav-cta { margin: 8px 24px 12px !important; display: block; text-align: center; }
   }
@@ -216,17 +172,11 @@
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="gatley-kitchens-our-work.html">Our Work</a></li>
-    <li class="nav-dropdown">
-      <a href="gatley-kitchens-doors.html">Doors</a>
-      <div class="dropdown-menu">
-        <a href="gatley-kitchens-doors.html">Kitchen & Bedroom Doors</a>
-        <a href="gatley-kitchens-sliding-wardrobes.html">Sliding Wardrobes</a>
-      </div>
-    </li>
+    <li><a href="gatley-kitchens-doors.html">Door Styles</a></li>
     <li><a href="gatley-kitchens-worktops.html" style="color:var(--accent);font-weight:600;">Worktops</a></li>
     <li><a href="gatley-kitchens-blog.html">Blog</a></li>
     <li><a href="gatley-kitchens-about.html">About</a></li>
-    <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Free Quote</a></li>
+    <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Quote</a></li>
   </ul>
   <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
@@ -236,7 +186,7 @@
   <h1>Beautiful <em>Quartz</em><br>Worktops</h1>
   <p>Engineered quartz combines the natural beauty of stone with outstanding durability. Scratch-resistant, stain-resistant, and virtually maintenance-free — the perfect finishing touch for any kitchen.</p>
   <div class="hero-stats">
-    <div class="stat"><div class="stat-num">15+</div><div class="stat-label">Stone Colours</div></div>
+    <div class="stat"><div class="stat-num">72</div><div class="stat-label">Stone Colours</div></div>
     <div class="stat"><div class="stat-num">20mm</div><div class="stat-label">Standard Thickness</div></div>
     <div class="stat"><div class="stat-num">30mm</div><div class="stat-label">Premium Thickness</div></div>
     <div class="stat"><div class="stat-num">10yr</div><div class="stat-label">Typical Warranty</div></div>
@@ -262,7 +212,468 @@
   </div>
 </div>
 
+<div class="view-toggle-wrap">
+  <div class="view-toggle">
+    <button class="view-btn active" id="btn-swatches">Colour Swatches</button>
+    <button class="view-btn" id="btn-kitchens">In Our Kitchens</button>
+  </div>
+</div>
+
+<div class="view-panel active" id="panel-swatches">
+<p class="availability-line">Every surface below is available in 20mm | 30mm.</p>
+<div class="range-section">
+  <div class="range-heading"><h2>MasterQuartz</h2><span class="range-count">18 colours</span></div>
+  <div class="swatch-grid">
+    <div class="stone-card swatch" data-name="Arctic Shimmer" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_1_arctic_shimmer-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_1_arctic_shimmer-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_1_arctic_shimmer-202x202.jpg';" alt="Arctic Shimmer quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Arctic Shimmer</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Icy Messina" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Icy%20Messina-500x500.jpeg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Icy%20Messina-500x500.jpeg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Icy%20Messina-202x202.jpeg';" alt="Icy Messina quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Icy Messina</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Pure White" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_1_pure_white-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_1_pure_white-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_1_pure_white-202x202.jpg';" alt="Pure White quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Pure White</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Arctic Carrara" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_arctic_carrara-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_arctic_carrara-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_arctic_carrara-202x202.jpg';" alt="Arctic Carrara quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Arctic Carrara</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Calacatta Gold" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Calacatta%20Gold-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Calacatta%20Gold-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Calacatta%20Gold-202x202.jpg';" alt="Calacatta Gold quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Calacatta Gold</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Calacatta Grigio" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Calacatta%20Grigio-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Calacatta%20Grigio-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Calacatta%20Grigio-202x202.jpg';" alt="Calacatta Grigio quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Calacatta Grigio</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Citrine Rivers" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Citrine%20Rivers-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Citrine%20Rivers-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Citrine%20Rivers-202x202w.jpg';" alt="Citrine Rivers quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Citrine Rivers</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Fiorelli" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Fiorelli-500x500w.jpeg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Fiorelli-500x500w.jpeg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Fiorelli-202x202w.jpeg';" alt="Fiorelli quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Fiorelli</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Fresh Concrete" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_fresh_concrete-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_fresh_concrete-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_fresh_concrete-202x202.jpg';" alt="Fresh Concrete quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Fresh Concrete</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Massa" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_massa-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_massa-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_massa-202x202.jpg';" alt="Massa quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Massa</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Rapolano" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Rapolano-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Rapolano-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Rapolano-202x202w.jpg';" alt="Rapolano quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Rapolano</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Urban Concrete" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_urban_concrete-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_urban_concrete-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_urban_concrete-202x202.jpg';" alt="Urban Concrete quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Urban Concrete</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Umbra Haze" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Umbra%20Haze-500x500.jpeg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Umbra%20Haze-500x500.jpeg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Umbra%20Haze-202x202.jpeg';" alt="Umbra Haze quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Umbra Haze</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Volturno" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_volturno-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_volturno-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_2_volturno-202x202.jpg';" alt="Volturno quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Volturno</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Borghini Gelare" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Borghini%20Gelare-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Borghini%20Gelare-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/Borghini%20Gelare-202x202.jpg';" alt="Borghini Gelare quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Borghini Gelare</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Dolomitica" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/PG3%20-%20Dolomitica-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/PG3%20-%20Dolomitica-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/PG3%20-%20Dolomitica-202x202w.jpg';" alt="Dolomitica quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Dolomitica</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Luna Glacier" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_3_luna_glacier-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_3_luna_glacier-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartzImages/thumbnail_3_luna_glacier-202x202.jpg';" alt="Luna Glacier quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Luna Glacier</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Oro Fortuna" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/PG3%20-%20Oro%20Fortuna-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/PG3%20-%20Oro%20Fortuna-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/MasterQuartz%20Colours/PG3%20-%20Oro%20Fortuna-202x202w.jpg';" alt="Oro Fortuna quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Oro Fortuna</h3></div>
+    </div>
+  </div>
+</div>
+<div class="range-section">
+  <div class="range-heading"><h2>Caesarstone</h2><span class="range-count">33 colours</span></div>
+  <div class="swatch-grid">
+    <div class="stone-card swatch" data-name="Concrete" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/2003---Concrete-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/2003---Concrete-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/2003---Concrete-202x202.jpg';" alt="Concrete quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Concrete</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Jet Black" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/3100---Jet-Black-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/3100---Jet-Black-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/3100---Jet-Black-202x202.jpg';" alt="Jet Black quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Jet Black</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Intense White" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6011%20Intense%20White-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6011%20Intense%20White-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6011%20Intense%20White-202x202.jpg';" alt="Intense White quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Intense White</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Ocean Foam" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6141_Ocean_Foam-500x500h.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6141_Ocean_Foam-500x500h.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6141_Ocean_Foam-202x202h.jpg';" alt="Ocean Foam quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Ocean Foam</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Atlantic Salt" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6270_Atlantic_Salt-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6270_Atlantic_Salt-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6270_Atlantic_Salt-202x202w.jpg';" alt="Atlantic Salt quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Atlantic Salt</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Riverlet" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/1001%20Riverlet-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/1001%20Riverlet-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/1001%20Riverlet-202x202w.jpg';" alt="Riverlet quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Riverlet</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Snow" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/2141%20Snow-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/2141%20Snow-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/2141%20Snow-202x202.jpg';" alt="Snow quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Snow</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Wyndigo" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/1002%20Wyndigo-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/1002%20Wyndigo-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/1002%20Wyndigo-202x202w.jpg';" alt="Wyndigo quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Wyndigo</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Pebble" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4030---Oyster-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4030---Oyster-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4030---Oyster-202x202.jpg';" alt="Pebble quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Pebble</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Raven" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4120---Raven-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4120---Raven-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4120---Raven-202x202.jpg';" alt="Raven quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Raven</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Misty Carrara" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4141---Misty-Carrara-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4141---Misty-Carrara-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4141---Misty-Carrara-202x202.jpg';" alt="Misty Carrara quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Misty Carrara</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Clamshell" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4130-Clamshell-Swatch-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4130-Clamshell-Swatch-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4130-Clamshell-Swatch-202x202.jpg';" alt="Clamshell quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Clamshell</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Shitake" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4230---Shitake-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4230---Shitake-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4230---Shitake-202x202.jpg';" alt="Shitake quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Shitake</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Organic White" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4600%20Organic%20White-500x500h.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4600%20Organic%20White-500x500h.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4600%20Organic%20White-202x202h.jpg';" alt="Organic White quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Organic White</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Frozen Terra" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4601%20Frozen%20Terra-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4601%20Frozen%20Terra-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4601%20Frozen%20Terra-202x202.jpg';" alt="Frozen Terra quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Frozen Terra</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Nougat" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6600---Nougat-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6600---Nougat-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6600---Nougat-202x202.jpg';" alt="Nougat quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Nougat</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Raw Concrete" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4004_Raw%20concrete_Swatch-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4004_Raw%20concrete_Swatch-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4004_Raw%20concrete_Swatch-202x202.jpg';" alt="Raw Concrete quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Raw Concrete</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Vanilla Noir" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/Vanilla%20noir%20swatch-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/Vanilla%20noir%20swatch-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/Vanilla%20noir%20swatch-202x202.jpg';" alt="Vanilla Noir quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Vanilla Noir</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Aterra Blanca" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5112%20Aterra%20Blanca-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5112%20Aterra%20Blanca-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5112%20Aterra%20Blanca-202x202w.jpg';" alt="Aterra Blanca quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Aterra Blanca</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="White Attica" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5143_White_Attica-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5143_White_Attica-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5143_White_Attica-202x202.jpg';" alt="White Attica quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>White Attica</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Taj Mahal" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5212%20TAJ%20ROYAL-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5212%20TAJ%20ROYAL-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5212%20TAJ%20ROYAL-202x202w.jpg';" alt="Taj Mahal quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Taj Mahal</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Cloudburst Concrete" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4011%20CLOUDBURST%20CONCRETE-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4011%20CLOUDBURST%20CONCRETE-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/4011%20CLOUDBURST%20CONCRETE-202x202w.jpg';" alt="Cloudburst Concrete quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Cloudburst Concrete</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="London Grey" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5000_London-Grey-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5000_London-Grey-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5000_London-Grey-202x202.jpg';" alt="London Grey quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>London Grey</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Georgian Bluffs" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6134_Georgian_Bluffs-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6134_Georgian_Bluffs-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6134_Georgian_Bluffs-202x202.jpg';" alt="Georgian Bluffs quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Georgian Bluffs</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Frosty Carrina" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5141_Frosty-Carrina-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5141_Frosty-Carrina-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5141_Frosty-Carrina-202x202.jpg';" alt="Frosty Carrina quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Frosty Carrina</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Piatra Grey" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5003_Piatra-Grey-%28New-for-2014%29-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5003_Piatra-Grey-%28New-for-2014%29-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5003_Piatra-Grey-%28New-for-2014%29-202x202.jpg';" alt="Piatra Grey quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Piatra Grey</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Dreamy Marfil" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5220_Dreamy-Marfil-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5220_Dreamy-Marfil-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5220_Dreamy-Marfil-202x202.jpg';" alt="Dreamy Marfil quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Dreamy Marfil</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Bianco Drift" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6131-Bianco-Drift-Swatch-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6131-Bianco-Drift-Swatch-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6131-Bianco-Drift-Swatch-202x202.jpg';" alt="Bianco Drift quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Bianco Drift</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Symphony Grey" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5133_Symphony_Grey_swatch-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5133_Symphony_Grey_swatch-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5133_Symphony_Grey_swatch-202x202.jpg';" alt="Symphony Grey quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Symphony Grey</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Woodlands" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6338-Woodlands%20%28New%20for%202014%29-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6338-Woodlands%20%28New%20for%202014%29-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/6338-Woodlands%20%28New%20for%202014%29-202x202.jpg';" alt="Woodlands quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Woodlands</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Statuario Maximus" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5031_Statuario_Maximus_3d_Swatch-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5031_Statuario_Maximus_3d_Swatch-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5031_Statuario_Maximus_3d_Swatch-202x202.jpg';" alt="Statuario Maximus quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Statuario Maximus</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Statuario Nuvo" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5111_Statuario_Nuvo%20%282%29-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5111_Statuario_Nuvo%20%282%29-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5111_Statuario_Nuvo%20%282%29-202x202.jpg';" alt="Statuario Nuvo quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Statuario Nuvo</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Calacatta Nuvo" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5131-Calacatta-Nuvo-Swatch-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5131-Calacatta-Nuvo-Swatch-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/CaesarstoneImages/5131-Calacatta-Nuvo-Swatch-202x202.jpg';" alt="Calacatta Nuvo quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Calacatta Nuvo</h3></div>
+    </div>
+  </div>
+</div>
+<div class="range-section">
+  <div class="range-heading"><h2>Silestone</h2><span class="range-count">21 colours</span></div>
+  <div class="swatch-grid">
+    <div class="stone-card swatch" data-name="Blanco City" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Blanco-City-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Blanco-City-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Blanco-City-202x202.jpg';" alt="Blanco City quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Blanco City</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Gris Expo" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Gris-Expo-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Gris-Expo-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Gris-Expo-202x202.jpg';" alt="Gris Expo quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Gris Expo</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Marengo" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/marengo-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/marengo-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/marengo-202x202.jpg';" alt="Marengo quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Marengo</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Noka" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/noka-02-1-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/noka-02-1-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/noka-02-1-202x202.jpg';" alt="Noka quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Noka</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Arden Blue" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/arden-blue-tabla-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/arden-blue-tabla-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/arden-blue-tabla-202x202.jpg';" alt="Arden Blue quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Arden Blue</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Cemento Spa" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/cemento-spa-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/cemento-spa-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/cemento-spa-202x202.jpg';" alt="Cemento Spa quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Cemento Spa</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Coral Clay" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Coral%20Clay%20-%20Tabla%20%283%29-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Coral%20Clay%20-%20Tabla%20%283%29-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Coral%20Clay%20-%20Tabla%20%283%29-202x202w.jpg';" alt="Coral Clay quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Coral Clay</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Crema Minerva" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Crema-Minerva-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Crema-Minerva-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Crema-Minerva-202x202.jpg';" alt="Crema Minerva quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Crema Minerva</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Ironbark" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Ironbark%20-%20Tabla%20%282%29-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Ironbark%20-%20Tabla%20%282%29-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Ironbark%20-%20Tabla%20%282%29-202x202w.jpg';" alt="Ironbark quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Ironbark</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Negro Tebas" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Negro-Tebas-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Negro-Tebas-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Negro-Tebas-202x202.jpg';" alt="Negro Tebas quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Negro Tebas</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Niebla" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/niebla-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/niebla-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/niebla-202x202.jpg';" alt="Niebla quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Niebla</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Royal Reef" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/royal-reef-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/royal-reef-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/royal-reef-202x202.jpg';" alt="Royal Reef quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Royal Reef</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Blanco Capri" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Blanco-Capri-500x500h.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Blanco-Capri-500x500h.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Blanco-Capri-202x202h.jpg';" alt="Blanco Capri quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Blanco Capri</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Cygnus" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/CYGNUS-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/CYGNUS-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/CYGNUS-202x202.jpg';" alt="Cygnus quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Cygnus</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="White Storm" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/White%20Storm%20-%20Tabla%20%282%29-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/White%20Storm%20-%20Tabla%20%282%29-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/White%20Storm%20-%20Tabla%20%282%29-202x202w.jpg';" alt="White Storm quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>White Storm</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Alpina White" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Alpina%20White%20-%20Tabla%20%284%29-500x500h.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Alpina%20White%20-%20Tabla%20%284%29-500x500h.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/Alpina%20White%20-%20Tabla%20%284%29-202x202h.jpg';" alt="Alpina White quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Alpina White</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Classic White" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/CLASSIC%20WHITE-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/CLASSIC%20WHITE-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/CLASSIC%20WHITE-202x202.jpg';" alt="Classic White quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Classic White</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Grey Stellar" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/stella-grey-tabla-500x500.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/stella-grey-tabla-500x500.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/stella-grey-tabla-202x202.jpg';" alt="Grey Stellar quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Grey Stellar</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Eternal Marquina" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ETERNAL%20MARQUINA-500x500h.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ETERNAL%20MARQUINA-500x500h.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ETERNAL%20MARQUINA-202x202h.jpg';" alt="Eternal Marquina quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Eternal Marquina</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Eternal Statuario" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ETERNAL%20STATUARIO-500x500h.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ETERNAL%20STATUARIO-500x500h.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ETERNAL%20STATUARIO-202x202h.jpg';" alt="Eternal Statuario quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Eternal Statuario</h3></div>
+    </div>
+    <div class="stone-card swatch" data-name="Iconic White" data-img="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ICONIC%20WHITE%20slab-500x500w.jpg">
+      <div class="stone-img-wrap">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ICONIC%20WHITE%20slab-500x500w.jpg" onerror="this.onerror=null;this.src='https://www.quartzfabrications.co.uk/image/cache/catalog/SilestoneImages/ICONIC%20WHITE%20slab-202x202w.jpg';" alt="Iconic White quartz worktop" loading="lazy">
+      </div>
+      <div class="stone-info"><h3>Iconic White</h3></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="view-panel" id="panel-kitchens">
+<p class="availability-line">A closer look at some of these colours fitted in real kitchens. See more on our <a href="gatley-kitchens-our-work.html" style="color:var(--accent);">Our Work</a> page.</p>
 <div class="stone-grid" id="stone-grid">
+
   
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20002-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20003-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20004-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20005-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20006-500x500h.jpg", "https://www.quartzfabrications.co.uk/image/cache/catalog/gallery/Arctic%20Carrara%20-%20Trade%20Sale/Arctic%20Carrara%20007-500x500h.jpg"]' data-current="0">
       <div class="stone-img-wrap">
@@ -288,7 +699,7 @@
     </div>
     <div class="stone-card" data-images='["https://www.quartzfabrications.co.uk/image/cache/catalog/INSTALL%20IMAGES/IMG_0905-480x750h.jpg"]' data-current="0">
       <div class="stone-img-wrap">
-        <img class="stone-img" src="IMG_0905-480x750h.jpg" alt="C.S Calacatta Nuvo" loading="lazy">
+        <img class="stone-img" src="https://www.quartzfabrications.co.uk/image/cache/catalog/INSTALL%20IMAGES/IMG_0905-480x750h.jpg" alt="C.S Calacatta Nuvo" loading="lazy" style="transform:rotate(180deg);">
       </div>
       <div class="stone-info">
         <h3>C.S Calacatta Nuvo</h3>
@@ -440,6 +851,7 @@
       </div>
     </div>
 </div>
+</div>
 
 <section class="cta-section">
   <h2>Like what you see?</h2>
@@ -452,7 +864,7 @@
 
 <div class="contact-bar">
   <span>📞 <a href="tel:01614378899">0161 437 8899</a></span>
-  <span>✉️ <a href="/cdn-cgi/l/email-protection#422f233029022523362e273b292b36212a272c316c212d6c3729">Email us</a></span>
+  <span>✉️ <a href="mailto:mark@gatleykitchens.co.uk">Email us</a></span>
   <span>💬 <a href="https://wa.me/447871643157">WhatsApp</a></span>
   <span>Gatley Kitchens &amp; Bedrooms · 11a Stonepail Rd, Gatley SK8 4EZ</span>
 </div>
@@ -465,83 +877,58 @@
       <button class="lb-close" id="lb-close">&times;</button>
       <img id="lb-img" src="" alt="">
       <div class="lb-counter" id="lb-counter"></div>
+      <div class="lb-name" id="lb-name"></div>
     </div>
     <button class="lb-btn" id="lb-next">&#8250;</button>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Mobile nav burger
-    const burger = document.getElementById('navBurger');
+  const burger = document.getElementById('navBurger');
   const navLinks = document.querySelector('.nav-links');
   if (burger && navLinks) {
     burger.addEventListener('click', () => {
       burger.classList.toggle('open');
       navLinks.classList.toggle('open');
     });
-    
-    // Close menu when clicking non-dropdown links
     navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', (e) => {
-        // Don't close if this is the dropdown toggle
-        if (!a.parentElement.classList.contains('nav-dropdown')) {
-          burger.classList.remove('open');
-          navLinks.classList.remove('open');
-        }
+      a.addEventListener('click', () => {
+        burger.classList.remove('open');
+        navLinks.classList.remove('open');
       });
     });
-    
-    // Mobile dropdown toggle
-    const dropdown = document.querySelector('.nav-dropdown');
-    if (dropdown && window.innerWidth <= 800) {
-      dropdown.querySelector('a').addEventListener('click', (e) => {
-        e.preventDefault();
-        dropdown.classList.toggle('mobile-open');
-      });
-    }
   }
 
-  // Per-card image cycling
-  document.querySelectorAll('.stone-card').forEach(card => {
-    const imgs = JSON.parse(card.dataset.images);
-    const imgEl = card.querySelector('.stone-img');
-    const dots = card.querySelectorAll('.dot');
-    let cur = 0;
-
-    function setImg(i) {
-      cur = (i + imgs.length) % imgs.length;
-      imgEl.src = imgs[cur];
-      dots.forEach((d, j) => d.classList.toggle('active', j === cur));
-    }
-
-    card.querySelector('.stone-prev')?.addEventListener('click', e => { e.stopPropagation(); setImg(cur - 1); });
-    card.querySelector('.stone-next')?.addEventListener('click', e => { e.stopPropagation(); setImg(cur + 1); });
-    dots.forEach((d, j) => d.addEventListener('click', e => { e.stopPropagation(); setImg(j); }));
-
-    const wrap = card.querySelector('.stone-img-wrap');
-    if (wrap) {
-      wrap.style.cursor = 'zoom-in';
-      wrap.addEventListener('click', e => {
-        if (!e.target.classList.contains('stone-prev') &&
-            !e.target.classList.contains('stone-next') &&
-            !e.target.classList.contains('dot')) {
-          openLightbox(imgs, cur);
-        }
-      });
-    }
+  // View toggle
+  const btnSwatches = document.getElementById('btn-swatches');
+  const btnKitchens = document.getElementById('btn-kitchens');
+  const panelSwatches = document.getElementById('panel-swatches');
+  const panelKitchens = document.getElementById('panel-kitchens');
+  btnSwatches.addEventListener('click', () => {
+    btnSwatches.classList.add('active'); btnKitchens.classList.remove('active');
+    panelSwatches.classList.add('active'); panelKitchens.classList.remove('active');
+  });
+  btnKitchens.addEventListener('click', () => {
+    btnKitchens.classList.add('active'); btnSwatches.classList.remove('active');
+    panelKitchens.classList.add('active'); panelSwatches.classList.remove('active');
   });
 
-  // Lightbox
-  let lbImgs = [], lbIdx = 0;
+  // Lightbox (shared)
+  let lbImgs = [], lbIdx = 0, lbName = '';
 
-  function openLightbox(imgs, idx) {
-    lbImgs = imgs; lbIdx = idx;
+  function openLightbox(imgs, idx, name) {
+    lbImgs = imgs; lbIdx = idx; lbName = name || '';
     renderLb();
     document.getElementById('lightbox').classList.add('open');
   }
   function renderLb() {
     document.getElementById('lb-img').src = lbImgs[lbIdx];
+    document.getElementById('lb-img').style.transform = lbImgs[lbIdx].includes('IMG_0905') ? 'rotate(180deg)' : '';
     document.getElementById('lb-counter').textContent = lbImgs.length > 1 ? (lbIdx + 1) + ' / ' + lbImgs.length : '';
+    document.getElementById('lb-name').textContent = lbImgs.length > 1 ? '' : lbName;
+    document.getElementById('lb-prev').style.display = lbImgs.length > 1 ? 'flex' : 'none';
+    document.getElementById('lb-next').style.display = lbImgs.length > 1 ? 'flex' : 'none';
     document.getElementById('lb-prev').disabled = lbIdx === 0;
     document.getElementById('lb-next').disabled = lbIdx === lbImgs.length - 1;
   }
@@ -557,6 +944,43 @@
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowLeft' && lbIdx > 0) { lbIdx--; renderLb(); }
     if (e.key === 'ArrowRight' && lbIdx < lbImgs.length - 1) { lbIdx++; renderLb(); }
+  });
+
+  // Swatch cards -> lightbox (single image)
+  document.querySelectorAll('.stone-card.swatch').forEach(card => {
+    card.addEventListener('click', () => {
+      openLightbox([card.dataset.img], 0, card.dataset.name);
+    });
+  });
+
+  // Kitchen cards -> image cycling + lightbox (multi image)
+  document.querySelectorAll('#stone-grid .stone-card').forEach(card => {
+    const imgs = JSON.parse(card.dataset.images);
+    const imgEl = card.querySelector('.stone-img');
+    const dots = card.querySelectorAll('.dot');
+    const name = card.querySelector('h3')?.textContent || '';
+    let cur = 0;
+
+    function setImg(i) {
+      cur = (i + imgs.length) % imgs.length;
+      imgEl.src = imgs[cur];
+      dots.forEach((d, j) => d.classList.toggle('active', j === cur));
+    }
+
+    card.querySelector('.stone-prev')?.addEventListener('click', e => { e.stopPropagation(); setImg(cur - 1); });
+    card.querySelector('.stone-next')?.addEventListener('click', e => { e.stopPropagation(); setImg(cur + 1); });
+    dots.forEach((d, j) => d.addEventListener('click', e => { e.stopPropagation(); setImg(j); }));
+
+    const wrap = card.querySelector('.stone-img-wrap');
+    if (wrap) {
+      wrap.addEventListener('click', e => {
+        if (!e.target.classList.contains('stone-prev') &&
+            !e.target.classList.contains('stone-next') &&
+            !e.target.classList.contains('dot')) {
+          openLightbox(imgs, cur, name);
+        }
+      });
+    }
   });
 </script>
 </body>
