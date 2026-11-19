@@ -158,18 +158,11 @@
 
 </div>
 
-<div class="contact-form-section">
-  <h2>Interested in a boiling water tap?</h2>
-  <p>Drop us a message and we'll get back to you — no pressure, just honest advice.</p>
-  <form class="blog-contact-form" id="blogContactForm">
-    <div><label for="bcName">Your Name</label><input type="text" id="bcName" name="name" required></div>
-    <div><label for="bcEmail">Email Address</label><input type="email" id="bcEmail" name="email" required></div>
-    <div><label for="bcPhone">Phone (optional)</label><input type="tel" id="bcPhone" name="phone"></div>
-    <div><label for="bcMessage">Your Message</label><textarea id="bcMessage" name="message" placeholder="Tell us a bit about your project…"></textarea></div>
-    <input type="hidden" name="_subject" value="Blog enquiry: Boiling Water Taps">
-    <button type="submit" id="blogSubmitBtn">Send Message</button>
-  </form>
-  <div id="blogFormSuccess">Thanks for getting in touch! We'll be back to you shortly.</div>
+<div class="contact-form-section" style="text-align:center;">
+  <h2>Want to talk about this?</h2>
+  <p>Get in touch</p>
+  <a href="https://www.gatleykitchens.co.uk/gatley-kitchens-quote.html" style="display:inline-block;background:#1c1a17;color:#ffffff;padding:13px 32px;font-size:0.78rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;margin:6px;">Get a Free Quote</a>
+  <a href="https://wa.me/447871643157" style="display:inline-block;background:transparent;color:#1c1a17;border:1px solid #1c1a17;padding:13px 32px;font-size:0.78rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;margin:6px;">WhatsApp Us</a>
 </div>
 
 <section class="cta-bar">
@@ -213,32 +206,6 @@
       });
     }
   }
-    document.getElementById('blogContactForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('blogSubmitBtn');
-    btn.textContent = 'Sending…';
-    btn.disabled = true;
-    const data = new FormData(this);
-    try {
-      const res = await fetch('https://formspree.io/f/xojkwner', {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json' }
-      });
-      if (res.ok) {
-        this.style.display = 'none';
-        document.getElementById('blogFormSuccess').style.display = 'block';
-      } else {
-        btn.textContent = 'Send Message';
-        btn.disabled = false;
-        alert('Something went wrong — please try again or call us on 0161 437 8899.');
-      }
-    } catch(err) {
-      btn.textContent = 'Send Message';
-      btn.disabled = false;
-      alert('Network error — please try again or call us on 0161 437 8899.');
-    }
-  });
-</script>
+    </script>
 </body>
 </html>
