@@ -368,7 +368,17 @@
           body: data,
           headers: { 'Accept': 'application/json' }
         });
+        if (!res.ok) throw new Error('Send failed');
         gtag('event', 'generate_lead', { event_category: 'Quote Form', event_label: 'Quote Page' });
         form.style.display = 'none';
         success.style.display = 'block';
-        document.querySelector('.
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        alert('Something went wrong. Please try again or call us on 0161 437 8899.');
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
