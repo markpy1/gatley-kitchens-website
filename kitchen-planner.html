@@ -560,7 +560,7 @@ canvas {
 
   <!-- Step 2: Add units -->
   <div class="panel" id="panel-1">
-    <p class="guide-line">Pick a category, then a size, then tap the room where you want it. Units drop in and go straight into Move mode. Tap any unit or opening to add a note or change its size. Doors and windows are chosen below and placed by tapping their wall.</p>
+    <p class="guide-line">Pick a category, then a unit. If it comes in more than one width, choose the width under the grid. Then tap the room where you want it. Units drop in and go straight into Move mode. Tap any unit or opening to add a note or change its size. Doors and windows are chosen below and placed by tapping their wall.</p>
 
     <div class="toolbar">
       <button class="btn outline sm" onclick="undo()">Undo</button>
@@ -573,6 +573,9 @@ canvas {
 
     <div class="mode-btns" id="cat-btns"></div>
     <div class="cabinet-grid" id="cab-grid"></div>
+
+    <div class="mode-btns" id="size-row" hidden></div>
+    <div class="mode-btns" id="on-row" hidden></div>
 
     <div class="mode-btns" id="opening-btns">
       <button class="mode-btn" id="open-door" onclick="pickOpening('door')">Door (800 mm)</button>
@@ -710,49 +713,43 @@ const CATEGORIES = [
   ['tall', 'Tall'], ['appliance', 'Appliances'], ['island', 'Island']
 ];
 const CAT_COLOR = {base:'#4A7C59', drawers:'#3F6E4E', wall:'#4A6FA5', tall:'#8B5E3C', appliance:'#B85C5C', island:'#6B6B8A'};
+
+/* One card per kind of unit. Where a unit comes in more than one width, the customer picks the width
+   (and for a hob, what it sits on) after choosing the card. */
 const UNITS = [];
-function addUnit(cat, label, w, d, extra){
-  UNITS.push(Object.assign({cat, label, w, d, layer: 'floor', color: CAT_COLOR[cat], editable: []}, extra || {}));
+function addUnit(cat, label, d, extra){
+  const e = Object.assign({cat, label, d, layer: 'floor', color: CAT_COLOR[cat], editable: [], sizes: null, corner: false}, extra || {});
+  if (e.sizes) {
+    e.sizes = e.sizes.map(s => typeof s === 'number' ? {w: s, name: String(s), label: s + ' mm'} : s);
+    e.w = (e.sizes.find(s => s.w === e.def) || e.sizes[0]).w;
+  }
+  UNITS.push(e);
 }
-/* Base units, 580 deep: the usual widths */
-[150, 300, 500, 600, 700, 800, 900, 1000, 1200].forEach(w => addUnit('base', 'Base ' + w, w, 580));
-addUnit('base', 'Base 600 (under oven)', 600, 580);
-addUnit('base', 'Corner base 1000', 1000, 580, {corner: true});
-addUnit('base', 'Corner base 1200', 1200, 580, {corner: true});
-addUnit('base', 'L-shaped corner base', 900, 900, {corner: true, shape: 'L', arm: 580, short: 'L corner', sizeText: '900 × 900 mm, 580 deep'});
-/* Wine racks sit in the base line */
-addUnit('base', 'Wine rack 150', 150, 580);
-addUnit('base', 'Wine rack 300', 300, 580);
-/* Hob and sinks, 580 deep */
-addUnit('base', 'Hob 600', 600, 580);
-addUnit('base', 'Hob 750', 750, 580);
-addUnit('base', 'Sink 600', 600, 580);
-addUnit('base', 'Sink 800', 800, 580);
-addUnit('base', 'Sink 1000', 1000, 580);
-addUnit('base', 'Sink 1200', 1200, 580);
-/* Drawers, 580 deep */
-[400, 500, 600, 700, 800, 900, 1000, 1100, 1200].forEach(w => addUnit('drawers', 'Drawers ' + w, w, 580));
-/* Wall units, 300 deep, wall layer */
-[150, 600, 700, 800, 900, 1000, 1200].forEach(w => addUnit('wall', 'Wall ' + w, w, 300, {layer: 'wall'}));
-addUnit('wall', 'Corner wall 1000', 1000, 300, {layer: 'wall', corner: true});
-addUnit('wall', 'Corner wall 1200', 1200, 300, {layer: 'wall', corner: true});
-addUnit('wall', 'L-shaped corner wall', 900, 900, {layer: 'wall', corner: true, shape: 'L', arm: 300, short: 'L corner', sizeText: '900 × 900 mm, 300 deep'});
-/* Boiler housing sits in the wall-unit line */
-addUnit('wall', 'Boiler housing', 500, 400, {layer: 'wall', sizeText: '500 wide × 400 deep × 900 high'});
-/* Tall units, 600 deep */
-addUnit('tall', 'Larder 300', 300, 600);
-addUnit('tall', 'Larder 500', 500, 600);
-addUnit('tall', 'Larder 600', 600, 600);
-addUnit('tall', 'Oven housing 600', 600, 600);
-addUnit('tall', 'Larder 1200', 1200, 600);
-addUnit('tall', 'Fridge freezer 600', 600, 600);
+const WIDTHS_BASE = [150, 300, 450, 500, 600, 700, 800, 900, 1000, 1200];
+/* Base: 580 deep. Most are 600 wide. */
+addUnit('base', 'Base unit', 580, {sizes: WIDTHS_BASE, def: 600});
+addUnit('base', 'Corner base', 580, {sizes: [1000, 1200], corner: true});
+addUnit('base', 'L-shaped corner base', 580, {w: 900, d: 900, corner: true, shape: 'L', arm: 580, short: 'L corner', sizeText: '900 × 900 mm, 580 deep'});
+addUnit('base', 'Wine rack', 580, {sizes: [150, 300]});
+addUnit('base', 'Hob', 580, {sizes: [600, 750], def: 600, sits: true});
+addUnit('base', 'Sink', 580, {sizes: [600, 800, 1000, 1200], def: 600});
+/* Drawers: 580 deep */
+addUnit('drawers', 'Drawers', 580, {sizes: [400, 500, 600, 700, 800, 900, 1000, 1100, 1200], def: 600});
+/* Wall units: 300 deep, on the wall layer */
+addUnit('wall', 'Wall unit', 300, {sizes: [150, 600, 700, 800, 900, 1000, 1200], def: 600, layer: 'wall'});
+addUnit('wall', 'Corner wall', 300, {sizes: [1000, 1200], corner: true, layer: 'wall'});
+addUnit('wall', 'L-shaped corner wall', 300, {w: 900, d: 900, corner: true, shape: 'L', arm: 300, short: 'L corner', layer: 'wall', sizeText: '900 × 900 mm, 300 deep'});
+addUnit('wall', 'Boiler housing', 400, {w: 500, layer: 'wall', sizeText: '500 wide × 400 deep × 900 high'});
+/* Tall: 600 deep */
+addUnit('tall', 'Larder', 600, {sizes: [300, 500, 600, 1200], def: 600});
+addUnit('tall', 'Oven housing', 600, {sizes: [600]});
+addUnit('tall', 'Fridge freezer', 600, {sizes: [600]});
 /* Appliances */
-addUnit('appliance', 'Dishwasher 600', 600, 580);
-addUnit('appliance', 'Slimline dishwasher 450', 450, 580);
-addUnit('appliance', 'Washing machine 600', 600, 580);
-addUnit('appliance', 'Extractor hood 600', 600, 500, {layer: 'wall'});
+addUnit('appliance', 'Dishwasher', 580, {sizes: [{w: 600, name: '600', label: '600 mm'}, {w: 450, name: '450 slimline', label: '450 mm slimline'}]});
+addUnit('appliance', 'Washing machine', 580, {sizes: [600]});
+addUnit('appliance', 'Extractor hood', 500, {sizes: [600], layer: 'wall'});
 /* Island: default size, editable */
-addUnit('island', 'Island', 1200, 900, {editable: ['w', 'd']});
+addUnit('island', 'Island', 900, {w: 1200, editable: ['w', 'd']});
 
 /* Doors sit at floor level and block floor units. Windows sit high on the wall and block wall units. */
 const OPENING_TYPES = {
@@ -775,7 +772,9 @@ let selWall = -1;
 /* Units and openings */
 let units = [];        /* {type, rot:0|1, x, y, note, w?, d?}: x and y are the top-left corner in mm */
 let openings = [];     /* {kind, wall, at, w, note}: at is mm along the wall from its start point */
-let selectedType = UNITS.find(t => t.label === 'Base 600');
+let selectedType = null;
+let selectedChip = null;   /* chosen width for the selected unit */
+let selectedOn = null;     /* hob: null, 'drawers' or 'oven' */
 let selectedIdx = -1;
 let selOpen = -1;
 let openingPick = null;
@@ -795,7 +794,7 @@ const PC = document.getElementById('plan-canvas');
 function snapshot(){
   return JSON.stringify({
     pts, closed,
-    units: units.map(u => ({t: UNITS.indexOf(u.type), rot: u.rot, x: u.x, y: u.y, note: u.note || '', w: u.w, d: u.d})),
+    units: units.map(u => ({t: UNITS.indexOf(u.type), rot: u.rot, x: u.x, y: u.y, note: u.note || '', w: u.w, d: u.d, sn: u.sizeName || '', on: u.on || null})),
     openings
   });
 }
@@ -806,6 +805,8 @@ function restore(json){
   closed = s.closed;
   units = s.units.map(o => {
     const u = {type: UNITS[o.t], rot: o.rot, x: o.x, y: o.y, note: o.note || ''};
+    if (o.sn) u.sizeName = o.sn;
+    if (o.on) u.on = o.on;
     if (o.w) u.w = o.w;
     if (o.d) u.d = o.d;
     return u;
@@ -837,6 +838,12 @@ function undo(){
 const snap = v => Math.round(v / GRID) * GRID;
 
 function dimsOf(u){ return {W: u.w || u.type.w, D: u.d || u.type.d}; }
+
+const ON_LABEL = {drawers: 'on drawers', oven: 'on oven housing'};
+/* Name shown on the plan and in the summary, e.g. "Base unit 600", "Sink 800", "Dishwasher 450 slimline" */
+function displayName(u){
+  return u.sizeName ? u.type.label + ' ' + u.sizeName : u.type.label;
+}
 
 function bounds(){
   if (!pts.length) return {minX: 0, minY: 0, maxX: 0, maxY: 0};
@@ -1203,8 +1210,9 @@ function drawPlan(cv, withUnits){
       const tx = onL ? (fx ? x + w - arm/2 : x + arm/2) : x + w/2;
       const ty = onL ? (fy ? y + h - arm/2 : y + arm/2) : y + h/2;
       /* Narrow units stack the name one word per line, so the text runs underneath rather than across */
-      const name = u.type.short || u.type.label;
+      const name = u.type.short || displayName(u);
       const lines = (w < 130 ? name.split(' ') : [name]).map(t => ({t, italic: false}));
+      if (u.on) lines.push({t: ON_LABEL[u.on], italic: true});
       if (note) lines.push({t: note, italic: true});
       const fs = Math.max(8, Math.min(12, w / 8));
       const lh = fs + 2;
@@ -1418,30 +1426,62 @@ function setCat(k){
   CATEGORIES.forEach(([key]) => document.getElementById('cat-' + key).classList.toggle('active-mode', key === k));
   const g = document.getElementById('cab-grid');
   g.innerHTML = '';
+  const icon = k === 'wall' || k === 'appliance' ? '▬' : k === 'tall' ? '▮' : '▭';
   UNITS.filter(t => t.cat === k).forEach(t => {
     const btn = document.createElement('button');
     btn.className = 'cab-btn' + (t === selectedType && !openingPick ? ' selected-cab' : '');
-    btn.innerHTML = '<span class="cab-icon" style="color:' + t.color + '">' + (k === 'wall' || k === 'wine' || k === 'appliance' ? '▬' : k === 'tall' ? '▮' : '▭') + '</span>' +
-      t.label + '<br><span style="color:#999;font-size:9px">' + (t.sizeText || (t.w + ' × ' + t.d + ' mm')) + '</span>';
+    const range = t.sizes
+      ? (t.sizes.length > 1 ? t.sizes[0].w + '–' + t.sizes[t.sizes.length - 1].w + ' mm' : t.sizes[0].w + ' mm')
+      : (t.sizeText || (t.w + ' × ' + t.d + ' mm'));
+    btn.innerHTML = '<span class="cab-icon" style="color:' + t.color + '">' + icon + '</span>' +
+      t.label + '<br><span style="color:#999;font-size:9px">' + range + '</span>';
     btn.onclick = () => pickUnit(t);
     g.appendChild(btn);
   });
+  renderSizes();
 }
 
-function highlightGrid(){
-  document.querySelectorAll('#cab-grid .cab-btn').forEach(b => b.classList.remove('selected-cab'));
-  if (openingPick) return;
-  const idx = UNITS.filter(t => t.cat === activeCat).indexOf(selectedType);
-  const btn = document.querySelectorAll('#cab-grid .cab-btn')[idx];
-  if (btn) btn.classList.add('selected-cab');
+/* Width buttons for the selected unit, and hob options */
+function renderSizes(){
+  const row = document.getElementById('size-row'), onRow = document.getElementById('on-row');
+  const t = selectedType;
+  const inCat = t && t.cat === activeCat && !openingPick;
+  const showSizes = inCat && t.sizes && t.sizes.length > 1;
+  row.hidden = !showSizes;
+  row.innerHTML = '';
+  if (showSizes) {
+    t.sizes.forEach(sz => {
+      const b = document.createElement('button');
+      b.className = 'mode-btn' + (selectedChip && selectedChip.w === sz.w ? ' active-mode' : '');
+      b.textContent = sz.label;
+      b.onclick = () => { selectedChip = sz; renderSizes(); };
+      row.appendChild(b);
+    });
+  }
+  const showOn = inCat && t.sits;
+  onRow.hidden = !showOn;
+  onRow.innerHTML = '';
+  if (showOn) {
+    [[null, 'On base unit'], ['drawers', 'On drawers'], ['oven', 'On oven housing']].forEach(([k, l]) => {
+      const b = document.createElement('button');
+      b.className = 'mode-btn' + (selectedOn === k ? ' active-mode' : '');
+      b.textContent = l;
+      b.onclick = () => { selectedOn = k; renderSizes(); };
+      onRow.appendChild(b);
+    });
+  }
 }
+
+function highlightGrid(){ setCat(activeCat); }
 
 function pickUnit(t){
   selectedType = t;
+  selectedChip = t.sizes ? (t.sizes.find(sz => sz.w === t.w) || t.sizes[0]) : null;
+  selectedOn = null;
   selectedIdx = -1; selOpen = -1;
   setMode('add');
-  highlightGrid();
-  redraw('Tap the room to place the ' + t.label + '.');
+  setCat(t.cat);
+  redraw('Choose a width if you need one, then tap the room to place the ' + t.label.toLowerCase() + '.');
 }
 
 function pickOpening(kind){
@@ -1480,7 +1520,7 @@ function showItemEditor(){
   if (selectedIdx >= 0 && units[selectedIdx]) {
     const u = units[selectedIdx], {W, D} = dimsOf(u);
     ed.hidden = false;
-    document.getElementById('item-label').textContent = u.type.label;
+    document.getElementById('item-label').textContent = displayName(u);
     document.getElementById('item-note').value = u.note || '';
     wW.style.display = u.type.editable.includes('w') ? '' : 'none';
     wD.style.display = u.type.editable.includes('d') ? '' : 'none';
@@ -1537,9 +1577,15 @@ function closePopup(){ document.getElementById('popup').hidden = true; }
 
 function placeUnit(p){
   const t = selectedType;
-  const r = settle({x: p.x - t.w/2, y: p.y - t.d/2, w: t.w, h: t.d, wall: t.layer === 'wall'}, -1);
+  if (!t) { redraw('Pick a unit first.'); return; }
+  const w = selectedChip ? selectedChip.w : t.w;
+  const d = t.sits && selectedOn === 'oven' ? 600 : t.d;
+  const r = settle({x: p.x - w/2, y: p.y - d/2, w, h: d, wall: t.layer === 'wall'}, -1);
   if (!r) { redraw(); showPopup('Not enough space'); return; }
-  units.push({type: t, rot: 0, x: r.x, y: r.y, note: ''});
+  const u = {type: t, rot: 0, x: r.x, y: r.y, note: '', w, d};
+  if (selectedChip && t.sizes && t.sizes.length > 1) u.sizeName = selectedChip.name;
+  if (t.sits && selectedOn) u.on = selectedOn;
+  units.push(u);
   selectedIdx = units.length - 1;
   selOpen = -1;
   setMode('move');
@@ -1594,7 +1640,7 @@ function redraw(msg){
   if (!text) {
     text = units.length + (units.length === 1 ? ' unit' : ' units') + ' placed';
     if (openings.length) text += ', ' + openings.length + (openings.length === 1 ? ' opening' : ' openings');
-    if (selectedIdx >= 0) text += ' · ' + units[selectedIdx].type.label + ' selected';
+    if (selectedIdx >= 0) text += ' · ' + displayName(units[selectedIdx]) + ' selected';
     if (selOpen >= 0) text += ' · ' + OPENING_TYPES[openings[selOpen].kind].label + ' selected';
   }
   document.getElementById('cab-info').textContent = text;
@@ -1711,7 +1757,7 @@ PC.addEventListener('pointercancel', endDrag);
 function buildSummary(){
   const counts = {};
   units.forEach(u => {
-    const key = u.type.label + (u.note ? ' (' + u.note + ')' : '');
+    const key = displayName(u) + (u.on ? ' ' + ON_LABEL[u.on] : '') + (u.note ? ' (' + u.note + ')' : '');
     counts[key] = (counts[key] || 0) + 1;
   });
   let layout = Object.entries(counts).map(([k, v]) => k + ' ×' + v).join(', ') || 'None';
@@ -1754,7 +1800,7 @@ buildCats();
 setCat('base');
 setMode('add');
 refreshDraw(null);
-redraw('Pick a category, then a size.');
+redraw('Pick a category, then a unit.');
 </script>
 </body>
 </html>
