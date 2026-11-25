@@ -533,7 +533,7 @@ canvas {
       <button class="btn outline sm" onclick="startAgain()">Start again</button>
     </div>
 
-    <canvas id="draw-canvas" width="752" height="460"></canvas>
+    <canvas id="draw-canvas" width="752" height="680"></canvas>
     <div class="info-bar" id="draw-info">Tap to place your first corner.</div>
 
     <div class="wall-editor" id="wall-editor" hidden>
@@ -572,7 +572,7 @@ canvas {
       <div class="leg-item"><div class="leg-swatch" style="background:#6B6B8A"></div>Island</div>
     </div>
 
-    <canvas id="plan-canvas" width="752" height="460"></canvas>
+    <canvas id="plan-canvas" width="752" height="680"></canvas>
     <div class="info-bar" id="cab-info">0 units placed</div>
 
     <div class="nav-row">
@@ -667,7 +667,9 @@ canvas {
 
 <script>
 /* Plan view size (canvas pixels), padding, grid (mm) and snapping distance (mm) */
-const PLAN_W = 752, PLAN_H = 460, PAD = 32, GRID = 100, SNAP = 150;
+const PLAN_W = 752, PLAN_H = 680, PAD = 32, GRID = 100, SNAP = 150;
+/* Fixed view: 16 px per metre, origin a little left of and above the top-left corner. The view only zooms out when a room is bigger than it. */
+const VIEW_SCALE = 0.16, VIEW_X0 = -200, VIEW_Y0 = -200;
 
 /* Units are rectangles in plan view, measured in mm. w runs along the wall, d is depth. */
 const UNITS = [
@@ -713,19 +715,27 @@ const PC = document.getElementById('plan-canvas');
 const snap = v => Math.round(v / GRID) * GRID;
 
 function bounds(){
-  let xs = [0, 4000], ys = [0, 3500];
-  if (pts.length) { xs = pts.map(p => p.x); ys = pts.map(p => p.y); }
-  let minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  if (maxX - minX < 3000) { const c = (minX + maxX) / 2; minX = c - 1500; maxX = c + 1500; }
-  if (maxY - minY < 3000) { const c = (minY + maxY) / 2; minY = c - 1500; maxY = c + 1500; }
-  return {minX, minY, maxX, maxY};
+  if (!pts.length) return {minX: 0, minY: 0, maxX: 0, maxY: 0};
+  return {
+    minX: Math.min(...pts.map(p => p.x)), minY: Math.min(...pts.map(p => p.y)),
+    maxX: Math.max(...pts.map(p => p.x)), maxY: Math.max(...pts.map(p => p.y))
+  };
 }
 
+/* The grid stays where it is while you draw. It only zooms out if the room
+   grows past the visible area. */
 function view(){
   const b = bounds();
-  const bw = b.maxX - b.minX, bh = b.maxY - b.minY;
-  const s = Math.min((PLAN_W - 2*PAD) / bw, (PLAN_H - 2*PAD) / bh);
-  return {s, ox: (PLAN_W - bw*s) / 2 - b.minX*s, oy: (PLAN_H - bh*s) / 2 - b.minY*s};
+  const visW = (PLAN_W - 2*PAD) / VIEW_SCALE, visH = (PLAN_H - 2*PAD) / VIEW_SCALE;
+  let X0 = VIEW_X0, Y0 = VIEW_Y0;
+  let X1 = VIEW_X0 + visW, Y1 = VIEW_Y0 + visH;
+  /* Only zoom out when a corner falls outside the visible area */
+  if (pts.length && (b.minX < X0 || b.minY < Y0 || b.maxX > X1 || b.maxY > Y1)) {
+    X0 = Math.min(X0, b.minX - 200); Y0 = Math.min(Y0, b.minY - 200);
+    X1 = Math.max(X1, b.maxX + 200); Y1 = Math.max(Y1, b.maxY + 200);
+  }
+  const s = Math.min(VIEW_SCALE, (PLAN_W - 2*PAD) / (X1 - X0), (PLAN_H - 2*PAD) / (Y1 - Y0));
+  return {s, ox: PAD - X0*s, oy: PAD - Y0*s, X0, Y0, X1, Y1};
 }
 
 function wallList(){
@@ -881,23 +891,22 @@ function label(ctx, text, x, y){
 
 function drawPlan(cv, withUnits){
   const ctx = cv.getContext('2d');
-  const {s, ox, oy} = view();
-  const b = bounds();
+  const {s, ox, oy, X0, Y0, X1, Y1} = view();
   const X = x => ox + x*s, Y = y => oy + y*s;
 
   ctx.fillStyle = '#FAFAF7';
   ctx.fillRect(0, 0, cv.width, cv.height);
 
   /* 10 cm grid, with a darker line every metre */
-  for (let x = Math.floor(b.minX / GRID) * GRID; x <= b.maxX; x += GRID) {
-    ctx.strokeStyle = x % 1000 === 0 ? '#e0dbd0' : '#efebe2';
-    ctx.lineWidth = x % 1000 === 0 ? 0.8 : 0.5;
-    ctx.beginPath(); ctx.moveTo(X(x), Y(b.minY)); ctx.lineTo(X(x), Y(b.maxY)); ctx.stroke();
+  for (let x = Math.ceil(X0 / GRID) * GRID; x <= X1; x += GRID) {
+    ctx.strokeStyle = x % 1000 === 0 ? '#d9d3c5' : '#ebe6dc';
+    ctx.lineWidth = x % 1000 === 0 ? 0.9 : 0.5;
+    ctx.beginPath(); ctx.moveTo(X(x), Y(Y0)); ctx.lineTo(X(x), Y(Y1)); ctx.stroke();
   }
-  for (let y = Math.floor(b.minY / GRID) * GRID; y <= b.maxY; y += GRID) {
-    ctx.strokeStyle = y % 1000 === 0 ? '#e0dbd0' : '#efebe2';
-    ctx.lineWidth = y % 1000 === 0 ? 0.8 : 0.5;
-    ctx.beginPath(); ctx.moveTo(X(b.minX), Y(y)); ctx.lineTo(X(b.maxX), Y(y)); ctx.stroke();
+  for (let y = Math.ceil(Y0 / GRID) * GRID; y <= Y1; y += GRID) {
+    ctx.strokeStyle = y % 1000 === 0 ? '#d9d3c5' : '#ebe6dc';
+    ctx.lineWidth = y % 1000 === 0 ? 0.9 : 0.5;
+    ctx.beginPath(); ctx.moveTo(X(X0), Y(y)); ctx.lineTo(X(X1), Y(y)); ctx.stroke();
   }
 
   /* Room floor and outline */
