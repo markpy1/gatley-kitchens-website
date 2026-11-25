@@ -526,7 +526,7 @@ canvas {
 
   <!-- Step 1: Draw the room -->
   <div class="panel active" id="panel-0">
-    <p class="guide-line">Tap each corner of your room in turn. Walls snap to straight lines and to 10&nbsp;cm steps. Tap the first corner to close the room, then tap any wall to change its length.</p>
+    <p class="guide-line">Start with your longest outside wall, as it&rsquo;s usually where the window and sink go. Tap each corner in turn. Walls snap to straight lines and to 10&nbsp;cm steps. After each wall you can type its exact length. Tap the first corner to close the room.</p>
 
     <div class="toolbar">
       <button class="btn outline sm" onclick="undoPoint()">Undo</button>
@@ -538,7 +538,7 @@ canvas {
 
     <div class="wall-editor" id="wall-editor" hidden>
       <span id="wall-label">Wall</span>
-      <input type="number" id="wall-len" min="10" max="2000" step="10" inputmode="numeric" aria-label="Wall length in centimetres">
+      <input type="number" id="wall-len" min="10" max="2000" step="10" inputmode="numeric" aria-label="Wall length in centimetres" onkeydown="if(event.key==='Enter'){applyWallLength();}">
       <span class="dim-unit">cm</span>
       <button class="btn accent sm" onclick="applyWallLength()">Apply</button>
       <button class="btn outline sm" onclick="closeWallEditor()">Cancel</button>
@@ -552,9 +552,14 @@ canvas {
 
   <!-- Step 2: Add units -->
   <div class="panel" id="panel-1">
-    <p class="guide-line">Tap a unit below, then tap the room where you want it. It drops in and is ready to drag into position.</p>
+    <p class="guide-line">Tap a unit below, then tap the room where you want it. It drops in and is ready to drag into position. For doors and windows, pick one below, then tap its wall.</p>
 
     <div class="cabinet-grid" id="cab-grid"></div>
+
+    <div class="mode-btns" id="opening-btns">
+      <button class="mode-btn" id="open-door" onclick="pickOpening('door')">Door</button>
+      <button class="mode-btn" id="open-window" onclick="pickOpening('window')">Window</button>
+    </div>
 
     <div class="mode-btns">
       <button class="mode-btn active-mode" id="mode-add" onclick="setMode('add')">Add</button>
@@ -666,9 +671,10 @@ canvas {
 
 
 <script>
-/* Plan view size (canvas pixels), padding, grid (mm) and snapping distance (mm) */
+/* Plan view size, padding, grid (mm) and snapping distance (mm) */
 const PLAN_W = 752, PLAN_H = 680, PAD = 32, GRID = 100, SNAP = 150;
-/* Fixed view: 16 px per metre, origin a little left of and above the top-left corner. The view only zooms out when a room is bigger than it. */
+/* Fixed view: 16 px per metre, origin a little left of and above the top-left corner.
+   The view only zooms out when a corner falls outside it. */
 const VIEW_SCALE = 0.16, VIEW_X0 = -200, VIEW_Y0 = -200;
 
 /* Units are rectangles in plan view, measured in mm. w runs along the wall, d is depth. */
@@ -688,10 +694,16 @@ const UNITS = [
   {id:'island',   label:'Island',       w:1200, d:900, color:'#6B6B8A', cat:'island'},
 ];
 
+/* Doors sit at floor level and block floor units. Windows sit high on the wall and block wall units. */
+const OPENING_TYPES = {
+  door:   {label:'Door',   w:800,  depth:100, color:'#A0785A', wall:false},
+  window: {label:'Window', w:1000, depth:100, color:'#7FA7C9', wall:true}
+};
+
 const HINTS = {
-  add:    'Tap a unit above, then tap the room to place it. It goes straight into Move mode.',
-  move:   'Drag a unit to position it. It snaps to the walls and lines up with the units next to it.',
-  delete: 'Tap a unit to remove it.'
+  add:    'Tap a unit above, or pick a door or window and tap its wall. Units go straight into Move mode.',
+  move:   'Drag a unit or opening to position it. Units snap to the walls and line up with their neighbours. Openings slide along their wall.',
+  delete: 'Tap a unit or opening to remove it.'
 };
 
 /* Room outline: corners in mm, walls are the straight lines between them */
@@ -700,10 +712,13 @@ let closed = false;
 let cursor = null;     /* last pointer position while drawing, mm */
 let selWall = -1;
 
-/* Units */
+/* Units and openings */
 let units = [];        /* {type, rot:0|1, x, y}, x and y are the top-left corner in mm */
+let openings = [];     /* {kind, wall, at, w}: at is mm along the wall from its start point */
 let selectedType = UNITS[0];
 let selectedIdx = -1;
+let selOpen = -1;
+let openingPick = null;
 let mode = 'add';
 let drag = null;
 
@@ -722,14 +737,11 @@ function bounds(){
   };
 }
 
-/* The grid stays where it is while you draw. It only zooms out if the room
-   grows past the visible area. */
 function view(){
   const b = bounds();
   const visW = (PLAN_W - 2*PAD) / VIEW_SCALE, visH = (PLAN_H - 2*PAD) / VIEW_SCALE;
   let X0 = VIEW_X0, Y0 = VIEW_Y0;
   let X1 = VIEW_X0 + visW, Y1 = VIEW_Y0 + visH;
-  /* Only zoom out when a corner falls outside the visible area */
   if (pts.length && (b.minX < X0 || b.minY < Y0 || b.maxX > X1 || b.maxY > Y1)) {
     X0 = Math.min(X0, b.minX - 200); Y0 = Math.min(Y0, b.minY - 200);
     X1 = Math.max(X1, b.maxX + 200); Y1 = Math.max(Y1, b.maxY + 200);
@@ -813,7 +825,37 @@ function overlaps(a, b){
          a.y < b.y + b.h - 0.5 && a.y + a.h > b.y + 0.5;
 }
 
-/* Wall units hang above the floor units, so they only collide with other wall units */
+/* Plan rectangle of an opening: along its wall, depth into the room */
+function openingRect(o){
+  const w = wallList().find(x => x.i === o.wall);
+  if (!w) return null;
+  const L = wallLengthMM(w);
+  const ux = (w.b.x - w.a.x) / L, uy = (w.b.y - w.a.y) / L;
+  const depth = OPENING_TYPES[o.kind].depth;
+  const horizontal = w.a.y === w.b.y;
+  const mx = (w.a.x + w.b.x) / 2, my = (w.a.y + w.b.y) / 2;
+  let nx = 0, ny = 0;
+  if (horizontal) ny = pointInPoly(mx, my + 50) ? 1 : -1;
+  else nx = pointInPoly(mx + 50, my) ? 1 : -1;
+  const x0 = w.a.x + ux*o.at, x1 = w.a.x + ux*(o.at + o.w);
+  const y0 = w.a.y + uy*o.at, y1 = w.a.y + uy*(o.at + o.w);
+  if (horizontal) {
+    return {x: Math.min(x0, x1), y: Math.min(w.a.y, w.a.y + ny*depth), w: Math.abs(x1 - x0), h: depth,
+            wall: OPENING_TYPES[o.kind].wall, opening: true};
+  }
+  return {x: Math.min(w.a.x, w.a.x + nx*depth), y: Math.min(y0, y1), w: depth, h: Math.abs(y1 - y0),
+          wall: OPENING_TYPES[o.kind].wall, opening: true};
+}
+
+/* Wall units hang above the floor units, so they only collide with other wall units.
+   Windows sit on the wall layer and doors on the floor layer. */
+function openingBlocks(r){
+  return openings.some(o => {
+    const R = openingRect(o);
+    return R && R.wall === !!r.wall && overlaps(r, R);
+  });
+}
+
 function overlapsAny(r, ignore){
   return units.some((u, i) => {
     if (i === ignore) return false;
@@ -822,7 +864,7 @@ function overlapsAny(r, ignore){
   });
 }
 
-function valid(r, ignore){ return insideRoom(r) && !overlapsAny(r, ignore); }
+function valid(r, ignore){ return insideRoom(r) && !overlapsAny(r, ignore) && !openingBlocks(r); }
 
 function nearest(candidates, v){
   let best = v, bestDist = SNAP;
@@ -862,6 +904,40 @@ function hitTest(p){
   return -1;
 }
 
+function hitOpening(p){
+  for (let i = openings.length - 1; i >= 0; i--) {
+    const o = openingRect(openings[i]);
+    if (o && p.x >= o.x && p.x <= o.x + o.w && p.y >= o.y && p.y <= o.y + o.h) return i;
+  }
+  return -1;
+}
+
+/* Can an opening sit here? It must fit its wall and not clash with units or other openings on its layer. */
+function openingFits(o, ignore){
+  const w = wallList().find(x => x.i === o.wall);
+  if (!w) return false;
+  const L = wallLengthMM(w);
+  if (o.at < 0 || o.at + o.w > L + 0.5) return false;
+  const R = openingRect(o);
+  if (!R) return false;
+  if (units.some(u => { const r = unitRect(u); return r.wall === R.wall && overlaps(R, r); })) return false;
+  return !openings.some((q, k) => {
+    if (k === ignore) return false;
+    const S = openingRect(q);
+    return S && S.wall === R.wall && overlaps(R, S);
+  });
+}
+
+/* Drop openings that no longer fit after the room changed */
+function pruneOpenings(){
+  const before = openings.length;
+  openings = openings.filter(o => {
+    const w = wallList().find(x => x.i === o.wall);
+    return w && o.at >= 0 && o.at + o.w <= wallLengthMM(w) + 0.5;
+  });
+  return before - openings.length;
+}
+
 /* Remove any unit that no longer fits after the room changed */
 function pruneUnits(){
   const kept = [];
@@ -869,11 +945,18 @@ function pruneUnits(){
   units.forEach(u => {
     const r = unitRect(u);
     const clash = kept.some(k => { const o = unitRect(k); return o.wall === r.wall && overlaps(r, o); });
-    if (insideRoom(r) && !clash) kept.push(u); else dropped++;
+    if (insideRoom(r) && !clash && !openingBlocks(r)) kept.push(u); else dropped++;
   });
   units = kept;
   selectedIdx = -1;
   return dropped;
+}
+
+function pruneAll(){
+  const d1 = pruneOpenings();
+  const d2 = pruneUnits();
+  selOpen = -1;
+  return d1 + d2;
 }
 
 /* ---------- Drawing ---------- */
@@ -984,6 +1067,31 @@ function drawPlan(cv, withUnits){
       ctx.fillText(u.type.label, x + w/2, y + h/2);
     }
   });
+
+  /* Doors and windows */
+  openings.forEach((o, i) => {
+    const r = openingRect(o);
+    if (!r) return;
+    const type = OPENING_TYPES[o.kind];
+    const x = X(r.x), y = Y(r.y), w = r.w*s, h = r.h*s;
+    ctx.fillStyle = type.color + '66';
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = type.color;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(x, y, w, h);
+    if (i === selOpen) {
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x - 1.5, y - 1.5, w + 3, h + 3);
+    }
+    if (w > 40 && h > 10) {
+      ctx.fillStyle = '#3d3a35';
+      ctx.font = '10px Jost, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(type.label, x + w/2, y + h/2);
+    }
+  });
 }
 
 function drawAll(){
@@ -998,7 +1106,7 @@ function updateDrawInfo(msg){
   if (!text) {
     if (closed) text = 'Room closed. Tap a wall to change its length.';
     else if (!pts.length) text = 'Tap to place your first corner.';
-    else text = 'Corner ' + (pts.length) + ' placed. Tap the first corner to close the room.';
+    else text = 'Corner ' + pts.length + ' placed. Type the length of the wall above if you know it, or tap the first corner to close the room.';
   }
   document.getElementById('draw-info').textContent = text;
   document.getElementById('next-1').disabled = !closed;
@@ -1036,19 +1144,20 @@ function closeRoom(){
   closed = true;
   cursor = null;
   closeWallEditor();
-  const dropped = pruneUnits();
-  refreshDraw(dropped ? dropped + ' unit(s) no longer fitted the room and were removed.' : null);
+  const dropped = pruneAll();
+  refreshDraw(dropped ? dropped + ' item(s) no longer fitted the room and were removed.' : null);
 }
 
 function undoPoint(){
   closeWallEditor();
-  if (closed) { closed = false; }
+  if (closed) { closed = false; openings = []; selOpen = -1; }
   else if (pts.length) { pts.pop(); }
   refreshDraw(null);
 }
 
 function startAgain(){
-  pts = []; closed = false; cursor = null; selWall = -1; units = []; selectedIdx = -1;
+  pts = []; closed = false; cursor = null; selWall = -1;
+  units = []; openings = []; selectedIdx = -1; selOpen = -1;
   closeWallEditor();
   refreshDraw(null);
 }
@@ -1088,13 +1197,17 @@ DC.addEventListener('pointerdown', e => {
   if (t.x === L.x && t.y === L.y) return;
   pts.push(t);
   cursor = null;
+  /* Offer the wall just drawn for typing its exact length */
+  openWallEditor(pts.length - 2);
   refreshDraw(null);
 });
 
-/* Wall length editor: changing one wall moves the corners after it so the shape stays square */
+/* Wall length editor. Changing a wall moves the corners after it so the shape stays square.
+   On an open outline the last wall is the only one that can change without leaving a gap. */
 function openWallEditor(i){
   selWall = i;
   const w = wallList().find(x => x.i === i);
+  if (!w) { closeWallEditor(); return; }
   document.getElementById('wall-len').value = Math.round(wallLengthMM(w) / 10);
   document.getElementById('wall-label').textContent = 'Wall ' + (i + 1);
   document.getElementById('wall-editor').hidden = false;
@@ -1110,7 +1223,8 @@ function applyWallLength(){
   if (!cm || cm < 10) { refreshDraw('Enter a length of at least 10 cm.'); return; }
   const n = pts.length, w = selWall;
   if (w < 0) return;
-  const p = pts[w], q = pts[(w + 1) % n], r = pts[(w + 2) % n];
+  const p = pts[w], q = pts[(w + 1) % n];
+  const r = (closed || w + 2 < n) ? pts[(w + 2) % n] : null;
   const horizontal = p.y === q.y;
   const cur = horizontal ? q.x - p.x : q.y - p.y;
   if (cur === 0) return;
@@ -1118,12 +1232,13 @@ function applyWallLength(){
   const target = (horizontal ? p.x : p.y) + sign * cm * 10;
   const delta = target - (horizontal ? q.x : q.y);
 
-  if (horizontal) { q.x += delta; r.x += delta; }
-  else { q.y += delta; r.y += delta; }
+  if (horizontal) { q.x += delta; if (r) r.x += delta; }
+  else { q.y += delta; if (r) r.y += delta; }
 
-  const dropped = pruneUnits();
+  let dropped = 0;
+  if (closed) dropped = pruneAll();
   closeWallEditor();
-  refreshDraw(dropped ? dropped + ' unit(s) no longer fitted the room and were removed.' : null);
+  refreshDraw(dropped ? dropped + ' item(s) no longer fitted the room and were removed.' : null);
 }
 
 /* ---------- Steps ---------- */
@@ -1138,7 +1253,7 @@ function nextStep(n){
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-/* ---------- Unit picker and modes ---------- */
+/* ---------- Unit picker, openings and modes ---------- */
 
 function buildGrid(){
   const icons = {base:'▭', wall:'▬', tall:'▮', appliance:'⬚', island:'⬜'};
@@ -1150,6 +1265,7 @@ function buildGrid(){
       t.label + '<br><span style="color:#999;font-size:9px">' + t.w + ' × ' + t.d + ' mm</span>';
     btn.onclick = () => {
       selectedType = t;
+      openingPick = null;
       document.querySelectorAll('.cab-btn').forEach(b => b.classList.remove('selected-cab'));
       btn.classList.add('selected-cab');
       selectedIdx = -1;
@@ -1160,20 +1276,36 @@ function buildGrid(){
   });
 }
 
+function pickOpening(kind){
+  setMode('add');
+  openingPick = kind;
+  document.querySelectorAll('.cab-btn').forEach(b => b.classList.remove('selected-cab'));
+  setOpeningButtons();
+  redraw('Tap the ' + OPENING_TYPES[kind].label.toLowerCase() + "'s wall to place it.");
+}
+
+function setOpeningButtons(){
+  ['door', 'window'].forEach(k => document.getElementById('open-' + k).classList.toggle('active-mode', openingPick === k));
+}
+
 function redraw(msg){
   drawAll();
   document.getElementById('rotate-btn').disabled = selectedIdx < 0;
   let text = msg;
   if (!text) {
     text = units.length + (units.length === 1 ? ' unit' : ' units') + ' placed';
+    if (openings.length) text += ', ' + openings.length + (openings.length === 1 ? ' opening' : ' openings');
     if (selectedIdx >= 0) text += ' · ' + units[selectedIdx].type.label + ' selected';
+    if (selOpen >= 0) text += ' · ' + OPENING_TYPES[openings[selOpen].kind].label + ' selected';
   }
   document.getElementById('cab-info').textContent = text;
 }
 
 function setMode(m){
   mode = m;
+  if (m !== 'add') openingPick = null;
   ['add', 'move', 'delete'].forEach(k => document.getElementById('mode-' + k).classList.toggle('active-mode', k === m));
+  setOpeningButtons();
   document.getElementById('mode-hint').textContent = HINTS[m];
   PC.style.cursor = m === 'add' ? 'crosshair' : m === 'move' ? 'grab' : 'pointer';
 }
@@ -1184,8 +1316,30 @@ function placeUnit(p){
   if (!r) { redraw('No space there. Try another spot in the room.'); return; }
   units.push({type: t, rot: 0, x: r.x, y: r.y});
   selectedIdx = units.length - 1;
+  selOpen = -1;
   setMode('move');
   redraw('Placed. Drag it into position.');
+}
+
+function placeOpening(p){
+  const kind = openingPick, def = OPENING_TYPES[kind];
+  const tol = 20 / view().s;
+  let best = null, bestD = tol;
+  wallList().forEach(w => { const d = distSeg(p, w.a, w.b); if (d < bestD) { bestD = d; best = w; } });
+  if (!best) { redraw('Tap closer to a wall to place the ' + def.label.toLowerCase() + '.'); return; }
+  const L = wallLengthMM(best);
+  if (L < def.w) { redraw('That wall is too short for a ' + def.label.toLowerCase() + '.'); return; }
+  const ux = (best.b.x - best.a.x) / L, uy = (best.b.y - best.a.y) / L;
+  const t = (p.x - best.a.x) * ux + (p.y - best.a.y) * uy;
+  let at = Math.round((t - def.w / 2) / GRID) * GRID;
+  at = Math.max(0, Math.min(at, L - def.w));
+  const o = {kind, wall: best.i, at, w: def.w};
+  if (!openingFits(o, -1)) { redraw('No room for a ' + def.label.toLowerCase() + ' there. Try another spot.'); return; }
+  openings.push(o);
+  selOpen = openings.length - 1;
+  selectedIdx = -1;
+  setMode('move');
+  redraw('Placed. Drag it along the wall to move it.');
 }
 
 function rotateSelected(){
@@ -1200,32 +1354,63 @@ function rotateSelected(){
 
 /* ---------- Pointer input on the plan (mouse, touch and pen) ---------- */
 
+function pointToMM(e){ return toMM(PC, e); }
+
 PC.addEventListener('pointerdown', e => {
-  const p = toMM(PC, e);
-  if (mode === 'add') { placeUnit(p); return; }
-  if (mode === 'delete') {
-    const i = hitTest(p);
-    if (i >= 0) { units.splice(i, 1); selectedIdx = -1; redraw('Unit removed.'); }
+  const p = pointToMM(e);
+  if (mode === 'add') {
+    if (openingPick) placeOpening(p); else placeUnit(p);
     return;
   }
-  const i = hitTest(p);
-  selectedIdx = i;
-  if (i >= 0) {
-    const o = unitRect(units[i]);
-    drag = {i, dx: p.x - o.x, dy: p.y - o.y};
+  /* Openings are small strips on the walls, so they take priority over units in plan view */
+  if (mode === 'delete') {
+    const k = hitOpening(p);
+    if (k >= 0) { openings.splice(k, 1); selOpen = -1; redraw('Opening removed.'); return; }
+    const i = hitTest(p);
+    if (i >= 0) { units.splice(i, 1); selectedIdx = -1; selOpen = -1; redraw('Unit removed.'); }
+    return;
+  }
+
+  /* Move mode */
+  const k = hitOpening(p);
+  if (k >= 0) {
+    selectedIdx = -1; selOpen = k;
+    drag = {kind: 'opening', k};
     PC.setPointerCapture(e.pointerId);
     PC.style.cursor = 'grabbing';
+  } else {
+    const i = hitTest(p);
+    selOpen = -1; selectedIdx = i;
+    if (i >= 0) {
+      const o = unitRect(units[i]);
+      drag = {kind: 'unit', i, dx: p.x - o.x, dy: p.y - o.y};
+      PC.setPointerCapture(e.pointerId);
+      PC.style.cursor = 'grabbing';
+    }
   }
   redraw();
 });
 
 PC.addEventListener('pointermove', e => {
   if (!drag) return;
-  const p = toMM(PC, e);
-  const u = units[drag.i];
-  const o = unitRect(u);
-  const next = settle({x: p.x - drag.dx, y: p.y - drag.dy, w: o.w, h: o.h, wall: o.wall}, drag.i);
-  if (next) { u.x = next.x; u.y = next.y; }
+  const p = pointToMM(e);
+  if (drag.kind === 'unit') {
+    const u = units[drag.i];
+    const o = unitRect(u);
+    const next = settle({x: p.x - drag.dx, y: p.y - drag.dy, w: o.w, h: o.h, wall: o.wall}, drag.i);
+    if (next) { u.x = next.x; u.y = next.y; }
+  } else {
+    const o = openings[drag.k];
+    const w = wallList().find(x => x.i === o.wall);
+    if (!w) return;
+    const L = wallLengthMM(w);
+    const ux = (w.b.x - w.a.x) / L, uy = (w.b.y - w.a.y) / L;
+    const t = (p.x - w.a.x) * ux + (p.y - w.a.y) * uy;
+    let at = Math.round((t - o.w / 2) / GRID) * GRID;
+    at = Math.max(0, Math.min(at, L - o.w));
+    const candidate = {kind: o.kind, wall: o.wall, at, w: o.w};
+    if (openingFits(candidate, drag.k)) { o.at = at; }
+  }
   redraw();
 });
 
@@ -1245,7 +1430,14 @@ function buildSummary(){
   el.innerHTML = Object.keys(counts).length
     ? Object.entries(counts).map(([k, v]) => '<div class="summary-row"><span>' + k + '</span><span>&times;' + v + '</span></div>').join('')
     : '<div class="summary-row"><span>No units placed. We can talk through the layout in person.</span></div>';
-  document.getElementById('hidden-layout').value = Object.entries(counts).map(([k, v]) => k + ' ×' + v).join(', ') || 'None';
+  openings.forEach(o => {
+    el.innerHTML += '<div class="summary-row"><span>' + OPENING_TYPES[o.kind].label + ' (wall ' + (o.wall + 1) + ', ' + Math.round(o.at / 10) + ' cm along)</span><span>' + Math.round(o.w / 10) + ' cm wide</span></div>';
+  });
+  let layout = Object.entries(counts).map(([k, v]) => k + ' ×' + v).join(', ') || 'None';
+  if (openings.length) {
+    layout += ' | Openings: ' + openings.map(o => OPENING_TYPES[o.kind].label + ' on wall ' + (o.wall + 1) + ' at ' + Math.round(o.at / 10) + ' cm, ' + Math.round(o.w / 10) + ' cm wide').join('; ');
+  }
+  document.getElementById('hidden-layout').value = layout;
   const walls = wallList().map(w => Math.round(wallLengthMM(w) / 10));
   document.getElementById('hidden-dims').value = 'Walls (cm): ' + walls.join(', ');
 }
