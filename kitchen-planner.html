@@ -15,7 +15,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kitchen Planner | Gatley Kitchens &amp; Bedrooms</title>
-  <meta name="description" content="Plan your new kitchen with our free interactive room planner. Draw your space, place cabinets, and request a free no-obligation quote from Gatley Kitchens.">
+  <meta name="description" content="Plan your new kitchen with our free interactive room planner. Draw your space, place cabinets, and and get in touch with the team at Gatley Kitchens.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -480,6 +480,14 @@ canvas {
 .wall-editor[hidden] { display: none; }
 .wall-editor input { width: 90px; padding: 5px 8px; border: 1px solid var(--border); font-family: 'Jost', sans-serif; font-size: 13px; text-align: center; border-radius: 2px; background: var(--white); }
 
+.popup-overlay { position: fixed; inset: 0; background: rgba(28,26,23,0.45); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.popup-overlay[hidden] { display: none; }
+.popup { background: var(--white); padding: 24px 28px; max-width: 320px; width: 100%; text-align: center; border-radius: 2px; box-shadow: 0 10px 40px rgba(0,0,0,0.25); }
+.popup p { font-size: 15px; color: var(--dark); margin-bottom: 16px; }
+.soft-intro { background: var(--cream); border: 1px solid var(--border); padding: 18px 22px; margin-bottom: 22px; }
+.soft-intro h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--dark); margin-bottom: 8px; }
+.soft-intro p { font-size: 14px; color: var(--mid); line-height: 1.7; margin: 0; }
+
 /* FOOTER NOTE */
 .footer-note { text-align: center; font-size: 12px; color: #bbb; margin-top: 24px; }
 .footer-note a { color: var(--accent); text-decoration: none; }
@@ -521,7 +529,7 @@ canvas {
   <div class="step-bar">
     <div class="step active" id="step-0">1. Draw your room</div>
     <div class="step" id="step-1">2. Add units</div>
-    <div class="step" id="step-2">3. Get a quote</div>
+    <div class="step" id="step-2">3. Next</div>
   </div>
 
   <!-- Step 1: Draw the room -->
@@ -559,6 +567,10 @@ canvas {
       <button class="btn outline sm" onclick="startAgain()">Start again</button>
     </div>
 
+    <div class="toolbar">
+      <button class="btn outline sm" onclick="saveLayoutImage()">Save layout as image</button>
+    </div>
+
     <div class="mode-btns" id="cat-btns"></div>
     <div class="cabinet-grid" id="cab-grid"></div>
 
@@ -571,7 +583,7 @@ canvas {
       <button class="mode-btn active-mode" id="mode-add" onclick="setMode('add')">Add</button>
       <button class="mode-btn" id="mode-move" onclick="setMode('move')">Move</button>
       <button class="mode-btn" id="mode-delete" onclick="setMode('delete')">Delete</button>
-      <button class="mode-btn" id="rotate-btn" onclick="rotateSelected()" disabled>Turn 90&deg;</button>
+      <button class="mode-btn" id="rotate-btn" onclick="rotateSelected()" disabled>Rotate 90&deg;</button>
     </div>
     <p class="hint" id="mode-hint"></p>
 
@@ -599,21 +611,21 @@ canvas {
 
     <div class="nav-row">
       <button class="btn outline" onclick="nextStep(0)">&larr; Back to room</button>
-      <button class="btn accent" onclick="nextStep(2)">Next: Get a quote &rarr;</button>
+      <button class="btn accent" onclick="nextStep(2)">Next &rarr;</button>
     </div>
   </div>
 
   <!-- Step 3: Quote form -->
   <div class="panel" id="panel-2">
 
-    <div class="summary-box">
-      <h3>Your layout</h3>
-      <div id="summary-content"></div>
+    <div class="soft-intro">
+      <h3>Let a professional help</h3>
+      <p>This planner is here to give you a rough idea of how your kitchen could work. Why not let one of our team help you turn it into a plan you can work from? Send us your details and we&rsquo;ll get in touch to talk it through. Your layout picture comes with your message.</p>
     </div>
 
     <div class="trust-bar">
       <div class="trust-item"><span class="trust-icon">&#10003;</span> Free home visit or showroom appointment</div>
-      <div class="trust-item"><span class="trust-icon">&#10003;</span> No obligation quote</div>
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> No obligation</div>
       <div class="trust-item"><span class="trust-icon">&#10003;</span> Family business, established 2007</div>
     </div>
 
@@ -661,7 +673,7 @@ canvas {
       </div>
 
       <div class="form-error" id="form-error"></div>
-      <button type="submit" class="submit-btn" id="submit-btn">Request a free consultation</button>
+      <button type="submit" class="submit-btn" id="submit-btn">Get in touch</button>
     </form>
 
     <div class="nav-row">
@@ -687,6 +699,12 @@ canvas {
 <p class="footer-note">Prefer to talk? Call us on <a href="tel:01614378899">0161 437 8899</a> or <a href="gatley-kitchens-quote.html">fill in our quote form</a>.</p>
 
 
+<div class="popup-overlay" id="popup" hidden role="dialog" aria-modal="true" aria-labelledby="popup-msg">
+  <div class="popup">
+    <p id="popup-msg">Not enough space</p>
+    <button class="btn accent sm" id="popup-ok" onclick="closePopup()">OK</button>
+  </div>
+</div>
 <script>
 /* Plan view size, padding, grid (mm) and snapping distance (mm) */
 const PLAN_W = 752, PLAN_H = 680, PAD = 32, GRID = 100, SNAP = 150;
@@ -712,7 +730,7 @@ function addUnit(cat, label, w, d, extra){
 addUnit('base', 'Base 600 (under oven)', 600, 580);
 addUnit('base', 'Corner base 1000', 1000, 580, {corner: true});
 addUnit('base', 'Corner base 1200', 1200, 580, {corner: true});
-addUnit('base', 'L-shaped corner base 900 x 900', 900, 900, {corner: true, shape: 'L', arm: 580, short: 'L corner'});
+addUnit('base', 'L-shaped corner base', 900, 900, {corner: true, shape: 'L', arm: 580, short: 'L corner', sizeText: '900 × 900 mm, 580 deep'});
 /* Drawers, 580 deep */
 [400, 500, 600, 700, 800, 900, 1000, 1100, 1200].forEach(w => addUnit('drawers', 'Drawers ' + w, w, 580));
 /* Wine racks, 580 deep */
@@ -723,7 +741,7 @@ addUnit('wine', 'Wine rack base 300', 300, 580);
 addUnit('wall', 'Corner wall 1000', 1000, 300, {layer: 'wall', corner: true});
 addUnit('wall', 'Corner wall 1200', 1200, 300, {layer: 'wall', corner: true});
 /* Boiler housing sits in the wall-unit line */
-addUnit('wall', 'Boiler housing 900 x 500', 900, 500, {layer: 'wall'});
+addUnit('wall', 'Boiler housing', 500, 400, {layer: 'wall', sizeText: '500 wide × 400 deep × 900 high'});
 /* Tall units, 600 deep */
 addUnit('tall', 'Larder 300', 300, 600);
 addUnit('tall', 'Larder 500', 500, 600);
@@ -911,7 +929,8 @@ function insideRoom(r){
 
 function unitRect(u){
   const {W, D} = dimsOf(u);
-  return {x: u.x, y: u.y, w: u.rot ? D : W, h: u.rot ? W : D, wall: u.type.layer === 'wall'};
+  const odd = u.rot % 2 === 1;
+  return {x: u.x, y: u.y, w: odd ? D : W, h: odd ? W : D, wall: u.type.layer === 'wall'};
 }
 
 function overlaps(a, b){
@@ -1144,12 +1163,17 @@ function drawPlan(cv, withUnits){
     ctx.strokeStyle = u.type.color;
     ctx.lineWidth = 1;
     const arm = u.type.arm ? u.type.arm * s : 0;
+    /* Turn flags: the L's notch sits in the corner opposite its solid arms, and turns with the unit */
+    const fx = u.rot === 1 || u.rot === 2, fy = u.rot === 2 || u.rot === 3;
+    const P = (px, py) => [fx ? x + w - px : x + px, fy ? y + h - py : y + py];
     ctx.beginPath();
-    if (u.type.shape === 'L' && w - arm > 2) {
-      /* L-shaped unit: arms run along two walls, with the notch cut from the far corner */
-      const nx = w - arm, ny = h - arm;
-      ctx.moveTo(x, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + ny);
-      ctx.lineTo(x + nx, y + ny); ctx.lineTo(x + nx, y + h); ctx.lineTo(x, y + h);
+    if (u.type.shape === 'L' && arm && arm < Math.min(w, h)) {
+      /* L-shaped unit: two arms, each arm deep (580 mm), meeting in the solid corner */
+      const T = arm;
+      [[0, 0], [w, 0], [w, T], [T, T], [T, h], [0, h]].forEach((q, i) => {
+        const [X, Y] = P(q[0], q[1]);
+        if (i) ctx.lineTo(X, Y); else ctx.moveTo(X, Y);
+      });
       ctx.closePath();
     } else {
       ctx.rect(x, y, w, h);
@@ -1180,8 +1204,9 @@ function drawPlan(cv, withUnits){
       ctx.textBaseline = 'middle';
       const note = u.note || '';
       /* On an L the label sits in the solid corner square, not the notch */
-      const tx = u.type.shape === 'L' && arm ? x + arm/2 : x + w/2;
-      const ty = u.type.shape === 'L' && arm ? y + arm/2 : y + h/2;
+      const onL = u.type.shape === 'L' && arm;
+      const tx = onL ? (fx ? x + w - arm/2 : x + arm/2) : x + w/2;
+      const ty = onL ? (fy ? y + h - arm/2 : y + arm/2) : y + h/2;
       if (note && h > 30) {
         ctx.fillText(u.type.short || u.type.label, tx, ty - 7);
         ctx.font = 'italic ' + Math.max(9, Math.min(11, w/9)) + 'px Jost, sans-serif';
@@ -1398,7 +1423,7 @@ function setCat(k){
     const btn = document.createElement('button');
     btn.className = 'cab-btn' + (t === selectedType && !openingPick ? ' selected-cab' : '');
     btn.innerHTML = '<span class="cab-icon" style="color:' + t.color + '">' + (k === 'wall' || k === 'wine' || k === 'appliance' ? '▬' : k === 'tall' ? '▮' : '▭') + '</span>' +
-      t.label + '<br><span style="color:#999;font-size:9px">' + t.w + ' × ' + t.d + ' mm</span>';
+      t.label + '<br><span style="color:#999;font-size:9px">' + (t.sizeText || (t.w + ' × ' + t.d + ' mm')) + '</span>';
     btn.onclick = () => pickUnit(t);
     g.appendChild(btn);
   });
@@ -1488,7 +1513,7 @@ function applyItemEdit(){
       if (u.type.editable.includes('d') && D) u.d = D;
       if (!valid(unitRect(u), selectedIdx)) {
         u.w = oldW; u.d = oldD;
-        msg = "That size doesn't fit there, so the size was kept as it was.";
+        msg = 'NOSPACE';
       }
     } else if (selOpen >= 0 && openings[selOpen]) {
       const o = openings[selOpen];
@@ -1496,17 +1521,25 @@ function applyItemEdit(){
       const W = parseMM('item-w');
       if (W && W !== o.w) {
         if (openingFits({kind: o.kind, wall: o.wall, at: o.at, w: W}, selOpen)) o.w = W;
-        else msg = "That width doesn't fit on this wall.";
+        else msg = 'NOSPACE';
       }
     }
   });
-  redraw(msg);
+  redraw(msg === 'NOSPACE' ? undefined : msg);
+  if (msg === 'NOSPACE') showPopup('Not enough space');
 }
+
+function showPopup(msg){
+  document.getElementById('popup-msg').textContent = msg || 'Not enough space';
+  document.getElementById('popup').hidden = false;
+  document.getElementById('popup-ok').focus();
+}
+function closePopup(){ document.getElementById('popup').hidden = true; }
 
 function placeUnit(p){
   const t = selectedType;
   const r = settle({x: p.x - t.w/2, y: p.y - t.d/2, w: t.w, h: t.d, wall: t.layer === 'wall'}, -1);
-  if (!r) { redraw('No space there. Try another spot in the room.'); return; }
+  if (!r) { redraw(); showPopup('Not enough space'); return; }
   units.push({type: t, rot: 0, x: r.x, y: r.y, note: ''});
   selectedIdx = units.length - 1;
   selOpen = -1;
@@ -1521,13 +1554,13 @@ function placeOpening(p){
   wallList().forEach(w => { const d = distSeg(p, w.a, w.b); if (d < bestD) { bestD = d; best = w; } });
   if (!best) { redraw('Tap closer to a wall to place the ' + def.label.toLowerCase() + '.'); return; }
   const L = wallLengthMM(best);
-  if (L < def.w) { redraw('That wall is too short for a ' + def.label.toLowerCase() + '.'); return; }
+  if (L < def.w) { redraw(); showPopup('Not enough space'); return; }
   const ux = (best.b.x - best.a.x) / L, uy = (best.b.y - best.a.y) / L;
   const t = (p.x - best.a.x) * ux + (p.y - best.a.y) * uy;
   let at = Math.round((t - def.w / 2) / GRID) * GRID;
   at = Math.max(0, Math.min(at, L - def.w));
   const o = {kind, wall: best.i, at, w: def.w, note: ''};
-  if (!openingFits(o, -1)) { redraw('No room for a ' + def.label.toLowerCase() + ' there. Try another spot.'); return; }
+  if (!openingFits(o, -1)) { redraw(); showPopup('Not enough space'); return; }
   openings.push(o);
   selOpen = openings.length - 1;
   selectedIdx = -1;
@@ -1537,15 +1570,22 @@ function placeOpening(p){
 
 function rotateSelected(){
   if (selectedIdx < 0) return;
+  let ok = false;
   act(() => {
     const u = units[selectedIdx];
     const oldRot = u.rot, oldX = u.x, oldY = u.y;
-    u.rot = u.rot ? 0 : 1;
-    const r = settle(unitRect(u), selectedIdx);
-    if (r) { u.x = r.x; u.y = r.y; }
-    else { u.rot = oldRot; u.x = oldX; u.y = oldY; }
+    u.rot = (u.rot + 1) % 4;
+    const cur = unitRect(u);
+    /* Try the turned spot first, then nearby spots, before giving up */
+    const tries = [[0, 0], [100, 0], [-100, 0], [0, 100], [0, -100], [100, 100], [-100, -100], [100, -100], [-100, 100]];
+    for (const [dx, dy] of tries) {
+      const r = settle({x: cur.x + dx, y: cur.y + dy, w: cur.w, h: cur.h, wall: cur.wall}, selectedIdx);
+      if (r) { u.x = r.x; u.y = r.y; ok = true; break; }
+    }
+    if (!ok) { u.rot = oldRot; u.x = oldX; u.y = oldY; }
   });
-  redraw(selectedIdx >= 0 && !valid(unitRect(units[selectedIdx]), selectedIdx) ? 'No room to turn it here.' : null);
+  redraw(ok ? null : undefined);
+  if (!ok) showPopup('Not enough space');
 }
 
 function redraw(msg){
@@ -1560,6 +1600,30 @@ function redraw(msg){
   }
   document.getElementById('cab-info').textContent = text;
   showItemEditor();
+}
+
+/* The plan as a picture, without the selection outline */
+function layoutCanvas(){
+  const off = document.createElement('canvas');
+  off.width = PLAN_W; off.height = PLAN_H;
+  const keep = [selectedIdx, selOpen];
+  selectedIdx = -1; selOpen = -1;
+  drawPlan(off, true);
+  selectedIdx = keep[0]; selOpen = keep[1];
+  return off;
+}
+
+function saveLayoutImage(){
+  layoutCanvas().toBlob(blob => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'kitchen-layout.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }, 'image/png');
 }
 
 function deleteAt(p){
@@ -1651,13 +1715,6 @@ function buildSummary(){
     const key = u.type.label + (u.note ? ' (' + u.note + ')' : '');
     counts[key] = (counts[key] || 0) + 1;
   });
-  const el = document.getElementById('summary-content');
-  el.innerHTML = Object.keys(counts).length
-    ? Object.entries(counts).map(([k, v]) => '<div class="summary-row"><span>' + k + '</span><span>&times;' + v + '</span></div>').join('')
-    : '<div class="summary-row"><span>No units placed. We can talk through the layout in person.</span></div>';
-  openings.forEach(o => {
-    el.innerHTML += '<div class="summary-row"><span>' + OPENING_TYPES[o.kind].label + (o.note ? ' (' + o.note + ')' : '') + ' on wall ' + (o.wall + 1) + ', ' + Math.round(o.at / 10) + ' cm along</span><span>' + Math.round(o.w / 10) + ' cm wide</span></div>';
-  });
   let layout = Object.entries(counts).map(([k, v]) => k + ' ×' + v).join(', ') || 'None';
   if (openings.length) {
     layout += ' | Openings: ' + openings.map(o => OPENING_TYPES[o.kind].label + (o.note ? ' (' + o.note + ')' : '') + ' on wall ' + (o.wall + 1) + ' at ' + Math.round(o.at / 10) + ' cm, ' + Math.round(o.w / 10) + ' cm wide').join('; ');
@@ -1673,11 +1730,14 @@ document.getElementById('quote-form').addEventListener('submit', async function(
   const btn = document.getElementById('submit-btn'), err = document.getElementById('form-error');
   err.style.display = 'none'; btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Sending…';
   try {
-    const res = await fetch(this.action, {method: 'POST', body: new FormData(this), headers: {'Accept': 'application/json'}});
+    const fd = new FormData(this);
+    const blob = await new Promise(resolve => layoutCanvas().toBlob(resolve, 'image/png'));
+    if (blob) fd.append('layout_image', blob, 'kitchen-layout.png');
+    const res = await fetch(this.action, {method: 'POST', body: fd, headers: {'Accept': 'application/json'}});
     if (res.ok) { nextStep(3); } else { throw new Error(); }
   } catch {
     err.textContent = 'Something went wrong — please try again or call us on 0161 437 8899.';
-    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Request a free consultation';
+    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Get in touch';
   }
 });
 
