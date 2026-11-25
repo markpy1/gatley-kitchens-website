@@ -583,6 +583,7 @@ canvas {
       <div class="leg-item"><div class="leg-swatch" style="background:#8B5E3C"></div>Tall</div>
       <div class="leg-item"><div class="leg-swatch" style="background:#B85C5C"></div>Appliances</div>
       <div class="leg-item"><div class="leg-swatch" style="background:#6B6B8A"></div>Island</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:repeating-linear-gradient(45deg,#4A7C59 0 3px,#ffffff 3px 5px)"></div>Corner unit</div>
     </div>
 
     <canvas id="plan-canvas" width="752" height="680"></canvas>
@@ -709,9 +710,9 @@ function addUnit(cat, label, w, d, extra){
 /* Base units, 580 deep */
 [150, 300, 500, 600, 700, 800, 900, 1000, 1200].forEach(w => addUnit('base', 'Base ' + w, w, 580));
 addUnit('base', 'Base 600 (under oven)', 600, 580);
-addUnit('base', 'Corner base 1000', 1000, 580);
-addUnit('base', 'Corner base 1200', 1200, 580);
-addUnit('base', 'L-shaped corner base 900 x 900', 900, 900);
+addUnit('base', 'Corner base 1000', 1000, 580, {corner: true});
+addUnit('base', 'Corner base 1200', 1200, 580, {corner: true});
+addUnit('base', 'L-shaped corner base 900 x 900', 900, 900, {corner: true, shape: 'L', arm: 580});
 /* Drawers, 580 deep */
 [400, 500, 600, 700, 800, 900, 1000, 1100, 1200].forEach(w => addUnit('drawers', 'Drawers ' + w, w, 580));
 /* Wine racks, 580 deep */
@@ -719,8 +720,8 @@ addUnit('wine', 'Wine rack base 150', 150, 580);
 addUnit('wine', 'Wine rack base 300', 300, 580);
 /* Wall units, 300 deep, wall layer */
 [150, 600, 700, 800, 900, 1000, 1200].forEach(w => addUnit('wall', 'Wall ' + w, w, 300, {layer: 'wall'}));
-addUnit('wall', 'Corner wall 1000', 1000, 300, {layer: 'wall'});
-addUnit('wall', 'Corner wall 1200', 1200, 300, {layer: 'wall'});
+addUnit('wall', 'Corner wall 1000', 1000, 300, {layer: 'wall', corner: true});
+addUnit('wall', 'Corner wall 1200', 1200, 300, {layer: 'wall', corner: true});
 /* Boiler housing sits in the wall-unit line */
 addUnit('wall', 'Boiler housing 900 x 500', 900, 500, {layer: 'wall'});
 /* Tall units, 600 deep */
@@ -1140,10 +1141,32 @@ function drawPlan(cv, withUnits){
     const x = X(r.x), y = Y(r.y), w = r.w*s, h = r.h*s;
     ctx.globalAlpha = r.wall ? 0.7 : 1;
     ctx.fillStyle = u.type.color + 'CC';
-    ctx.fillRect(x, y, w, h);
     ctx.strokeStyle = u.type.color;
     ctx.lineWidth = 1;
-    ctx.strokeRect(x, y, w, h);
+    const arm = u.type.arm ? u.type.arm * s : 0;
+    ctx.beginPath();
+    if (u.type.shape === 'L' && w - arm > 2) {
+      /* L-shaped unit: arms run along two walls, with the notch cut from the far corner */
+      const nx = w - arm, ny = h - arm;
+      ctx.moveTo(x, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + ny);
+      ctx.lineTo(x + nx, y + ny); ctx.lineTo(x + nx, y + h); ctx.lineTo(x, y + h);
+      ctx.closePath();
+    } else {
+      ctx.rect(x, y, w, h);
+    }
+    ctx.fill();
+    ctx.stroke();
+    if (u.type.corner) {
+      /* Corner units are hatched so they read as corner pieces */
+      ctx.save();
+      ctx.clip();
+      ctx.beginPath();
+      for (let k = -h; k < w; k += 7) { ctx.moveTo(x + k, y); ctx.lineTo(x + k + h, y + h); }
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    }
     ctx.globalAlpha = 1;
     if (i === selectedIdx) {
       ctx.strokeStyle = '#8b6f47';
