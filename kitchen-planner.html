@@ -474,8 +474,11 @@ canvas {
 .guide-line { font-size: 14px; color: var(--mid); margin-bottom: 14px; line-height: 1.6; }
 .mode-btns { flex-wrap: wrap; }
 .mode-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-#plan-canvas { touch-action: none; }
-#room-preview { cursor: default; }
+#plan-canvas, #draw-canvas { touch-action: none; }
+#draw-canvas { cursor: crosshair; }
+.wall-editor { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding: 10px 14px; background: var(--cream); border: 1px solid var(--border); border-radius: 2px; font-size: 13px; color: var(--mid); }
+.wall-editor[hidden] { display: none; }
+.wall-editor input { width: 90px; padding: 5px 8px; border: 1px solid var(--border); font-family: 'Jost', sans-serif; font-size: 13px; text-align: center; border-radius: 2px; background: var(--white); }
 
 /* FOOTER NOTE */
 .footer-note { text-align: center; font-size: 12px; color: #bbb; margin-top: 24px; }
@@ -516,29 +519,34 @@ canvas {
 <div class="planner-wrap">
 
   <div class="step-bar">
-    <div class="step active" id="step-0">1. Room size</div>
+    <div class="step active" id="step-0">1. Draw your room</div>
     <div class="step" id="step-1">2. Add units</div>
     <div class="step" id="step-2">3. Get a quote</div>
   </div>
 
-  <!-- Step 1: Room size -->
+  <!-- Step 1: Draw the room -->
   <div class="panel active" id="panel-0">
-    <p class="guide-line">Enter the width and depth of your room in centimetres. The outline updates as you type.</p>
+    <p class="guide-line">Tap each corner of your room in turn. Walls snap to straight lines and to 10&nbsp;cm steps. Tap the first corner to close the room, then tap any wall to change its length.</p>
 
-    <div class="dim-row">
-      <label for="room-w">Width</label>
-      <input type="number" id="room-w" value="400" min="100" max="900" inputmode="numeric">
-      <span class="dim-unit">cm</span>
-      <label for="room-d">Depth</label>
-      <input type="number" id="room-d" value="350" min="100" max="700" inputmode="numeric">
-      <span class="dim-unit">cm</span>
+    <div class="toolbar">
+      <button class="btn outline sm" onclick="undoPoint()">Undo</button>
+      <button class="btn outline sm" onclick="startAgain()">Start again</button>
     </div>
 
-    <canvas id="room-preview" width="752" height="460"></canvas>
+    <canvas id="draw-canvas" width="752" height="460"></canvas>
+    <div class="info-bar" id="draw-info">Tap to place your first corner.</div>
+
+    <div class="wall-editor" id="wall-editor" hidden>
+      <span id="wall-label">Wall</span>
+      <input type="number" id="wall-len" min="10" max="2000" step="10" inputmode="numeric" aria-label="Wall length in centimetres">
+      <span class="dim-unit">cm</span>
+      <button class="btn accent sm" onclick="applyWallLength()">Apply</button>
+      <button class="btn outline sm" onclick="closeWallEditor()">Cancel</button>
+    </div>
 
     <div class="nav-row">
       <span></span>
-      <button class="btn accent" onclick="nextStep(1)">Next: Add units &rarr;</button>
+      <button class="btn accent" id="next-1" onclick="nextStep(1)" disabled>Next: Add units &rarr;</button>
     </div>
   </div>
 
@@ -568,7 +576,7 @@ canvas {
     <div class="info-bar" id="cab-info">0 units placed</div>
 
     <div class="nav-row">
-      <button class="btn outline" onclick="nextStep(0)">&larr; Back</button>
+      <button class="btn outline" onclick="nextStep(0)">&larr; Back to room</button>
       <button class="btn accent" onclick="nextStep(2)">Next: Get a quote &rarr;</button>
     </div>
   </div>
@@ -658,8 +666,8 @@ canvas {
 
 
 <script>
-/* Plan view size (canvas pixels) and snapping distance (mm) */
-const PLAN_W = 752, PLAN_H = 460, PAD = 28, SNAP = 150;
+/* Plan view size (canvas pixels), padding, grid (mm) and snapping distance (mm) */
+const PLAN_W = 752, PLAN_H = 460, PAD = 32, GRID = 100, SNAP = 150;
 
 /* Units are rectangles in plan view, measured in mm. w runs along the wall, d is depth. */
 const UNITS = [
@@ -684,24 +692,105 @@ const HINTS = {
   delete: 'Tap a unit to remove it.'
 };
 
-const ROOM = {w:400, d:350};          /* cm */
-let units = [];                       /* {type, rot:0|1, x, y} with x, y the top-left corner in mm */
+/* Room outline: corners in mm, walls are the straight lines between them */
+let pts = [];          /* {x, y} */
+let closed = false;
+let cursor = null;     /* last pointer position while drawing, mm */
+let selWall = -1;
+
+/* Units */
+let units = [];        /* {type, rot:0|1, x, y}, x and y are the top-left corner in mm */
 let selectedType = UNITS[0];
 let selectedIdx = -1;
 let mode = 'add';
 let drag = null;
 
-const RP = document.getElementById('room-preview');
+const DC = document.getElementById('draw-canvas');
 const PC = document.getElementById('plan-canvas');
 
 /* ---------- Geometry ---------- */
 
-function roomMM(){ return {w: ROOM.w * 10, d: ROOM.d * 10}; }
+const snap = v => Math.round(v / GRID) * GRID;
+
+function bounds(){
+  let xs = [0, 4000], ys = [0, 3500];
+  if (pts.length) { xs = pts.map(p => p.x); ys = pts.map(p => p.y); }
+  let minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  if (maxX - minX < 3000) { const c = (minX + maxX) / 2; minX = c - 1500; maxX = c + 1500; }
+  if (maxY - minY < 3000) { const c = (minY + maxY) / 2; minY = c - 1500; maxY = c + 1500; }
+  return {minX, minY, maxX, maxY};
+}
 
 function view(){
-  const rm = roomMM();
-  const s = Math.min((PLAN_W - 2*PAD) / rm.w, (PLAN_H - 2*PAD) / rm.d);
-  return {s, ox: (PLAN_W - rm.w*s) / 2, oy: (PLAN_H - rm.d*s) / 2};
+  const b = bounds();
+  const bw = b.maxX - b.minX, bh = b.maxY - b.minY;
+  const s = Math.min((PLAN_W - 2*PAD) / bw, (PLAN_H - 2*PAD) / bh);
+  return {s, ox: (PLAN_W - bw*s) / 2 - b.minX*s, oy: (PLAN_H - bh*s) / 2 - b.minY*s};
+}
+
+function wallList(){
+  const n = pts.length, out = [];
+  const count = closed ? n : n - 1;
+  for (let i = 0; i < count; i++) out.push({i, a: pts[i], b: pts[(i + 1) % n]});
+  return out;
+}
+
+function wallLengthMM(w){ return Math.abs(w.b.x - w.a.x) + Math.abs(w.b.y - w.a.y); }
+
+/* Corner for a line from the last point, forced horizontal or vertical and snapped to the grid */
+function orthoTarget(c){
+  const L = pts[pts.length - 1];
+  if (Math.abs(c.x - L.x) >= Math.abs(c.y - L.y)) return {x: snap(c.x), y: L.y};
+  return {x: L.x, y: snap(c.y)};
+}
+
+function distSeg(p, a, b){
+  const dx = b.x - a.x, dy = b.y - a.y, l2 = dx*dx + dy*dy;
+  let t = l2 ? ((p.x - a.x)*dx + (p.y - a.y)*dy) / l2 : 0;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p.x - (a.x + t*dx), p.y - (a.y + t*dy));
+}
+
+function wallHit(p){
+  const tol = 14 / view().s;
+  let best = -1, bestD = tol;
+  wallList().forEach(w => { const d = distSeg(p, w.a, w.b); if (d < bestD) { bestD = d; best = w.i; } });
+  return best;
+}
+
+function pointInPoly(x, y){
+  let inside = false;
+  const n = pts.length;
+  for (let i = 0, j = n - 1; i < n; j = i++) {
+    const xi = pts[i].x, yi = pts[i].y, xj = pts[j].x, yj = pts[j].y;
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/* Does segment a-b pass through the interior of rectangle R? (Liang-Barsky clipping) */
+function segHitsRect(a, b, R){
+  let t0 = 0, t1 = 1;
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const p = [-dx, dx, -dy, dy];
+  const q = [a.x - R.x0, R.x1 - a.x, a.y - R.y0, R.y1 - a.y];
+  for (let k = 0; k < 4; k++) {
+    if (p[k] === 0) { if (q[k] <= 0) return false; }
+    else {
+      const t = q[k] / p[k];
+      if (p[k] < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+      else { if (t < t0) return false; if (t < t1) t1 = t; }
+    }
+  }
+  return t1 - t0 > 1e-9;
+}
+
+function insideRoom(r){
+  if (!closed) return false;
+  const R = {x0: r.x + 1, y0: r.y + 1, x1: r.x + r.w - 1, y1: r.y + r.h - 1};
+  const corners = [[R.x0, R.y0], [R.x1, R.y0], [R.x1, R.y1], [R.x0, R.y1]];
+  if (!corners.every(([x, y]) => pointInPoly(x, y))) return false;
+  return !wallList().some(w => segHitsRect(w.a, w.b, R));
 }
 
 function unitRect(u){
@@ -723,42 +812,35 @@ function overlapsAny(r, ignore){
   });
 }
 
-function clampRect(r){
-  const rm = roomMM();
-  r.x = Math.max(0, Math.min(r.x, rm.w - r.w));
-  r.y = Math.max(0, Math.min(r.y, rm.d - r.h));
-  return r;
-}
+function valid(r, ignore){ return insideRoom(r) && !overlapsAny(r, ignore); }
 
 function nearest(candidates, v){
   let best = v, bestDist = SNAP;
-  candidates.forEach(c => {
-    const d = Math.abs(c - v);
-    if (d <= bestDist) { bestDist = d; best = c; }
-  });
+  candidates.forEach(c => { const d = Math.abs(c - v); if (d <= bestDist) { bestDist = d; best = c; } });
   return best;
 }
 
-/* Snap to walls, and flush against or aligned with other units */
+/* Snap to room walls, and flush against or aligned with other units */
 function snapRect(r, ignore){
-  const rm = roomMM();
-  const xs = [0, rm.w - r.w];
-  const ys = [0, rm.d - r.h];
+  const xs = [], ys = [];
+  wallList().forEach(w => {
+    if (w.a.y === w.b.y) ys.push(w.a.y, w.a.y - r.h);
+    if (w.a.x === w.b.x) xs.push(w.a.x, w.a.x - r.w);
+  });
   units.forEach((u, i) => {
     if (i === ignore) return;
     const o = unitRect(u);
     xs.push(o.x + o.w, o.x - r.w, o.x, o.x + o.w - r.w);
     ys.push(o.y + o.h, o.y - r.h, o.y, o.y + o.h - r.h);
   });
-  return {x: nearest(xs, r.x), y: nearest(ys, r.y), w: r.w, h: r.h};
+  return {x: nearest(xs, r.x), y: nearest(ys, r.y), w: r.w, h: r.h, wall: r.wall};
 }
 
-/* Return a legal position near r, or null if there is no room for it */
+/* A legal position near r, or null if there is no room for it there */
 function settle(r, ignore){
-  r = clampRect({...r});
-  const snapped = clampRect(snapRect(r, ignore));
-  if (!overlapsAny(snapped, ignore)) return snapped;
-  if (!overlapsAny(r, ignore)) return r;
+  const snapped = snapRect(r, ignore);
+  if (valid(snapped, ignore)) return snapped;
+  if (valid(r, ignore)) return r;
   return null;
 }
 
@@ -770,43 +852,109 @@ function hitTest(p){
   return -1;
 }
 
+/* Remove any unit that no longer fits after the room changed */
+function pruneUnits(){
+  const kept = [];
+  let dropped = 0;
+  units.forEach(u => {
+    const r = unitRect(u);
+    const clash = kept.some(k => { const o = unitRect(k); return o.wall === r.wall && overlaps(r, o); });
+    if (insideRoom(r) && !clash) kept.push(u); else dropped++;
+  });
+  units = kept;
+  selectedIdx = -1;
+  return dropped;
+}
+
 /* ---------- Drawing ---------- */
+
+function label(ctx, text, x, y){
+  ctx.font = '12px Jost, sans-serif';
+  const w = ctx.measureText(text).width + 10;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.fillRect(x - w/2, y - 9, w, 18);
+  ctx.fillStyle = '#6b655c';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+}
 
 function drawPlan(cv, withUnits){
   const ctx = cv.getContext('2d');
   const {s, ox, oy} = view();
-  const rm = roomMM();
+  const b = bounds();
+  const X = x => ox + x*s, Y = y => oy + y*s;
 
   ctx.fillStyle = '#FAFAF7';
   ctx.fillRect(0, 0, cv.width, cv.height);
 
-  ctx.strokeStyle = '#ede9e0';
-  ctx.lineWidth = 0.5;
-  for (let x = 0; x <= rm.w; x += 500) { ctx.beginPath(); ctx.moveTo(ox + x*s, oy); ctx.lineTo(ox + x*s, oy + rm.d*s); ctx.stroke(); }
-  for (let y = 0; y <= rm.d; y += 500) { ctx.beginPath(); ctx.moveTo(ox, oy + y*s); ctx.lineTo(ox + rm.w*s, oy + y*s); ctx.stroke(); }
+  /* 10 cm grid, with a darker line every metre */
+  for (let x = Math.floor(b.minX / GRID) * GRID; x <= b.maxX; x += GRID) {
+    ctx.strokeStyle = x % 1000 === 0 ? '#e0dbd0' : '#efebe2';
+    ctx.lineWidth = x % 1000 === 0 ? 0.8 : 0.5;
+    ctx.beginPath(); ctx.moveTo(X(x), Y(b.minY)); ctx.lineTo(X(x), Y(b.maxY)); ctx.stroke();
+  }
+  for (let y = Math.floor(b.minY / GRID) * GRID; y <= b.maxY; y += GRID) {
+    ctx.strokeStyle = y % 1000 === 0 ? '#e0dbd0' : '#efebe2';
+    ctx.lineWidth = y % 1000 === 0 ? 0.8 : 0.5;
+    ctx.beginPath(); ctx.moveTo(X(b.minX), Y(y)); ctx.lineTo(X(b.maxX), Y(y)); ctx.stroke();
+  }
 
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(ox, oy, rm.w*s, rm.d*s);
-  ctx.strokeStyle = '#1c1a17';
-  ctx.lineWidth = 2.5;
-  ctx.strokeRect(ox, oy, rm.w*s, rm.d*s);
+  /* Room floor and outline */
+  if (pts.length) {
+    ctx.beginPath();
+    ctx.moveTo(X(pts[0].x), Y(pts[0].y));
+    pts.slice(1).forEach(p => ctx.lineTo(X(p.x), Y(p.y)));
+    if (closed) { ctx.closePath(); ctx.fillStyle = '#ffffff'; ctx.fill(); }
+    ctx.strokeStyle = '#1c1a17';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
 
-  ctx.fillStyle = '#8a8478';
-  ctx.font = '12px Jost, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'bottom';
-  ctx.fillText(ROOM.w + ' cm', ox + rm.w*s/2, oy - 6);
-  ctx.save();
-  ctx.translate(ox - 8, oy + rm.d*s/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText(ROOM.d + ' cm', 0, 0);
-  ctx.restore();
+  /* Wall lengths */
+  wallList().forEach(w => {
+    const mx = X((w.a.x + w.b.x) / 2), my = Y((w.a.y + w.b.y) / 2);
+    if (w.i === selWall) {
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(X(w.a.x), Y(w.a.y)); ctx.lineTo(X(w.b.x), Y(w.b.y)); ctx.stroke();
+    }
+    label(ctx, Math.round(wallLengthMM(w) / 10) + ' cm', mx, my);
+  });
+
+  /* Corners, and a ring on the first corner once the room can close */
+  pts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(X(p.x), Y(p.y), 4.5, 0, Math.PI*2);
+    ctx.fillStyle = i === 0 ? '#8b6f47' : '#1c1a17';
+    ctx.fill();
+  });
+  if (!closed && pts.length >= 3) {
+    ctx.beginPath();
+    ctx.arc(X(pts[0].x), Y(pts[0].y), 14, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(139,111,71,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  /* Live preview of the next wall while drawing */
+  if (!closed && pts.length && cursor && cv === DC) {
+    const L = pts[pts.length - 1], t = orthoTarget(cursor);
+    if (t.x !== L.x || t.y !== L.y) {
+      ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(X(L.x), Y(L.y)); ctx.lineTo(X(t.x), Y(t.y)); ctx.stroke();
+      ctx.setLineDash([]);
+      label(ctx, Math.round((Math.abs(t.x - L.x) + Math.abs(t.y - L.y)) / 10) + ' cm', X((L.x + t.x)/2), Y((L.y + t.y)/2));
+    }
+  }
 
   if (!withUnits) return;
 
   units.forEach((u, i) => {
     const r = unitRect(u);
-    const x = ox + r.x*s, y = oy + r.y*s, w = r.w*s, h = r.h*s;
+    const x = X(r.x), y = Y(r.y), w = r.w*s, h = r.h*s;
     ctx.globalAlpha = r.wall ? 0.7 : 1;
     ctx.fillStyle = u.type.color + 'CC';
     ctx.fillRect(x, y, w, h);
@@ -829,54 +977,153 @@ function drawPlan(cv, withUnits){
   });
 }
 
-function redraw(msg){
+function drawAll(){
+  drawPlan(DC, false);
   drawPlan(PC, true);
-  document.getElementById('rotate-btn').disabled = selectedIdx < 0;
+}
+
+/* ---------- Step 1: drawing the room ---------- */
+
+function updateDrawInfo(msg){
   let text = msg;
   if (!text) {
-    text = units.length + (units.length === 1 ? ' unit' : ' units') + ' placed';
-    if (selectedIdx >= 0) text += ' · ' + units[selectedIdx].type.label + ' selected';
+    if (closed) text = 'Room closed. Tap a wall to change its length.';
+    else if (!pts.length) text = 'Tap to place your first corner.';
+    else text = 'Corner ' + (pts.length) + ' placed. Tap the first corner to close the room.';
   }
-  document.getElementById('cab-info').textContent = text;
+  document.getElementById('draw-info').textContent = text;
+  document.getElementById('next-1').disabled = !closed;
 }
 
-/* ---------- Room size (step 1) ---------- */
-
-function clampNum(v, min, max, fallback){
-  const n = parseInt(v, 10);
-  if (isNaN(n)) return fallback;
-  return Math.max(min, Math.min(max, n));
+function refreshDraw(msg){
+  drawAll();
+  updateDrawInfo(msg);
 }
 
-function readRoom(){
-  ROOM.w = clampNum(document.getElementById('room-w').value, 100, 900, ROOM.w);
-  ROOM.d = clampNum(document.getElementById('room-d').value, 100, 700, ROOM.d);
+function toMM(cv, e){
+  const r = cv.getBoundingClientRect();
+  const px = (e.clientX - r.left) * (cv.width / r.width);
+  const py = (e.clientY - r.top) * (cv.height / r.height);
+  const {s, ox, oy} = view();
+  return {x: (px - ox) / s, y: (py - oy) / s};
 }
 
-function onRoomInput(){
-  readRoom();
-  units.forEach(u => { const r = clampRect(unitRect(u)); u.x = r.x; u.y = r.y; });
-  drawPlan(RP, false);
-  redraw();
+function closeRoom(){
+  const first = pts[0];
+  if (pts.length > 1) {
+    const L = pts[pts.length - 1];
+    if (L.x === first.x && L.y === first.y) pts.pop();
+  }
+  const L = pts[pts.length - 1];
+  if (L.x !== first.x && L.y !== first.y) {
+    const corner = {x: first.x, y: L.y};
+    const prev = pts[pts.length - 2];
+    if (prev && corner.x === prev.x && corner.y === prev.y) {
+      refreshDraw('Come at the first corner from a straight line, or tap one more corner first.');
+      return;
+    }
+    pts.push(corner);
+  }
+  closed = true;
+  cursor = null;
+  closeWallEditor();
+  const dropped = pruneUnits();
+  refreshDraw(dropped ? dropped + ' unit(s) no longer fitted the room and were removed.' : null);
 }
 
-function onRoomChange(){
-  document.getElementById('room-w').value = ROOM.w;
-  document.getElementById('room-d').value = ROOM.d;
-  onRoomInput();
+function undoPoint(){
+  closeWallEditor();
+  if (closed) { closed = false; }
+  else if (pts.length) { pts.pop(); }
+  refreshDraw(null);
 }
 
-document.getElementById('room-w').addEventListener('input', onRoomInput);
-document.getElementById('room-d').addEventListener('input', onRoomInput);
-document.getElementById('room-w').addEventListener('change', onRoomChange);
-document.getElementById('room-d').addEventListener('change', onRoomChange);
+function startAgain(){
+  pts = []; closed = false; cursor = null; selWall = -1; units = []; selectedIdx = -1;
+  closeWallEditor();
+  refreshDraw(null);
+}
+
+DC.addEventListener('pointermove', e => {
+  if (closed) return;
+  cursor = toMM(DC, e);
+  drawAll();
+});
+DC.addEventListener('pointerleave', () => { cursor = null; if (!closed) drawAll(); });
+
+DC.addEventListener('pointerdown', e => {
+  const p = toMM(DC, e);
+
+  if (closed) {
+    const w = wallHit(p);
+    if (w >= 0) openWallEditor(w);
+    else closeWallEditor();
+    refreshDraw(null);
+    return;
+  }
+
+  if (!pts.length) {
+    pts.push({x: snap(p.x), y: snap(p.y)});
+    refreshDraw(null);
+    return;
+  }
+
+  const first = pts[0];
+  if (pts.length >= 3 && Math.hypot(p.x - first.x, p.y - first.y) < 22 / view().s) {
+    closeRoom();
+    return;
+  }
+
+  const L = pts[pts.length - 1];
+  const t = orthoTarget(p);
+  if (t.x === L.x && t.y === L.y) return;
+  pts.push(t);
+  cursor = null;
+  refreshDraw(null);
+});
+
+/* Wall length editor: changing one wall moves the corners after it so the shape stays square */
+function openWallEditor(i){
+  selWall = i;
+  const w = wallList().find(x => x.i === i);
+  document.getElementById('wall-len').value = Math.round(wallLengthMM(w) / 10);
+  document.getElementById('wall-label').textContent = 'Wall ' + (i + 1);
+  document.getElementById('wall-editor').hidden = false;
+}
+
+function closeWallEditor(){
+  selWall = -1;
+  document.getElementById('wall-editor').hidden = true;
+}
+
+function applyWallLength(){
+  const cm = parseInt(document.getElementById('wall-len').value, 10);
+  if (!cm || cm < 10) { refreshDraw('Enter a length of at least 10 cm.'); return; }
+  const n = pts.length, w = selWall;
+  if (w < 0) return;
+  const p = pts[w], q = pts[(w + 1) % n], r = pts[(w + 2) % n];
+  const horizontal = p.y === q.y;
+  const cur = horizontal ? q.x - p.x : q.y - p.y;
+  if (cur === 0) return;
+  const sign = Math.sign(cur);
+  const target = (horizontal ? p.x : p.y) + sign * cm * 10;
+  const delta = target - (horizontal ? q.x : q.y);
+
+  if (horizontal) { q.x += delta; r.x += delta; }
+  else { q.y += delta; r.y += delta; }
+
+  const dropped = pruneUnits();
+  closeWallEditor();
+  refreshDraw(dropped ? dropped + ' unit(s) no longer fitted the room and were removed.' : null);
+}
 
 /* ---------- Steps ---------- */
 
 function nextStep(n){
+  if (n === 1 && !closed) return;
   document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n));
   document.querySelectorAll('.step').forEach((s, i) => { s.classList.toggle('active', i === n); s.classList.toggle('done', i < n); });
-  if (n === 0) { readRoom(); drawPlan(RP, false); }
+  if (n === 0) { drawAll(); }
   if (n === 1) { redraw(); }
   if (n === 2) { buildSummary(); }
   window.scrollTo({top: 0, behavior: 'smooth'});
@@ -902,6 +1149,17 @@ function buildGrid(){
     };
     g.appendChild(btn);
   });
+}
+
+function redraw(msg){
+  drawAll();
+  document.getElementById('rotate-btn').disabled = selectedIdx < 0;
+  let text = msg;
+  if (!text) {
+    text = units.length + (units.length === 1 ? ' unit' : ' units') + ' placed';
+    if (selectedIdx >= 0) text += ' · ' + units[selectedIdx].type.label + ' selected';
+  }
+  document.getElementById('cab-info').textContent = text;
 }
 
 function setMode(m){
@@ -931,22 +1189,11 @@ function rotateSelected(){
   else { u.rot = oldRot; u.x = oldX; u.y = oldY; redraw('No room to turn it here.'); }
 }
 
-/* ---------- Pointer input (mouse, touch and pen) ---------- */
-
-function pointToMm(e){
-  const r = PC.getBoundingClientRect();
-  const px = (e.clientX - r.left) * (PC.width / r.width);
-  const py = (e.clientY - r.top) * (PC.height / r.height);
-  const {s, ox, oy} = view();
-  return {x: (px - ox) / s, y: (py - oy) / s};
-}
+/* ---------- Pointer input on the plan (mouse, touch and pen) ---------- */
 
 PC.addEventListener('pointerdown', e => {
-  const p = pointToMm(e);
-  if (mode === 'add') {
-    placeUnit(p);
-    return;
-  }
+  const p = toMM(PC, e);
+  if (mode === 'add') { placeUnit(p); return; }
   if (mode === 'delete') {
     const i = hitTest(p);
     if (i >= 0) { units.splice(i, 1); selectedIdx = -1; redraw('Unit removed.'); }
@@ -965,7 +1212,7 @@ PC.addEventListener('pointerdown', e => {
 
 PC.addEventListener('pointermove', e => {
   if (!drag) return;
-  const p = pointToMm(e);
+  const p = toMM(PC, e);
   const u = units[drag.i];
   const o = unitRect(u);
   const next = settle({x: p.x - drag.dx, y: p.y - drag.dy, w: o.w, h: o.h, wall: o.wall}, drag.i);
@@ -990,7 +1237,8 @@ function buildSummary(){
     ? Object.entries(counts).map(([k, v]) => '<div class="summary-row"><span>' + k + '</span><span>&times;' + v + '</span></div>').join('')
     : '<div class="summary-row"><span>No units placed. We can talk through the layout in person.</span></div>';
   document.getElementById('hidden-layout').value = Object.entries(counts).map(([k, v]) => k + ' ×' + v).join(', ') || 'None';
-  document.getElementById('hidden-dims').value = ROOM.w + 'cm × ' + ROOM.d + 'cm';
+  const walls = wallList().map(w => Math.round(wallLengthMM(w) / 10));
+  document.getElementById('hidden-dims').value = 'Walls (cm): ' + walls.join(', ');
 }
 
 /* Formspree submit */
@@ -1018,9 +1266,8 @@ if (burger && navLinks) {
 
 /* Init */
 buildGrid();
-readRoom();
 setMode('add');
-drawPlan(RP, false);
+refreshDraw(null);
 redraw('Tap a unit above to start.');
 </script>
 </body>
