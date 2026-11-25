@@ -601,7 +601,7 @@ canvas {
       <div class="pick-label" id="depth-label" hidden>Depth</div>
       <div class="mode-btns" id="depth-row" hidden></div>
       <p class="hint" id="width-hint">Choose a unit in step 2 first.</p>
-      <p class="hint">Need a size that isn&rsquo;t listed? Tell us in the &lsquo;Anything else&rsquo; box at the bottom of the form, or place the island and tap it to type your own width and depth.</p>
+      <p class="hint" id="custom-hint" hidden>Need a custom size, select one of the stock sizes, then scroll down to set your preferred dimensions.</p>
     </div>
 
     <div class="pick-step">
@@ -873,6 +873,8 @@ function dimsOf(u){ return {W: u.w || u.type.w, D: u.d || u.type.d}; }
 const ON_LABEL = {drawers: 'on drawers', oven: 'on oven housing'};
 /* Name shown on the plan and in the summary, e.g. "Base unit 600", "Sink 800", "Dishwasher 450 slimline" */
 function displayName(u){
+  /* The island always shows its actual size, so a typed-in size appears on the plan and in the summary */
+  if (u.type.label === 'Island') return 'Island ' + dimsOf(u).W + ' × ' + dimsOf(u).D;
   return u.sizeName ? u.type.label + ' ' + u.sizeName : u.type.label;
 }
 
@@ -1514,6 +1516,7 @@ function renderSizes(){
   const onLabel = document.getElementById('on-label'), hint = document.getElementById('width-hint');
   const depthRow = document.getElementById('depth-row'), depthLabel = document.getElementById('depth-label');
   const t = selectedType;
+  document.getElementById('custom-hint').hidden = !(t && t.label === 'Island' && t.cat === activeCat);
   row.innerHTML = '';
   onRow.innerHTML = '';
   depthRow.innerHTML = '';
