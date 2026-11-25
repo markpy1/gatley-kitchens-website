@@ -1179,12 +1179,15 @@ function drawPlan(cv, withUnits){
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const note = u.note || '';
+      /* On an L the label sits in the solid corner square, not the notch */
+      const tx = u.type.shape === 'L' && arm ? x + arm/2 : x + w/2;
+      const ty = u.type.shape === 'L' && arm ? y + arm/2 : y + h/2;
       if (note && h > 30) {
-        ctx.fillText(u.type.short || u.type.label, x + w/2, y + h/2 - 7);
+        ctx.fillText(u.type.short || u.type.label, tx, ty - 7);
         ctx.font = 'italic ' + Math.max(9, Math.min(11, w/9)) + 'px Jost, sans-serif';
-        ctx.fillText(note, x + w/2, y + h/2 + 8);
+        ctx.fillText(note, tx, ty + 8);
       } else {
-        ctx.fillText(note || u.type.short || u.type.label, x + w/2, y + h/2);
+        ctx.fillText(note || u.type.short || u.type.label, tx, ty);
       }
     }
   });
