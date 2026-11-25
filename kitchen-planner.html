@@ -601,6 +601,7 @@ canvas {
       <div class="pick-label" id="depth-label" hidden>Depth</div>
       <div class="mode-btns" id="depth-row" hidden></div>
       <p class="hint" id="width-hint">Choose a unit in step 2 first.</p>
+      <p class="hint">Need a size that isn&rsquo;t listed? Tell us in the &lsquo;Anything else&rsquo; box at the bottom of the form, or place the island and tap it to type your own width and depth.</p>
     </div>
 
     <div class="pick-step">
@@ -683,7 +684,7 @@ canvas {
       </div>
 
       <div class="form-row">
-        <label>Anything else?</label>
+        <label>Anything else? Include any sizes you need that aren&rsquo;t listed.</label>
         <textarea name="message" placeholder="Timescale, full renovation or just the kitchen, any specific requirements..."></textarea>
       </div>
 
@@ -777,7 +778,7 @@ addUnit('base', 'Dishwasher', 580, {sizes: [{w: 600, name: '600', label: '600 mm
 addUnit('base', 'Washing machine', 580, {sizes: [600]});
 addUnit('wall', 'Extractor hood', 500, {sizes: [600, 700, 800, 900, 1000], def: 600, layer: 'wall'});
 /* Island: default size, editable */
-addUnit('island', 'Island', 900, {sizes: [900, 1200, 1500, 1800], def: 1200, depths: [600, 900, 1000], editable: ['w', 'd']});
+addUnit('island', 'Island', 900, {sizes: [900, 1200, 1800, 2400, 3000], def: 1200, depths: [600, 900, 1200], editable: ['w', 'd']});
 
 /* Doors sit at floor level and block floor units. Windows sit high on the wall and block wall units. */
 const OPENING_TYPES = {
