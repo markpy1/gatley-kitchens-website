@@ -712,7 +712,7 @@ function addUnit(cat, label, w, d, extra){
 addUnit('base', 'Base 600 (under oven)', 600, 580);
 addUnit('base', 'Corner base 1000', 1000, 580, {corner: true});
 addUnit('base', 'Corner base 1200', 1200, 580, {corner: true});
-addUnit('base', 'L-shaped corner base 900 x 900', 900, 900, {corner: true, shape: 'L', arm: 580});
+addUnit('base', 'L-shaped corner base 900 x 900', 900, 900, {corner: true, shape: 'L', arm: 580, short: 'L corner'});
 /* Drawers, 580 deep */
 [400, 500, 600, 700, 800, 900, 1000, 1100, 1200].forEach(w => addUnit('drawers', 'Drawers ' + w, w, 580));
 /* Wine racks, 580 deep */
@@ -1180,11 +1180,11 @@ function drawPlan(cv, withUnits){
       ctx.textBaseline = 'middle';
       const note = u.note || '';
       if (note && h > 30) {
-        ctx.fillText(u.type.label, x + w/2, y + h/2 - 7);
+        ctx.fillText(u.type.short || u.type.label, x + w/2, y + h/2 - 7);
         ctx.font = 'italic ' + Math.max(9, Math.min(11, w/9)) + 'px Jost, sans-serif';
         ctx.fillText(note, x + w/2, y + h/2 + 8);
       } else {
-        ctx.fillText(note || u.type.label, x + w/2, y + h/2);
+        ctx.fillText(note || u.type.short || u.type.label, x + w/2, y + h/2);
       }
     }
   });
