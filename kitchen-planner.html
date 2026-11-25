@@ -470,6 +470,13 @@ canvas {
 }
 .success-contact strong { color: var(--dark); }
 
+/* SIMPLIFIED PLANNER */
+.guide-line { font-size: 14px; color: var(--mid); margin-bottom: 14px; line-height: 1.6; }
+.mode-btns { flex-wrap: wrap; }
+.mode-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+#plan-canvas { touch-action: none; }
+#room-preview { cursor: default; }
+
 /* FOOTER NOTE */
 .footer-note { text-align: center; font-size: 12px; color: #bbb; margin-top: 24px; }
 .footer-note a { color: var(--accent); text-decoration: none; }
@@ -509,51 +516,45 @@ canvas {
 <div class="planner-wrap">
 
   <div class="step-bar">
-    <div class="step active" id="step-0">1. Draw your room</div>
-    <div class="step" id="step-1">2. Place cabinets</div>
+    <div class="step active" id="step-0">1. Room size</div>
+    <div class="step" id="step-1">2. Add units</div>
     <div class="step" id="step-2">3. Get a quote</div>
   </div>
 
-  <!-- Step 1: Room -->
+  <!-- Step 1: Room size -->
   <div class="panel active" id="panel-0">
-    <p class="hint">Enter your room dimensions and click "Set room" for a rectangle, or click points on the canvas to draw an L-shape or any custom outline. Best used on desktop or tablet.</p>
+    <p class="guide-line">Enter the width and depth of your room in centimetres. The outline updates as you type.</p>
 
     <div class="dim-row">
-      <label>Width</label>
-      <input type="number" id="guide-w" value="400" min="100" max="900">
+      <label for="room-w">Width</label>
+      <input type="number" id="room-w" value="400" min="100" max="900" inputmode="numeric">
       <span class="dim-unit">cm</span>
-      <label>Depth</label>
-      <input type="number" id="guide-d" value="350" min="100" max="700">
+      <label for="room-d">Depth</label>
+      <input type="number" id="room-d" value="350" min="100" max="700" inputmode="numeric">
       <span class="dim-unit">cm</span>
-      <button class="btn accent sm" onclick="applyGuide()">Set room</button>
     </div>
 
-    <div class="toolbar">
-      <button class="btn outline sm" onclick="loadExample()">L-shape example</button>
-      <button class="btn outline sm" onclick="undoPoint()">Undo point</button>
-      <button class="btn outline sm" onclick="clearRoom()">Clear</button>
-      <button class="btn sm" onclick="finishRoom()">Finish outline</button>
-    </div>
-
-    <canvas id="room-canvas" width="752" height="420"></canvas>
-    <div class="info-bar" id="room-info">Enter your dimensions above, or click on the canvas to draw a custom room shape</div>
+    <canvas id="room-preview" width="752" height="460"></canvas>
 
     <div class="nav-row">
       <span></span>
-      <button class="btn accent" onclick="nextStep(1)">Next: Place cabinets &rarr;</button>
+      <button class="btn accent" onclick="nextStep(1)">Next: Add units &rarr;</button>
     </div>
   </div>
 
-  <!-- Step 2: Cabinets -->
+  <!-- Step 2: Add units -->
   <div class="panel" id="panel-1">
+    <p class="guide-line">Tap a unit below, then tap the room where you want it. It drops in and is ready to drag into position.</p>
+
+    <div class="cabinet-grid" id="cab-grid"></div>
+
     <div class="mode-btns">
       <button class="mode-btn active-mode" id="mode-add" onclick="setMode('add')">Add</button>
       <button class="mode-btn" id="mode-move" onclick="setMode('move')">Move</button>
       <button class="mode-btn" id="mode-delete" onclick="setMode('delete')">Delete</button>
+      <button class="mode-btn" id="rotate-btn" onclick="rotateSelected()" disabled>Turn 90&deg;</button>
     </div>
-    <p class="hint" id="mode-hint">Select a cabinet type below, then click in the room to place it.</p>
-
-    <div class="cabinet-grid" id="cab-grid"></div>
+    <p class="hint" id="mode-hint"></p>
 
     <div class="legend">
       <div class="leg-item"><div class="leg-swatch" style="background:#4A7C59"></div>Base units</div>
@@ -563,8 +564,8 @@ canvas {
       <div class="leg-item"><div class="leg-swatch" style="background:#6B6B8A"></div>Island</div>
     </div>
 
-    <canvas id="cab-canvas" width="752" height="400"></canvas>
-    <div class="info-bar" id="cab-info">0 cabinets placed</div>
+    <canvas id="plan-canvas" width="752" height="460"></canvas>
+    <div class="info-bar" id="cab-info">0 units placed</div>
 
     <div class="nav-row">
       <button class="btn outline" onclick="nextStep(0)">&larr; Back</button>
@@ -657,189 +658,370 @@ canvas {
 
 
 <script>
-const SCALE = 0.125;
-const CAB_TYPES = [
-  {id:'base-600', label:'Base 600',    w:600,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-500', label:'Base 500',    w:500,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-400', label:'Base 400',    w:400,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-300', label:'Base 300',    w:300,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-crn', label:'Corner base', w:950,  h:950,  color:'#3D6B4A', cat:'base'},
-  {id:'sink-800', label:'Sink unit',   w:800,  h:580,  color:'#5B8C6B', cat:'base'},
-  {id:'wall-600', label:'Wall 600',    w:600,  h:320,  color:'#4A6FA5', cat:'wall'},
-  {id:'wall-500', label:'Wall 500',    w:500,  h:320,  color:'#4A6FA5', cat:'wall'},
-  {id:'wall-300', label:'Wall 300',    w:300,  h:320,  color:'#4A6FA5', cat:'wall'},
-  {id:'wall-crn', label:'Corner wall', w:600,  h:600,  color:'#3D5F8A', cat:'wall'},
-  {id:'tall-600', label:'Tall larder', w:600,  h:2150, color:'#8B5E3C', cat:'tall'},
-  {id:'tall-300', label:'Tall 300',    w:300,  h:2150, color:'#8B5E3C', cat:'tall'},
-  {id:'oven-600', label:'Oven housing',w:600,  h:1200, color:'#B85C5C', cat:'appliance'},
-  {id:'fridge',   label:'Fridge space',w:600,  h:1800, color:'#B85C5C', cat:'appliance'},
-  {id:'island',   label:'Island',      w:1200, h:900,  color:'#6B6B8A', cat:'island'},
+/* Plan view size (canvas pixels) and snapping distance (mm) */
+const PLAN_W = 752, PLAN_H = 460, PAD = 28, SNAP = 150;
+
+/* Units are rectangles in plan view, measured in mm. w runs along the wall, d is depth. */
+const UNITS = [
+  {id:'base-600', label:'Base 600',     w:600,  d:580, color:'#4A7C59', cat:'base'},
+  {id:'base-500', label:'Base 500',     w:500,  d:580, color:'#4A7C59', cat:'base'},
+  {id:'base-400', label:'Base 400',     w:400,  d:580, color:'#4A7C59', cat:'base'},
+  {id:'base-300', label:'Base 300',     w:300,  d:580, color:'#4A7C59', cat:'base'},
+  {id:'sink-800', label:'Sink unit',    w:800,  d:580, color:'#5B8C6B', cat:'base'},
+  {id:'wall-600', label:'Wall 600',     w:600,  d:320, color:'#4A6FA5', cat:'wall'},
+  {id:'wall-500', label:'Wall 500',     w:500,  d:320, color:'#4A6FA5', cat:'wall'},
+  {id:'wall-300', label:'Wall 300',     w:300,  d:320, color:'#4A6FA5', cat:'wall'},
+  {id:'tall-600', label:'Tall larder',  w:600,  d:600, color:'#8B5E3C', cat:'tall'},
+  {id:'tall-300', label:'Tall 300',     w:300,  d:600, color:'#8B5E3C', cat:'tall'},
+  {id:'oven-600', label:'Oven housing', w:600,  d:600, color:'#B85C5C', cat:'appliance'},
+  {id:'fridge',   label:'Fridge space', w:600,  d:600, color:'#B85C5C', cat:'appliance'},
+  {id:'island',   label:'Island',       w:1200, d:900, color:'#6B6B8A', cat:'island'},
 ];
 
-let roomPts=[], roomClosed=false;
-let cabinets=[], selectedCabType=CAB_TYPES[0];
-let mode='add', dragging=null, dragOX=0, dragOY=0;
-let sc={sx:1,sy:1};
+const HINTS = {
+  add:    'Tap a unit above, then tap the room to place it. It goes straight into Move mode.',
+  move:   'Drag a unit to position it. It snaps to the walls and lines up with the units next to it.',
+  delete: 'Tap a unit to remove it.'
+};
 
-const RC=document.getElementById('room-canvas'), CC=document.getElementById('cab-canvas');
-const rctx=RC.getContext('2d'), cctx=CC.getContext('2d');
+const ROOM = {w:400, d:350};          /* cm */
+let units = [];                       /* {type, rot:0|1, x, y} with x, y the top-left corner in mm */
+let selectedType = UNITS[0];
+let selectedIdx = -1;
+let mode = 'add';
+let drag = null;
+
+const RP = document.getElementById('room-preview');
+const PC = document.getElementById('plan-canvas');
+
+/* ---------- Geometry ---------- */
+
+function roomMM(){ return {w: ROOM.w * 10, d: ROOM.d * 10}; }
+
+function view(){
+  const rm = roomMM();
+  const s = Math.min((PLAN_W - 2*PAD) / rm.w, (PLAN_H - 2*PAD) / rm.d);
+  return {s, ox: (PLAN_W - rm.w*s) / 2, oy: (PLAN_H - rm.d*s) / 2};
+}
+
+function unitRect(u){
+  const t = u.type;
+  return {x: u.x, y: u.y, w: u.rot ? t.d : t.w, h: u.rot ? t.w : t.d, wall: t.cat === 'wall'};
+}
+
+function overlaps(a, b){
+  return a.x < b.x + b.w - 0.5 && a.x + a.w > b.x + 0.5 &&
+         a.y < b.y + b.h - 0.5 && a.y + a.h > b.y + 0.5;
+}
+
+/* Wall units hang above the floor units, so they only collide with other wall units */
+function overlapsAny(r, ignore){
+  return units.some((u, i) => {
+    if (i === ignore) return false;
+    const o = unitRect(u);
+    return o.wall === !!r.wall && overlaps(r, o);
+  });
+}
+
+function clampRect(r){
+  const rm = roomMM();
+  r.x = Math.max(0, Math.min(r.x, rm.w - r.w));
+  r.y = Math.max(0, Math.min(r.y, rm.d - r.h));
+  return r;
+}
+
+function nearest(candidates, v){
+  let best = v, bestDist = SNAP;
+  candidates.forEach(c => {
+    const d = Math.abs(c - v);
+    if (d <= bestDist) { bestDist = d; best = c; }
+  });
+  return best;
+}
+
+/* Snap to walls, and flush against or aligned with other units */
+function snapRect(r, ignore){
+  const rm = roomMM();
+  const xs = [0, rm.w - r.w];
+  const ys = [0, rm.d - r.h];
+  units.forEach((u, i) => {
+    if (i === ignore) return;
+    const o = unitRect(u);
+    xs.push(o.x + o.w, o.x - r.w, o.x, o.x + o.w - r.w);
+    ys.push(o.y + o.h, o.y - r.h, o.y, o.y + o.h - r.h);
+  });
+  return {x: nearest(xs, r.x), y: nearest(ys, r.y), w: r.w, h: r.h};
+}
+
+/* Return a legal position near r, or null if there is no room for it */
+function settle(r, ignore){
+  r = clampRect({...r});
+  const snapped = clampRect(snapRect(r, ignore));
+  if (!overlapsAny(snapped, ignore)) return snapped;
+  if (!overlapsAny(r, ignore)) return r;
+  return null;
+}
+
+function hitTest(p){
+  for (let i = units.length - 1; i >= 0; i--) {
+    const o = unitRect(units[i]);
+    if (p.x >= o.x && p.x <= o.x + o.w && p.y >= o.y && p.y <= o.y + o.h) return i;
+  }
+  return -1;
+}
+
+/* ---------- Drawing ---------- */
+
+function drawPlan(cv, withUnits){
+  const ctx = cv.getContext('2d');
+  const {s, ox, oy} = view();
+  const rm = roomMM();
+
+  ctx.fillStyle = '#FAFAF7';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
+  ctx.strokeStyle = '#ede9e0';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x <= rm.w; x += 500) { ctx.beginPath(); ctx.moveTo(ox + x*s, oy); ctx.lineTo(ox + x*s, oy + rm.d*s); ctx.stroke(); }
+  for (let y = 0; y <= rm.d; y += 500) { ctx.beginPath(); ctx.moveTo(ox, oy + y*s); ctx.lineTo(ox + rm.w*s, oy + y*s); ctx.stroke(); }
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(ox, oy, rm.w*s, rm.d*s);
+  ctx.strokeStyle = '#1c1a17';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(ox, oy, rm.w*s, rm.d*s);
+
+  ctx.fillStyle = '#8a8478';
+  ctx.font = '12px Jost, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(ROOM.w + ' cm', ox + rm.w*s/2, oy - 6);
+  ctx.save();
+  ctx.translate(ox - 8, oy + rm.d*s/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText(ROOM.d + ' cm', 0, 0);
+  ctx.restore();
+
+  if (!withUnits) return;
+
+  units.forEach((u, i) => {
+    const r = unitRect(u);
+    const x = ox + r.x*s, y = oy + r.y*s, w = r.w*s, h = r.h*s;
+    ctx.globalAlpha = r.wall ? 0.7 : 1;
+    ctx.fillStyle = u.type.color + 'CC';
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = u.type.color;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, w, h);
+    ctx.globalAlpha = 1;
+    if (i === selectedIdx) {
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x - 1.5, y - 1.5, w + 3, h + 3);
+    }
+    if (w > 40 && h > 14) {
+      ctx.fillStyle = '#ffffff';
+      ctx.font = Math.max(9, Math.min(12, w/8)) + 'px Jost, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(u.type.label, x + w/2, y + h/2);
+    }
+  });
+}
+
+function redraw(msg){
+  drawPlan(PC, true);
+  document.getElementById('rotate-btn').disabled = selectedIdx < 0;
+  let text = msg;
+  if (!text) {
+    text = units.length + (units.length === 1 ? ' unit' : ' units') + ' placed';
+    if (selectedIdx >= 0) text += ' · ' + units[selectedIdx].type.label + ' selected';
+  }
+  document.getElementById('cab-info').textContent = text;
+}
+
+/* ---------- Room size (step 1) ---------- */
+
+function clampNum(v, min, max, fallback){
+  const n = parseInt(v, 10);
+  if (isNaN(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
+
+function readRoom(){
+  ROOM.w = clampNum(document.getElementById('room-w').value, 100, 900, ROOM.w);
+  ROOM.d = clampNum(document.getElementById('room-d').value, 100, 700, ROOM.d);
+}
+
+function onRoomInput(){
+  readRoom();
+  units.forEach(u => { const r = clampRect(unitRect(u)); u.x = r.x; u.y = r.y; });
+  drawPlan(RP, false);
+  redraw();
+}
+
+function onRoomChange(){
+  document.getElementById('room-w').value = ROOM.w;
+  document.getElementById('room-d').value = ROOM.d;
+  onRoomInput();
+}
+
+document.getElementById('room-w').addEventListener('input', onRoomInput);
+document.getElementById('room-d').addEventListener('input', onRoomInput);
+document.getElementById('room-w').addEventListener('change', onRoomChange);
+document.getElementById('room-d').addEventListener('change', onRoomChange);
+
+/* ---------- Steps ---------- */
 
 function nextStep(n){
-  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n));
-  document.querySelectorAll('.step').forEach((s,i)=>{s.classList.toggle('active',i===n);s.classList.toggle('done',i<n);});
-  if(n===1){sc.sx=CC.width/RC.width;sc.sy=CC.height/RC.height;drawCab();}
-  if(n===2){buildSummary();}
-  window.scrollTo({top:0,behavior:'smooth'});
+  document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n));
+  document.querySelectorAll('.step').forEach((s, i) => { s.classList.toggle('active', i === n); s.classList.toggle('done', i < n); });
+  if (n === 0) { readRoom(); drawPlan(RP, false); }
+  if (n === 1) { redraw(); }
+  if (n === 2) { buildSummary(); }
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-function gridLines(ctx,W,H){
-  ctx.strokeStyle='#ede9e0';ctx.lineWidth=0.5;
-  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-}
+/* ---------- Unit picker and modes ---------- */
 
-function drawRoom(){
-  const W=RC.width,H=RC.height;
-  rctx.clearRect(0,0,W,H);rctx.fillStyle='#FAFAF7';rctx.fillRect(0,0,W,H);
-  gridLines(rctx,W,H);
-  if(!roomPts.length)return;
-  rctx.beginPath();rctx.moveTo(roomPts[0].x,roomPts[0].y);
-  roomPts.slice(1).forEach(p=>rctx.lineTo(p.x,p.y));
-  if(roomClosed){rctx.closePath();rctx.fillStyle='rgba(249,246,241,0.9)';rctx.fill();}
-  rctx.strokeStyle='#1c1a17';rctx.lineWidth=2.5;rctx.stroke();
-  if(roomClosed&&roomPts.length>=2){
-    const dx=roomPts[1].x-roomPts[0].x,dy=roomPts[1].y-roomPts[0].y;
-    rctx.fillStyle='#aaa';rctx.font='11px Jost,sans-serif';rctx.textAlign='center';
-    rctx.fillText(Math.round(Math.sqrt(dx*dx+dy*dy)/SCALE/10)+'cm',(roomPts[0].x+roomPts[1].x)/2,(roomPts[0].y+roomPts[1].y)/2-8);
-  }
-  roomPts.forEach((p,i)=>{rctx.beginPath();rctx.arc(p.x,p.y,5,0,Math.PI*2);rctx.fillStyle=i===0?'#8b6f47':'#1c1a17';rctx.fill();});
-  if(!roomClosed&&roomPts.length>2){rctx.beginPath();rctx.arc(roomPts[0].x,roomPts[0].y,15,0,Math.PI*2);rctx.strokeStyle='rgba(139,111,71,0.35)';rctx.lineWidth=1.5;rctx.stroke();}
-}
-
-function applyGuide(){
-  const gw=(parseInt(document.getElementById('guide-w').value)||400)*10;
-  const gd=(parseInt(document.getElementById('guide-d').value)||350)*10;
-  const sw=gw*SCALE,sh=gd*SCALE,ox=(RC.width-sw)/2,oy=(RC.height-sh)/2;
-  roomPts=[{x:ox,y:oy},{x:ox+sw,y:oy},{x:ox+sw,y:oy+sh},{x:ox,y:oy+sh}];
-  roomClosed=true;drawRoom();
-  document.getElementById('room-info').textContent='Room set to '+Math.round(gw/10)+'cm × '+Math.round(gd/10)+'cm';
-}
-
-function loadExample(){
-  roomPts=[{x:60,y:60},{x:RC.width-70,y:60},{x:RC.width-70,y:220},{x:330,y:220},{x:330,y:360},{x:60,y:360}];
-  roomClosed=true;drawRoom();
-  document.getElementById('room-info').textContent='L-shaped example loaded';
-}
-
-function finishRoom(){if(roomPts.length<3){alert('Place at least 3 points first');return;}roomClosed=true;drawRoom();document.getElementById('room-info').textContent='Room outline complete';}
-function undoPoint(){if(roomPts.length){roomPts.pop();roomClosed=false;drawRoom();}}
-function clearRoom(){roomPts=[];roomClosed=false;drawRoom();document.getElementById('room-info').textContent='Click the canvas to place room corners';}
-
-RC.addEventListener('click',function(e){
-  if(roomClosed)return;
-  const r=RC.getBoundingClientRect();
-  const x=(e.clientX-r.left)*(RC.width/r.width),y=(e.clientY-r.top)*(RC.height/r.height);
-  if(roomPts.length>2){const dx=x-roomPts[0].x,dy=y-roomPts[0].y;if(Math.sqrt(dx*dx+dy*dy)<18){finishRoom();return;}}
-  roomPts.push({x,y});drawRoom();
-  document.getElementById('room-info').textContent=roomPts.length+' point'+(roomPts.length!==1?'s':'')+' — click the gold dot to close, or use Finish outline';
-});
-
-/* Cabinet canvas */
-function cW(c){return c.type.w*SCALE*sc.sx;}
-function cH(c){return Math.min(c.type.h,700)*SCALE*sc.sy;}
-
-function drawCab(){
-  const W=CC.width,H=CC.height;
-  cctx.clearRect(0,0,W,H);cctx.fillStyle='#FAFAF7';cctx.fillRect(0,0,W,H);
-  gridLines(cctx,W,H);
-  if(roomPts.length>2){
-    cctx.beginPath();cctx.moveTo(roomPts[0].x*sc.sx,roomPts[0].y*sc.sy);
-    roomPts.slice(1).forEach(p=>cctx.lineTo(p.x*sc.sx,p.y*sc.sy));
-    if(roomClosed){cctx.closePath();cctx.fillStyle='rgba(249,246,241,0.8)';cctx.fill();}
-    cctx.strokeStyle='#1c1a17';cctx.lineWidth=2;cctx.stroke();
-  }
-  cabinets.forEach(c=>{
-    const w=cW(c),h=cH(c);
-    cctx.fillStyle=c.type.color+'BB';cctx.fillRect(c.x-w/2,c.y-h/2,w,h);
-    cctx.strokeStyle=c.type.color;cctx.lineWidth=1.5;cctx.strokeRect(c.x-w/2,c.y-h/2,w,h);
-    cctx.fillStyle='#fff';cctx.font=Math.max(8,Math.min(10,w/7))+'px Jost,sans-serif';
-    cctx.textAlign='center';cctx.textBaseline='middle';cctx.fillText(c.type.label,c.x,c.y);
-  });
-}
-
-/* Build cabinet grid */
-(function(){
-  const icons={base:'▭',wall:'▬',tall:'▮',appliance:'⬚',island:'⬜'};
-  const g=document.getElementById('cab-grid');
-  CAB_TYPES.forEach(c=>{
-    const btn=document.createElement('button');
-    btn.className='cab-btn'+(c===selectedCabType?' selected-cab':'');
-    const dim=c.cat==='tall'?c.w+'mm':c.w+'×'+Math.min(c.h,600)+'mm';
-    btn.innerHTML='<span class="cab-icon" style="color:'+c.color+'">'+(icons[c.cat]||'▭')+'</span>'+c.label+'<br><span style="color:#ccc;font-size:9px">'+dim+'</span>';
-    btn.onclick=()=>{selectedCabType=c;document.querySelectorAll('.cab-btn').forEach(b=>b.classList.remove('selected-cab'));btn.classList.add('selected-cab');setMode('add');};
+function buildGrid(){
+  const icons = {base:'▭', wall:'▬', tall:'▮', appliance:'⬚', island:'⬜'};
+  const g = document.getElementById('cab-grid');
+  UNITS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'cab-btn' + (t === selectedType ? ' selected-cab' : '');
+    btn.innerHTML = '<span class="cab-icon" style="color:' + t.color + '">' + (icons[t.cat] || '▭') + '</span>' +
+      t.label + '<br><span style="color:#999;font-size:9px">' + t.w + ' × ' + t.d + ' mm</span>';
+    btn.onclick = () => {
+      selectedType = t;
+      document.querySelectorAll('.cab-btn').forEach(b => b.classList.remove('selected-cab'));
+      btn.classList.add('selected-cab');
+      selectedIdx = -1;
+      setMode('add');
+      redraw('Tap the room to place the ' + t.label + '.');
+    };
     g.appendChild(btn);
   });
-})();
-
-function setMode(m){
-  mode=m;
-  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active-mode'));
-  const el=document.getElementById('mode-'+m);if(el)el.classList.add('active-mode');
-  const h={add:'Select a cabinet below then click in the room to place it.',move:'Click and drag a cabinet to reposition it.',delete:'Click a cabinet to remove it.'};
-  document.getElementById('mode-hint').textContent=h[m]||'';
-  CC.style.cursor=m==='move'?'grab':m==='delete'?'not-allowed':'crosshair';
 }
 
-function getXY(canvas,e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};}
-function findCab(x,y){for(let i=cabinets.length-1;i>=0;i--){const c=cabinets[i],w=cW(c),h=cH(c);if(x>=c.x-w/2&&x<=c.x+w/2&&y>=c.y-h/2&&y<=c.y+h/2)return i;}return -1;}
+function setMode(m){
+  mode = m;
+  ['add', 'move', 'delete'].forEach(k => document.getElementById('mode-' + k).classList.toggle('active-mode', k === m));
+  document.getElementById('mode-hint').textContent = HINTS[m];
+  PC.style.cursor = m === 'add' ? 'crosshair' : m === 'move' ? 'grab' : 'pointer';
+}
 
-CC.addEventListener('mousedown',function(e){
-  const {x,y}=getXY(CC,e);
-  if(mode==='add'){cabinets.push({type:selectedCabType,x,y});drawCab();document.getElementById('cab-info').textContent=cabinets.length+' cabinet'+(cabinets.length!==1?'s':'')+' placed';}
-  else if(mode==='delete'){const i=findCab(x,y);if(i>=0){cabinets.splice(i,1);drawCab();}}
-  else if(mode==='move'){const i=findCab(x,y);if(i>=0){dragging=i;dragOX=x-cabinets[i].x;dragOY=y-cabinets[i].y;CC.style.cursor='grabbing';}}
+function placeUnit(p){
+  const t = selectedType;
+  const r = settle({x: p.x - t.w/2, y: p.y - t.d/2, w: t.w, h: t.d, wall: t.cat === 'wall'}, -1);
+  if (!r) { redraw('No space there. Try another spot in the room.'); return; }
+  units.push({type: t, rot: 0, x: r.x, y: r.y});
+  selectedIdx = units.length - 1;
+  setMode('move');
+  redraw('Placed. Drag it into position.');
+}
+
+function rotateSelected(){
+  if (selectedIdx < 0) return;
+  const u = units[selectedIdx];
+  const oldRot = u.rot, oldX = u.x, oldY = u.y;
+  u.rot = u.rot ? 0 : 1;
+  const r = settle(unitRect(u), selectedIdx);
+  if (r) { u.x = r.x; u.y = r.y; redraw(); }
+  else { u.rot = oldRot; u.x = oldX; u.y = oldY; redraw('No room to turn it here.'); }
+}
+
+/* ---------- Pointer input (mouse, touch and pen) ---------- */
+
+function pointToMm(e){
+  const r = PC.getBoundingClientRect();
+  const px = (e.clientX - r.left) * (PC.width / r.width);
+  const py = (e.clientY - r.top) * (PC.height / r.height);
+  const {s, ox, oy} = view();
+  return {x: (px - ox) / s, y: (py - oy) / s};
+}
+
+PC.addEventListener('pointerdown', e => {
+  const p = pointToMm(e);
+  if (mode === 'add') {
+    placeUnit(p);
+    return;
+  }
+  if (mode === 'delete') {
+    const i = hitTest(p);
+    if (i >= 0) { units.splice(i, 1); selectedIdx = -1; redraw('Unit removed.'); }
+    return;
+  }
+  const i = hitTest(p);
+  selectedIdx = i;
+  if (i >= 0) {
+    const o = unitRect(units[i]);
+    drag = {i, dx: p.x - o.x, dy: p.y - o.y};
+    PC.setPointerCapture(e.pointerId);
+    PC.style.cursor = 'grabbing';
+  }
+  redraw();
 });
-CC.addEventListener('mousemove',function(e){if(dragging===null)return;const {x,y}=getXY(CC,e);cabinets[dragging].x=x-dragOX;cabinets[dragging].y=y-dragOY;drawCab();});
-CC.addEventListener('mouseup',()=>{dragging=null;if(mode==='move')CC.style.cursor='grab';});
 
-/* Summary */
+PC.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const p = pointToMm(e);
+  const u = units[drag.i];
+  const o = unitRect(u);
+  const next = settle({x: p.x - drag.dx, y: p.y - drag.dy, w: o.w, h: o.h, wall: o.wall}, drag.i);
+  if (next) { u.x = next.x; u.y = next.y; }
+  redraw();
+});
+
+function endDrag(){
+  drag = null;
+  PC.style.cursor = mode === 'move' ? 'grab' : PC.style.cursor;
+}
+PC.addEventListener('pointerup', endDrag);
+PC.addEventListener('pointercancel', endDrag);
+
+/* ---------- Summary and submit ---------- */
+
 function buildSummary(){
-  const counts={};cabinets.forEach(c=>{counts[c.type.label]=(counts[c.type.label]||0)+1;});
-  const el=document.getElementById('summary-content');
-  el.innerHTML=Object.keys(counts).length
-    ?Object.entries(counts).map(([k,v])=>'<div class="summary-row"><span>'+k+'</span><span>&times;'+v+'</span></div>').join('')
-    :'<div class="summary-row"><span>No cabinets placed — we can discuss the layout in person.</span></div>';
-  document.getElementById('hidden-layout').value=Object.entries(counts).map(([k,v])=>k+' \xd7'+v).join(', ')||'None';
-  document.getElementById('hidden-dims').value=document.getElementById('guide-w').value+'cm \xd7 '+document.getElementById('guide-d').value+'cm';
+  const counts = {};
+  units.forEach(u => { counts[u.type.label] = (counts[u.type.label] || 0) + 1; });
+  const el = document.getElementById('summary-content');
+  el.innerHTML = Object.keys(counts).length
+    ? Object.entries(counts).map(([k, v]) => '<div class="summary-row"><span>' + k + '</span><span>&times;' + v + '</span></div>').join('')
+    : '<div class="summary-row"><span>No units placed. We can talk through the layout in person.</span></div>';
+  document.getElementById('hidden-layout').value = Object.entries(counts).map(([k, v]) => k + ' ×' + v).join(', ') || 'None';
+  document.getElementById('hidden-dims').value = ROOM.w + 'cm × ' + ROOM.d + 'cm';
 }
 
 /* Formspree submit */
-document.getElementById('quote-form').addEventListener('submit',async function(e){
+document.getElementById('quote-form').addEventListener('submit', async function(e){
   e.preventDefault();
-  const btn=document.getElementById('submit-btn'),err=document.getElementById('form-error');
-  err.style.display='none';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Sending\u2026';
-  try{
-    const res=await fetch(this.action,{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}});
-    if(res.ok){nextStep(3);}else{throw new Error();}
-  }catch{
-    err.textContent='Something went wrong \u2014 please try again or call us on 0161 437 8899.';
-    err.style.display='block';btn.disabled=false;btn.textContent='Request a free consultation';
+  const btn = document.getElementById('submit-btn'), err = document.getElementById('form-error');
+  err.style.display = 'none'; btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Sending…';
+  try {
+    const res = await fetch(this.action, {method: 'POST', body: new FormData(this), headers: {'Accept': 'application/json'}});
+    if (res.ok) { nextStep(3); } else { throw new Error(); }
+  } catch {
+    err.textContent = 'Something went wrong — please try again or call us on 0161 437 8899.';
+    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Request a free consultation';
   }
 });
 
 /* Mobile nav */
-const burger=document.getElementById('navBurger'),navLinks=document.querySelector('.nav-links');
-if(burger&&navLinks){
-  burger.addEventListener('click',()=>{burger.classList.toggle('open');navLinks.classList.toggle('open');});
-  navLinks.querySelectorAll('a').forEach(a=>{a.addEventListener('click',()=>{if(!a.parentElement.classList.contains('nav-dropdown')){burger.classList.remove('open');navLinks.classList.remove('open');}});});
-  const dd=document.querySelector('.nav-dropdown');
-  if(dd&&window.innerWidth<=800){dd.querySelector('a').addEventListener('click',e=>{e.preventDefault();dd.classList.toggle('mobile-open');});}
+const burger = document.getElementById('navBurger'), navLinks = document.querySelector('.nav-links');
+if (burger && navLinks) {
+  burger.addEventListener('click', () => { burger.classList.toggle('open'); navLinks.classList.toggle('open'); });
+  navLinks.querySelectorAll('a').forEach(a => { a.addEventListener('click', () => { if (!a.parentElement.classList.contains('nav-dropdown')) { burger.classList.remove('open'); navLinks.classList.remove('open'); } }); });
+  const dd = document.querySelector('.nav-dropdown');
+  if (dd && window.innerWidth <= 800) { dd.querySelector('a').addEventListener('click', e => { e.preventDefault(); dd.classList.toggle('mobile-open'); }); }
 }
 
 /* Init */
-sc.sx=CC.width/RC.width;sc.sy=CC.height/RC.height;
-applyGuide();
-drawCab();
+buildGrid();
+readRoom();
+setMode('add');
+drawPlan(RP, false);
+redraw('Tap a unit above to start.');
 </script>
 </body>
 </html>
