@@ -493,6 +493,9 @@ canvas {
 .pick-step .hint { margin: 6px 0 0; }
 .cab-icon svg { display: block; margin: 0 auto 4px; width: 40px; height: 28px; }
 
+.save-row { display: flex; justify-content: flex-end; margin-top: 10px; }
+.save-btn { display: inline-flex; align-items: center; gap: 8px; }
+
 /* FOOTER NOTE */
 .footer-note { text-align: center; font-size: 12px; color: #bbb; margin-top: 24px; }
 .footer-note a { color: var(--accent); text-decoration: none; }
@@ -578,7 +581,6 @@ canvas {
     <p class="guide-line">Build your layout in steps: choose a category, then a unit, then a width if it comes in more than one. Then tap the room. Move mode drags units into place.</p>
 
     <div class="toolbar">
-      <button class="btn outline sm" onclick="saveLayoutImage()">Save layout as image</button>
       <button class="btn outline sm" onclick="undo()">Undo</button>
       <button class="btn outline sm" onclick="startAgain()">Start again</button>
     </div>
@@ -625,6 +627,9 @@ canvas {
     </div>
 
     <canvas id="plan-canvas" width="752" height="680"></canvas>
+    <div class="save-row">
+      <button class="btn accent save-btn" onclick="saveLayoutImage()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>Save layout as image</button>
+    </div>
     <div class="info-bar" id="cab-info">0 units placed</div>
 
     <div class="wall-editor" id="item-editor" hidden>
