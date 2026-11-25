@@ -15,7 +15,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kitchen Planner | Gatley Kitchens &amp; Bedrooms</title>
-  <meta name="description" content="Plan your new kitchen with our free interactive room planner. Draw your space, place cabinets, and request a free no-obligation quote from Gatley Kitchens.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Plan your new kitchen with our free interactive room planner. Draw your space, place cabinets, and and get in touch with the team at Gatley Kitchens.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -470,6 +471,32 @@ canvas {
 }
 .success-contact strong { color: var(--dark); }
 
+/* SIMPLIFIED PLANNER */
+.guide-line { font-size: 14px; color: var(--mid); margin-bottom: 14px; line-height: 1.6; }
+.mode-btns { flex-wrap: wrap; }
+.mode-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+#plan-canvas, #draw-canvas { touch-action: none; }
+#draw-canvas { cursor: crosshair; }
+.wall-editor { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding: 10px 14px; background: var(--cream); border: 1px solid var(--border); border-radius: 2px; font-size: 13px; color: var(--mid); }
+.wall-editor[hidden] { display: none; }
+.wall-editor input { width: 90px; padding: 5px 8px; border: 1px solid var(--border); font-family: 'Jost', sans-serif; font-size: 13px; text-align: center; border-radius: 2px; background: var(--white); }
+
+.popup-overlay { position: fixed; inset: 0; background: rgba(28,26,23,0.45); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.popup-overlay[hidden] { display: none; }
+.popup { background: var(--white); padding: 24px 28px; max-width: 320px; width: 100%; text-align: center; border-radius: 2px; box-shadow: 0 10px 40px rgba(0,0,0,0.25); }
+.popup p { font-size: 15px; color: var(--dark); margin-bottom: 16px; }
+.soft-intro { background: var(--cream); border: 1px solid var(--border); padding: 18px 22px; margin-bottom: 22px; }
+.soft-intro h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--dark); margin-bottom: 8px; }
+.soft-intro p { font-size: 14px; color: var(--mid); line-height: 1.7; margin: 0; }
+
+.pick-step { border: 1px solid var(--border); background: var(--white); padding: 12px 14px; margin-bottom: 12px; }
+.pick-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dark); margin-bottom: 8px; font-weight: 500; }
+.pick-step .hint { margin: 6px 0 0; }
+.cab-icon svg { display: block; margin: 0 auto 4px; width: 40px; height: 28px; }
+
+.save-row { display: flex; justify-content: flex-end; margin-top: 10px; }
+.save-btn { display: inline-flex; align-items: center; gap: 8px; }
+
 /* FOOTER NOTE */
 .footer-note { text-align: center; font-size: 12px; color: #bbb; margin-top: 24px; }
 .footer-note a { color: var(--accent); text-decoration: none; }
@@ -493,7 +520,6 @@ canvas {
     <li><a href="gatley-kitchens-worktops.html">Worktops</a></li>
     <li><a href="gatley-kitchens-blog.html">Blog</a></li>
     <li><a href="gatley-kitchens-about.html">About</a></li>
-    <li><a href="kitchen-planner.html" style="color:var(--accent);font-weight:600;">Kitchen Planner</a></li>
     <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Free Quote</a></li>
   </ul>
   <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -510,79 +536,127 @@ canvas {
 
   <div class="step-bar">
     <div class="step active" id="step-0">1. Draw your room</div>
-    <div class="step" id="step-1">2. Place cabinets</div>
-    <div class="step" id="step-2">3. Get a quote</div>
+    <div class="step" id="step-1">2. Add units</div>
+    <div class="step" id="step-2">3. Next</div>
   </div>
 
-  <!-- Step 1: Room -->
+  <!-- Step 1: Draw the room -->
   <div class="panel active" id="panel-0">
-    <p class="hint">Enter your room dimensions and click "Set room" for a rectangle, or click points on the canvas to draw an L-shape or any custom outline. Best used on desktop or tablet.</p>
-
-    <div class="dim-row">
-      <label>Width</label>
-      <input type="number" id="guide-w" value="400" min="100" max="900">
-      <span class="dim-unit">cm</span>
-      <label>Depth</label>
-      <input type="number" id="guide-d" value="350" min="100" max="700">
-      <span class="dim-unit">cm</span>
-      <button class="btn accent sm" onclick="applyGuide()">Set room</button>
-    </div>
+    <p class="guide-line">Start with your longest outside wall, as it&rsquo;s usually where the window and sink go. Tap each corner in turn. Walls snap to straight lines and to 10&nbsp;cm steps. After each wall you can type its exact length. Tap the first corner to close the room. Then add any doors and windows.</p>
 
     <div class="toolbar">
-      <button class="btn outline sm" onclick="loadExample()">L-shape example</button>
-      <button class="btn outline sm" onclick="undoPoint()">Undo point</button>
-      <button class="btn outline sm" onclick="clearRoom()">Clear</button>
-      <button class="btn sm" onclick="finishRoom()">Finish outline</button>
+      <button class="btn outline sm" onclick="undo()">Undo</button>
+      <button class="btn outline sm" onclick="startAgain()">Start again</button>
     </div>
 
-    <canvas id="room-canvas" width="752" height="420"></canvas>
-    <div class="info-bar" id="room-info">Enter your dimensions above, or click on the canvas to draw a custom room shape</div>
+    <canvas id="draw-canvas" width="752" height="680"></canvas>
+    <div class="info-bar" id="draw-info">Tap to place your first corner.</div>
+
+    <div class="pick-step" id="opening-tools">
+      <div class="pick-label">Doors and windows</div>
+      <div class="mode-btns">
+        <button class="mode-btn" id="open-door" onclick="pickOpening('door')" disabled>Door (800 mm)</button>
+        <button class="mode-btn" id="open-window" onclick="pickOpening('window')" disabled>Window (1000 mm)</button>
+        <button class="mode-btn" onclick="removeOpening()">Remove selected</button>
+      </div>
+      <p class="hint">Once the room is closed, choose a door or window, then tap its wall. Drag it along the wall, or tap it to change its width.</p>
+    </div>
+
+    <div class="wall-editor" id="wall-editor" hidden>
+      <span id="wall-label">Wall</span>
+      <input type="number" id="wall-len" min="10" max="2000" step="10" inputmode="numeric" aria-label="Wall length in centimetres" onkeydown="if(event.key==='Enter'){applyWallLength();}">
+      <span class="dim-unit">cm</span>
+      <button class="btn accent sm" onclick="applyWallLength()">Apply</button>
+      <button class="btn outline sm" onclick="closeWallEditor()">Cancel</button>
+    </div>
 
     <div class="nav-row">
       <span></span>
-      <button class="btn accent" onclick="nextStep(1)">Next: Place cabinets &rarr;</button>
+      <button class="btn accent" id="next-1" onclick="nextStep(1)" disabled>Next: Add units &rarr;</button>
     </div>
   </div>
 
-  <!-- Step 2: Cabinets -->
+  <!-- Step 2: Add units -->
   <div class="panel" id="panel-1">
-    <div class="mode-btns">
-      <button class="mode-btn active-mode" id="mode-add" onclick="setMode('add')">Add</button>
-      <button class="mode-btn" id="mode-move" onclick="setMode('move')">Move</button>
-      <button class="mode-btn" id="mode-delete" onclick="setMode('delete')">Delete</button>
-    </div>
-    <p class="hint" id="mode-hint">Select a cabinet type below, then click in the room to place it.</p>
+    <p class="guide-line">Build your layout in steps: choose a category, then a unit, then a width if it comes in more than one. Then tap the room. Move mode drags units into place.</p>
 
-    <div class="cabinet-grid" id="cab-grid"></div>
+    <div class="toolbar">
+      <button class="btn outline sm" onclick="undo()">Undo</button>
+      <button class="btn outline sm" onclick="startAgain()">Start again</button>
+    </div>
+
+    <div class="pick-step">
+      <div class="pick-label">1 &middot; Choose a category</div>
+      <div class="mode-btns" id="cat-btns"></div>
+    </div>
+
+    <div class="pick-step">
+      <div class="pick-label">2 &middot; Choose a unit</div>
+      <div class="cabinet-grid" id="cab-grid"></div>
+    </div>
+
+    <div class="pick-step">
+      <div class="pick-label">3 &middot; Choose a width</div>
+      <div class="mode-btns" id="size-row"></div>
+      <div class="pick-label" id="on-label" hidden>Sits on</div>
+      <div class="mode-btns" id="on-row" hidden></div>
+      <div class="pick-label" id="depth-label" hidden>Depth</div>
+      <div class="mode-btns" id="depth-row" hidden></div>
+      <p class="hint" id="width-hint">Choose a unit in step 2 first.</p>
+      <p class="hint" id="custom-hint" hidden>Need a custom size, select one of the stock sizes, then scroll down to set your preferred dimensions.</p>
+    </div>
+
+    <div class="pick-step">
+      <div class="pick-label">4 &middot; Place and adjust</div>
+      <div class="mode-btns">
+        <button class="mode-btn active-mode" id="mode-add" onclick="setMode('add')">Add</button>
+        <button class="mode-btn" id="mode-move" onclick="setMode('move')">Move</button>
+        <button class="mode-btn" id="mode-delete" onclick="setMode('delete')">Delete</button>
+        <button class="mode-btn" id="rotate-btn" onclick="rotateSelected()" disabled>Rotate 90&deg;</button>
+      </div>
+      <p class="hint" id="mode-hint"></p>
+    </div>
 
     <div class="legend">
-      <div class="leg-item"><div class="leg-swatch" style="background:#4A7C59"></div>Base units</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#4A6FA5"></div>Wall units</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#8B5E3C"></div>Tall / larder</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#B85C5C"></div>Appliance space</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#6B6B8A"></div>Island</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#4A7C59"></div>Base Units</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#4A6FA5"></div>Drawer Packs</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#E08A2E"></div>Wall Units</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#E3C04A"></div>Tall Units</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#7B4E9A"></div>Island</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:repeating-linear-gradient(45deg,#4A7C59 0 3px,#ffffff 3px 5px)"></div>Corner unit</div>
     </div>
 
-    <canvas id="cab-canvas" width="752" height="400"></canvas>
-    <div class="info-bar" id="cab-info">0 cabinets placed</div>
+    <canvas id="plan-canvas" width="752" height="680"></canvas>
+    <div class="save-row">
+      <button class="btn accent save-btn" onclick="saveLayoutImage()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>Save layout as image</button>
+    </div>
+    <div class="info-bar" id="cab-info">0 units placed</div>
+
+    <div class="wall-editor" id="item-editor" hidden>
+      <span id="item-label">Item</span>
+      <label>Note <input type="text" id="item-note" maxlength="24" placeholder="e.g. sink unit" aria-label="Note for this item"></label>
+      <span id="size-w-wrap">Width <input type="number" id="item-w" min="100" max="3000" step="10" inputmode="numeric" aria-label="Width in millimetres"> mm</span>
+      <span id="size-d-wrap">Depth <input type="number" id="item-d" min="100" max="3000" step="10" inputmode="numeric" aria-label="Depth in millimetres"> mm</span>
+      <button class="btn accent sm" onclick="applyItemEdit()">Apply</button>
+    </div>
 
     <div class="nav-row">
-      <button class="btn outline" onclick="nextStep(0)">&larr; Back</button>
-      <button class="btn accent" onclick="nextStep(2)">Next: Get a quote &rarr;</button>
+      <button class="btn outline" onclick="nextStep(0)">&larr; Back to room</button>
+      <button class="btn accent" onclick="nextStep(2)">Next &rarr;</button>
     </div>
   </div>
 
   <!-- Step 3: Quote form -->
   <div class="panel" id="panel-2">
 
-    <div class="summary-box">
-      <h3>Your layout</h3>
-      <div id="summary-content"></div>
+    <div class="soft-intro">
+      <h3>Why not let Mark help?</h3>
+      <p>This basic planner is there to give you a bit of an idea. But why not let Mark help you with your plan, as a reference point? Send your details and he&rsquo;ll get in touch to talk it through. Your layout picture comes with your message.</p>
     </div>
 
     <div class="trust-bar">
       <div class="trust-item"><span class="trust-icon">&#10003;</span> Free home visit or showroom appointment</div>
-      <div class="trust-item"><span class="trust-icon">&#10003;</span> No obligation quote</div>
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> No obligation</div>
       <div class="trust-item"><span class="trust-icon">&#10003;</span> Family business, established 2007</div>
     </div>
 
@@ -612,25 +686,15 @@ canvas {
           <label>Postcode</label>
           <input type="text" name="postcode" id="f-post" placeholder="SK8, M20...">
         </div>
-        <div class="form-row">
-          <label>Rough budget</label>
-          <select name="budget">
-            <option value="">Prefer not to say</option>
-            <option>Under £5,000</option>
-            <option>£5,000 – £10,000</option>
-            <option>£10,000 – £20,000</option>
-            <option>£20,000+</option>
-          </select>
-        </div>
       </div>
 
       <div class="form-row">
-        <label>Anything else?</label>
+        <label>Anything else? Include any sizes you need that aren&rsquo;t listed.</label>
         <textarea name="message" placeholder="Timescale, full renovation or just the kitchen, any specific requirements..."></textarea>
       </div>
 
       <div class="form-error" id="form-error"></div>
-      <button type="submit" class="submit-btn" id="submit-btn">Request a free consultation</button>
+      <button type="submit" class="submit-btn" id="submit-btn">Get in touch</button>
     </form>
 
     <div class="nav-row">
@@ -656,190 +720,1232 @@ canvas {
 <p class="footer-note">Prefer to talk? Call us on <a href="tel:01614378899">0161 437 8899</a> or <a href="gatley-kitchens-quote.html">fill in our quote form</a>.</p>
 
 
+<div class="popup-overlay" id="popup" hidden role="dialog" aria-modal="true" aria-labelledby="popup-msg">
+  <div class="popup">
+    <p id="popup-msg">Not enough space</p>
+    <button class="btn accent sm" id="popup-ok" onclick="closePopup()">OK</button>
+  </div>
+</div>
 <script>
-const SCALE = 0.125;
-const CAB_TYPES = [
-  {id:'base-600', label:'Base 600',    w:600,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-500', label:'Base 500',    w:500,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-400', label:'Base 400',    w:400,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-300', label:'Base 300',    w:300,  h:580,  color:'#4A7C59', cat:'base'},
-  {id:'base-crn', label:'Corner base', w:950,  h:950,  color:'#3D6B4A', cat:'base'},
-  {id:'sink-800', label:'Sink unit',   w:800,  h:580,  color:'#5B8C6B', cat:'base'},
-  {id:'wall-600', label:'Wall 600',    w:600,  h:320,  color:'#4A6FA5', cat:'wall'},
-  {id:'wall-500', label:'Wall 500',    w:500,  h:320,  color:'#4A6FA5', cat:'wall'},
-  {id:'wall-300', label:'Wall 300',    w:300,  h:320,  color:'#4A6FA5', cat:'wall'},
-  {id:'wall-crn', label:'Corner wall', w:600,  h:600,  color:'#3D5F8A', cat:'wall'},
-  {id:'tall-600', label:'Tall larder', w:600,  h:2150, color:'#8B5E3C', cat:'tall'},
-  {id:'tall-300', label:'Tall 300',    w:300,  h:2150, color:'#8B5E3C', cat:'tall'},
-  {id:'oven-600', label:'Oven housing',w:600,  h:1200, color:'#B85C5C', cat:'appliance'},
-  {id:'fridge',   label:'Fridge space',w:600,  h:1800, color:'#B85C5C', cat:'appliance'},
-  {id:'island',   label:'Island',      w:1200, h:900,  color:'#6B6B8A', cat:'island'},
+/* Plan view size, padding, grid (mm) and snapping distance (mm) */
+const PLAN_W = 752, PLAN_H = 680, PAD = 32, GRID = 100, SNAP = 150;
+/* Fixed view: 16 px per metre, origin a little left of and above the top-left corner.
+   The view only zooms out when a corner falls outside it. */
+const VIEW_SCALE = 0.16, VIEW_X0 = -200, VIEW_Y0 = -200;
+
+/* ---------- Catalogue ----------
+   w runs along the wall, d is depth (both mm). Layer 'wall' sits high on the wall and
+   only collides with other wall-layer items and windows; 'floor' items collide with
+   floor items and doors. Corner units are drawn as one rectangle along the wall. */
+const CATEGORIES = [
+  ['base', 'Base Units'], ['drawers', 'Drawer Packs'], ['wall', 'Wall Units'],
+  ['tall', 'Tall Units'], ['island', 'Island']
 ];
+const CAT_COLOR = {base:'#4A7C59', drawers:'#4A6FA5', wall:'#E08A2E', tall:'#E3C04A', island:'#7B4E9A'};
+/* Label colour on each unit: dark on the light yellow of tall units */
+const CAT_TEXT = {tall:'#3d3a35'};
 
-let roomPts=[], roomClosed=false;
-let cabinets=[], selectedCabType=CAB_TYPES[0];
-let mode='add', dragging=null, dragOX=0, dragOY=0;
-let sc={sx:1,sy:1};
+/* One card per kind of unit. Where a unit comes in more than one width, the customer picks the width
+   (and for a hob, what it sits on) after choosing the card. */
+const UNITS = [];
+function addUnit(cat, label, d, extra){
+  const e = Object.assign({cat, label, d, layer: 'floor', color: CAT_COLOR[cat], editable: [], sizes: null, corner: false}, extra || {});
+  if (e.sizes) {
+    e.sizes = e.sizes.map(s => typeof s === 'number' ? {w: s, name: String(s), label: s + ' mm'} : s).sort((a, b) => a.w - b.w);
+    e.w = (e.sizes.find(s => s.w === e.def) || e.sizes[0]).w;
+  }
+  if (e.sizesDrawers) {
+    e.sizesDrawers = e.sizesDrawers.map(s => typeof s === 'number' ? {w: s, name: String(s), label: s + ' mm'} : s).sort((a, b) => a.w - b.w);
+  }
+  UNITS.push(e);
+}
+const WIDTHS_BASE = [150, 300, 450, 500, 600, 700, 800, 900, 1000, 1200];
+/* Base: 580 deep. Most are 600 wide. */
+addUnit('base', 'Base unit', 580, {sizes: WIDTHS_BASE, def: 600});
+addUnit('base', 'Corner base', 580, {sizes: [1000, 1200], corner: true});
+addUnit('base', 'L-shaped corner base', 580, {w: 900, d: 900, corner: true, shape: 'L', arm: 580, short: 'L corner', sizeText: '900 × 900 mm, 580 deep'});
+addUnit('base', 'Wine rack', 580, {sizes: [150, 300]});
+addUnit('base', 'Hob', 580, {sizes: [600, 750], sizesDrawers: [600, 750, 800, 900, 1000, 1200], def: 600, sits: true});
+addUnit('base', 'Sink', 580, {sizes: [600, 800, 1000, 1200], def: 600});
+/* Drawers: 580 deep */
+addUnit('drawers', 'Drawers', 580, {sizes: [400, 500, 600, 700, 800, 900, 1000, 1100, 1200], def: 600});
+/* Wall units: 300 deep, on the wall layer */
+addUnit('wall', 'Wall unit', 300, {sizes: [150, 600, 700, 800, 900, 1000, 1200], def: 600, layer: 'wall'});
+addUnit('wall', 'Corner wall', 300, {sizes: [1000, 1200], corner: true, layer: 'wall'});
+addUnit('wall', 'L-shaped corner wall', 300, {w: 900, d: 900, corner: true, shape: 'L', arm: 300, short: 'L corner', layer: 'wall', sizeText: '900 × 900 mm, 300 deep'});
+addUnit('wall', 'Boiler housing', 400, {w: 500, layer: 'wall', sizeText: '500 wide × 400 deep × 900 high'});
+/* Tall: 600 deep */
+addUnit('tall', 'Larder', 600, {sizes: [300, 500, 600, 1200], def: 600});
+addUnit('tall', 'Oven housing', 600, {sizes: [600]});
+addUnit('tall', 'Fridge freezer', 600, {sizes: [600]});
+/* Appliances: dishwashers and washing machines sit in the base line, extractor hoods in the wall line */
+addUnit('base', 'Dishwasher', 580, {sizes: [{w: 600, name: '600', label: '600 mm'}, {w: 450, name: '450 slimline', label: '450 mm slimline'}]});
+addUnit('base', 'Washing machine', 580, {sizes: [600]});
+addUnit('wall', 'Extractor hood', 500, {sizes: [600, 700, 800, 900, 1000], def: 600, layer: 'wall'});
+/* Island: default size, editable */
+addUnit('island', 'Island', 900, {sizes: [900, 1200, 1800, 2400, 3000], def: 1200, depths: [600, 900, 1200], editable: ['w', 'd']});
 
-const RC=document.getElementById('room-canvas'), CC=document.getElementById('cab-canvas');
-const rctx=RC.getContext('2d'), cctx=CC.getContext('2d');
+/* Doors sit at floor level and block floor units. Windows sit high on the wall and block wall units. */
+const OPENING_TYPES = {
+  door:   {label: 'Door',   w: 800,  depth: 100, color: '#A0785A', wall: false},
+  window: {label: 'Window', w: 1000, depth: 100, color: '#7FA7C9', wall: true}
+};
+
+const HINTS = {
+  add:    'Tap the room to place the selected item. Units go straight into Move mode.',
+  move:   'Drag to position. Tap empty space to place another of the chosen unit. Tap an item to add a note or change its size.',
+  delete: 'Tap an item to remove it.'
+};
+
+/* Room outline: corners in mm, walls are the straight lines between them */
+let pts = [];          /* {x, y} */
+let closed = false;
+let cursor = null;     /* last pointer position while drawing, mm */
+let selWall = -1;
+
+/* Units and openings */
+let units = [];        /* {type, rot:0|1, x, y, note, w?, d?}: x and y are the top-left corner in mm */
+let openings = [];     /* {kind, wall, at, w, note}: at is mm along the wall from its start point */
+let selectedType = null;
+let selectedChip = null;   /* chosen width for the selected unit */
+let selectedOn = null;
+let selectedDepth = null;   /* island depth, mm */     /* hob: null, 'drawers' or 'oven' */
+let selectedIdx = -1;
+let selOpen = -1;
+let openingPick = null;
+let activeCat = 'base';
+let mode = 'add';
+let drag = null;
+let dragBefore = null;
+
+/* Undo history: a snapshot of the room, units and openings before each change */
+let undoStack = [];
+let curStep = 0;
+
+const DC = document.getElementById('draw-canvas');
+const PC = document.getElementById('plan-canvas');
+
+/* ---------- History ---------- */
+
+function snapshot(){
+  return JSON.stringify({
+    pts, closed,
+    units: units.map(u => ({t: UNITS.indexOf(u.type), rot: u.rot, x: u.x, y: u.y, note: u.note || '', w: u.w, d: u.d, sn: u.sizeName || '', on: u.on || null})),
+    openings
+  });
+}
+
+function restore(json){
+  const s = JSON.parse(json);
+  pts = s.pts;
+  closed = s.closed;
+  units = s.units.map(o => {
+    const u = {type: UNITS[o.t], rot: o.rot, x: o.x, y: o.y, note: o.note || ''};
+    if (o.sn) u.sizeName = o.sn;
+    if (o.on) u.on = o.on;
+    if (o.w) u.w = o.w;
+    if (o.d) u.d = o.d;
+    return u;
+  });
+  openings = s.openings;
+  selectedIdx = -1; selOpen = -1; drag = null; cursor = null;
+  closeWallEditor();
+}
+
+/* Run a change and remember the state before it, if anything changed */
+function act(fn){
+  const before = snapshot();
+  fn();
+  if (snapshot() !== before) {
+    undoStack.push(before);
+    if (undoStack.length > 100) undoStack.shift();
+  }
+}
+
+function undo(){
+  if (!undoStack.length) { refreshDraw('Nothing to undo.'); redraw('Nothing to undo.'); return; }
+  restore(undoStack.pop());
+  refreshDraw('Undone.');
+  redraw('Undone.');
+}
+
+/* ---------- Geometry ---------- */
+
+const snap = v => Math.round(v / GRID) * GRID;
+
+function dimsOf(u){ return {W: u.w || u.type.w, D: u.d || u.type.d}; }
+
+const ON_LABEL = {drawers: 'on drawers', oven: 'on oven housing'};
+/* Name shown on the plan and in the summary, e.g. "Base unit 600", "Sink 800", "Dishwasher 450 slimline" */
+function displayName(u){
+  /* The island always shows its actual size, so a typed-in size appears on the plan and in the summary */
+  if (u.type.label === 'Island') return 'Island ' + dimsOf(u).W + ' × ' + dimsOf(u).D;
+  return u.sizeName ? u.type.label + ' ' + u.sizeName : u.type.label;
+}
+
+function bounds(){
+  if (!pts.length) return {minX: 0, minY: 0, maxX: 0, maxY: 0};
+  return {
+    minX: Math.min(...pts.map(p => p.x)), minY: Math.min(...pts.map(p => p.y)),
+    maxX: Math.max(...pts.map(p => p.x)), maxY: Math.max(...pts.map(p => p.y))
+  };
+}
+
+function view(){
+  const b = bounds();
+  const visW = (PLAN_W - 2*PAD) / VIEW_SCALE, visH = (PLAN_H - 2*PAD) / VIEW_SCALE;
+  let X0 = VIEW_X0, Y0 = VIEW_Y0;
+  let X1 = VIEW_X0 + visW, Y1 = VIEW_Y0 + visH;
+  if (pts.length && (b.minX < X0 || b.minY < Y0 || b.maxX > X1 || b.maxY > Y1)) {
+    X0 = Math.min(X0, b.minX - 200); Y0 = Math.min(Y0, b.minY - 200);
+    X1 = Math.max(X1, b.maxX + 200); Y1 = Math.max(Y1, b.maxY + 200);
+  }
+  const s = Math.min(VIEW_SCALE, (PLAN_W - 2*PAD) / (X1 - X0), (PLAN_H - 2*PAD) / (Y1 - Y0));
+  return {s, ox: PAD - X0*s, oy: PAD - Y0*s, X0, Y0, X1, Y1};
+}
+
+function wallList(){
+  const n = pts.length, out = [];
+  const count = closed ? n : n - 1;
+  for (let i = 0; i < count; i++) out.push({i, a: pts[i], b: pts[(i + 1) % n]});
+  return out;
+}
+
+function wallLengthMM(w){ return Math.abs(w.b.x - w.a.x) + Math.abs(w.b.y - w.a.y); }
+
+/* Corner for a line from the last point, forced horizontal or vertical and snapped to the grid */
+function orthoTarget(c){
+  const L = pts[pts.length - 1];
+  if (Math.abs(c.x - L.x) >= Math.abs(c.y - L.y)) return {x: snap(c.x), y: L.y};
+  return {x: L.x, y: snap(c.y)};
+}
+
+function distSeg(p, a, b){
+  const dx = b.x - a.x, dy = b.y - a.y, l2 = dx*dx + dy*dy;
+  let t = l2 ? ((p.x - a.x)*dx + (p.y - a.y)*dy) / l2 : 0;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p.x - (a.x + t*dx), p.y - (a.y + t*dy));
+}
+
+function wallHit(p){
+  const tol = 14 / view().s;
+  let best = -1, bestD = tol;
+  wallList().forEach(w => { const d = distSeg(p, w.a, w.b); if (d < bestD) { bestD = d; best = w.i; } });
+  return best;
+}
+
+function pointInPoly(x, y){
+  let inside = false;
+  const n = pts.length;
+  for (let i = 0, j = n - 1; i < n; j = i++) {
+    const xi = pts[i].x, yi = pts[i].y, xj = pts[j].x, yj = pts[j].y;
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/* Does segment a-b pass through the interior of rectangle R? (Liang-Barsky clipping) */
+function segHitsRect(a, b, R){
+  let t0 = 0, t1 = 1;
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const p = [-dx, dx, -dy, dy];
+  const q = [a.x - R.x0, R.x1 - a.x, a.y - R.y0, R.y1 - a.y];
+  for (let k = 0; k < 4; k++) {
+    if (p[k] === 0) { if (q[k] <= 0) return false; }
+    else {
+      const t = q[k] / p[k];
+      if (p[k] < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+      else { if (t < t0) return false; if (t < t1) t1 = t; }
+    }
+  }
+  return t1 - t0 > 1e-9;
+}
+
+function insideRoom(r){
+  if (!closed) return false;
+  const R = {x0: r.x + 1, y0: r.y + 1, x1: r.x + r.w - 1, y1: r.y + r.h - 1};
+  const corners = [[R.x0, R.y0], [R.x1, R.y0], [R.x1, R.y1], [R.x0, R.y1]];
+  if (!corners.every(([x, y]) => pointInPoly(x, y))) return false;
+  return !wallList().some(w => segHitsRect(w.a, w.b, R));
+}
+
+function unitRect(u){
+  const {W, D} = dimsOf(u);
+  const odd = u.rot % 2 === 1;
+  return {x: u.x, y: u.y, w: odd ? D : W, h: odd ? W : D, wall: u.type.layer === 'wall'};
+}
+
+function overlaps(a, b){
+  return a.x < b.x + b.w - 0.5 && a.x + a.w > b.x + 0.5 &&
+         a.y < b.y + b.h - 0.5 && a.y + a.h > b.y + 0.5;
+}
+
+/* Plan rectangle of an opening: along its wall, depth into the room */
+function openingRect(o){
+  const w = wallList().find(x => x.i === o.wall);
+  if (!w) return null;
+  const L = wallLengthMM(w);
+  const ux = (w.b.x - w.a.x) / L, uy = (w.b.y - w.a.y) / L;
+  const depth = OPENING_TYPES[o.kind].depth;
+  const horizontal = w.a.y === w.b.y;
+  const mx = (w.a.x + w.b.x) / 2, my = (w.a.y + w.b.y) / 2;
+  let nx = 0, ny = 0;
+  if (horizontal) ny = pointInPoly(mx, my + 50) ? 1 : -1;
+  else nx = pointInPoly(mx + 50, my) ? 1 : -1;
+  const x0 = w.a.x + ux*o.at, x1 = w.a.x + ux*(o.at + o.w);
+  const y0 = w.a.y + uy*o.at, y1 = w.a.y + uy*(o.at + o.w);
+  if (horizontal) {
+    return {x: Math.min(x0, x1), y: Math.min(w.a.y, w.a.y + ny*depth), w: Math.abs(x1 - x0), h: depth,
+            wall: OPENING_TYPES[o.kind].wall, opening: true};
+  }
+  return {x: Math.min(w.a.x, w.a.x + nx*depth), y: Math.min(y0, y1), w: depth, h: Math.abs(y1 - y0),
+          wall: OPENING_TYPES[o.kind].wall, opening: true};
+}
+
+function openingBlocks(r){
+  return openings.some(o => {
+    const R = openingRect(o);
+    return R && R.wall === !!r.wall && overlaps(r, R);
+  });
+}
+
+function overlapsAny(r, ignore){
+  return units.some((u, i) => {
+    if (i === ignore) return false;
+    const o = unitRect(u);
+    return o.wall === !!r.wall && overlaps(r, o);
+  });
+}
+
+function valid(r, ignore){ return insideRoom(r) && !overlapsAny(r, ignore) && !openingBlocks(r); }
+
+function nearest(candidates, v){
+  let best = v, bestDist = SNAP;
+  candidates.forEach(c => { const d = Math.abs(c - v); if (d <= bestDist) { bestDist = d; best = c; } });
+  return best;
+}
+
+/* Snap to room walls, and flush against or aligned with other units */
+function snapRect(r, ignore){
+  const xs = [], ys = [];
+  wallList().forEach(w => {
+    if (w.a.y === w.b.y) ys.push(w.a.y, w.a.y - r.h);
+    if (w.a.x === w.b.x) xs.push(w.a.x, w.a.x - r.w);
+  });
+  units.forEach((u, i) => {
+    if (i === ignore) return;
+    const o = unitRect(u);
+    xs.push(o.x + o.w, o.x - r.w, o.x, o.x + o.w - r.w);
+    ys.push(o.y + o.h, o.y - r.h, o.y, o.y + o.h - r.h);
+  });
+  return {x: nearest(xs, r.x), y: nearest(ys, r.y), w: r.w, h: r.h, wall: r.wall};
+}
+
+/* A legal position near r, or null if there is no room for it there */
+function settle(r, ignore){
+  const snapped = snapRect(r, ignore);
+  if (valid(snapped, ignore)) return snapped;
+  if (valid(r, ignore)) return r;
+  return null;
+}
+
+function hitTest(p){
+  for (let i = units.length - 1; i >= 0; i--) {
+    const o = unitRect(units[i]);
+    if (p.x >= o.x && p.x <= o.x + o.w && p.y >= o.y && p.y <= o.y + o.h) return i;
+  }
+  return -1;
+}
+
+function hitOpening(p){
+  for (let i = openings.length - 1; i >= 0; i--) {
+    const o = openingRect(openings[i]);
+    if (o && p.x >= o.x && p.x <= o.x + o.w && p.y >= o.y && p.y <= o.y + o.h) return i;
+  }
+  return -1;
+}
+
+/* Can an opening sit here? It must fit its wall and not clash with units or other openings on its layer. */
+function openingFits(o, ignore){
+  const w = wallList().find(x => x.i === o.wall);
+  if (!w) return false;
+  const L = wallLengthMM(w);
+  if (o.at < 0 || o.at + o.w > L + 0.5) return false;
+  const R = openingRect(o);
+  if (!R) return false;
+  if (units.some(u => { const r = unitRect(u); return r.wall === R.wall && overlaps(R, r); })) return false;
+  return !openings.some((q, k) => {
+    if (k === ignore) return false;
+    const S = openingRect(q);
+    return S && S.wall === R.wall && overlaps(R, S);
+  });
+}
+
+/* Drop openings that no longer fit after the room changed */
+function pruneOpenings(){
+  const before = openings.length;
+  openings = openings.filter(o => {
+    const w = wallList().find(x => x.i === o.wall);
+    return w && o.at >= 0 && o.at + o.w <= wallLengthMM(w) + 0.5;
+  });
+  return before - openings.length;
+}
+
+/* Remove any unit that no longer fits after the room changed */
+function pruneUnits(){
+  const kept = [];
+  let dropped = 0;
+  units.forEach(u => {
+    const r = unitRect(u);
+    const clash = kept.some(k => { const o = unitRect(k); return o.wall === r.wall && overlaps(r, o); });
+    if (insideRoom(r) && !clash && !openingBlocks(r)) kept.push(u); else dropped++;
+  });
+  units = kept;
+  selectedIdx = -1;
+  return dropped;
+}
+
+function pruneAll(){
+  const d1 = pruneOpenings();
+  const d2 = pruneUnits();
+  selOpen = -1;
+  return d1 + d2;
+}
+
+/* ---------- Drawing ---------- */
+
+function label(ctx, text, x, y){
+  ctx.font = '12px Jost, sans-serif';
+  const w = ctx.measureText(text).width + 10;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.fillRect(x - w/2, y - 9, w, 18);
+  ctx.fillStyle = '#6b655c';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+}
+
+function drawPlan(cv, withUnits){
+  const ctx = cv.getContext('2d');
+  const {s, ox, oy, X0, Y0, X1, Y1} = view();
+  const X = x => ox + x*s, Y = y => oy + y*s;
+
+  ctx.fillStyle = '#FAFAF7';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
+  /* 10 cm grid, with a darker line every metre */
+  for (let x = Math.ceil(X0 / GRID) * GRID; x <= X1; x += GRID) {
+    ctx.strokeStyle = x % 1000 === 0 ? '#d9d3c5' : '#ebe6dc';
+    ctx.lineWidth = x % 1000 === 0 ? 0.9 : 0.5;
+    ctx.beginPath(); ctx.moveTo(X(x), Y(Y0)); ctx.lineTo(X(x), Y(Y1)); ctx.stroke();
+  }
+  for (let y = Math.ceil(Y0 / GRID) * GRID; y <= Y1; y += GRID) {
+    ctx.strokeStyle = y % 1000 === 0 ? '#d9d3c5' : '#ebe6dc';
+    ctx.lineWidth = y % 1000 === 0 ? 0.9 : 0.5;
+    ctx.beginPath(); ctx.moveTo(X(X0), Y(y)); ctx.lineTo(X(X1), Y(y)); ctx.stroke();
+  }
+
+  /* Room floor and outline */
+  if (pts.length) {
+    ctx.beginPath();
+    ctx.moveTo(X(pts[0].x), Y(pts[0].y));
+    pts.slice(1).forEach(p => ctx.lineTo(X(p.x), Y(p.y)));
+    if (closed) { ctx.closePath(); ctx.fillStyle = '#ffffff'; ctx.fill(); }
+    ctx.strokeStyle = '#1c1a17';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
+
+  /* Wall lengths */
+  wallList().forEach(w => {
+    const mx = X((w.a.x + w.b.x) / 2), my = Y((w.a.y + w.b.y) / 2);
+    if (w.i === selWall) {
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(X(w.a.x), Y(w.a.y)); ctx.lineTo(X(w.b.x), Y(w.b.y)); ctx.stroke();
+    }
+    label(ctx, Math.round(wallLengthMM(w) / 10) + ' cm', mx, my);
+  });
+
+  /* Corners, and a ring on the first corner once the room can close */
+  pts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(X(p.x), Y(p.y), 4.5, 0, Math.PI*2);
+    ctx.fillStyle = i === 0 ? '#8b6f47' : '#1c1a17';
+    ctx.fill();
+  });
+  if (!closed && pts.length >= 3) {
+    ctx.beginPath();
+    ctx.arc(X(pts[0].x), Y(pts[0].y), 14, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(139,111,71,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  /* Live preview of the next wall while drawing */
+  if (!closed && pts.length && cursor && cv === DC) {
+    const L = pts[pts.length - 1], t = orthoTarget(cursor);
+    if (t.x !== L.x || t.y !== L.y) {
+      ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(X(L.x), Y(L.y)); ctx.lineTo(X(t.x), Y(t.y)); ctx.stroke();
+      ctx.setLineDash([]);
+      label(ctx, Math.round((Math.abs(t.x - L.x) + Math.abs(t.y - L.y)) / 10) + ' cm', X((L.x + t.x)/2), Y((L.y + t.y)/2));
+    }
+  }
+
+  if (withUnits) units.forEach((u, i) => {
+    const r = unitRect(u);
+    const x = X(r.x), y = Y(r.y), w = r.w*s, h = r.h*s;
+    ctx.globalAlpha = r.wall ? 0.7 : 1;
+    ctx.fillStyle = u.type.color + 'CC';
+    ctx.strokeStyle = u.type.color;
+    ctx.lineWidth = 1;
+    const arm = u.type.arm ? u.type.arm * s : 0;
+    /* Turn flags: the L's notch sits in the corner opposite its solid arms, and turns with the unit */
+    const fx = u.rot === 1 || u.rot === 2, fy = u.rot === 2 || u.rot === 3;
+    const P = (px, py) => [fx ? x + w - px : x + px, fy ? y + h - py : y + py];
+    ctx.beginPath();
+    if (u.type.shape === 'L' && arm && arm < Math.min(w, h)) {
+      /* L-shaped unit: two arms, each arm deep (580 mm), meeting in the solid corner */
+      const T = arm;
+      [[0, 0], [w, 0], [w, T], [T, T], [T, h], [0, h]].forEach((q, i) => {
+        const [X, Y] = P(q[0], q[1]);
+        if (i) ctx.lineTo(X, Y); else ctx.moveTo(X, Y);
+      });
+      ctx.closePath();
+    } else {
+      ctx.rect(x, y, w, h);
+    }
+    ctx.fill();
+    ctx.stroke();
+    if (u.type.corner) {
+      /* Corner units are hatched so they read as corner pieces */
+      ctx.save();
+      ctx.clip();
+      ctx.beginPath();
+      for (let k = -h; k < w; k += 7) { ctx.moveTo(x + k, y); ctx.lineTo(x + k + h, y + h); }
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+    if (i === selectedIdx) {
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x - 1.5, y - 1.5, w + 3, h + 3);
+    }
+    if (w > 40 && h > 14) {
+      ctx.fillStyle = CAT_TEXT[u.type.cat] || '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const note = u.note || '';
+      const onL = u.type.shape === 'L' && arm;
+      const tx = onL ? (fx ? x + w - arm/2 : x + arm/2) : x + w/2;
+      const ty = onL ? (fy ? y + h - arm/2 : y + arm/2) : y + h/2;
+      /* Narrow units stack the name one word per line, so the text runs underneath rather than across */
+      const name = u.type.short || displayName(u);
+      const lines = (w < 130 ? name.split(' ') : [name]).map(t => ({t, italic: false}));
+      if (u.on) lines.push({t: ON_LABEL[u.on], italic: true});
+      if (note) lines.push({t: note, italic: true});
+      const fs = Math.max(8, Math.min(12, w / 8));
+      const lh = fs + 2;
+      const top = ty - (lines.length * lh) / 2 + lh / 2;
+      lines.forEach((ln, i) => {
+        ctx.font = (ln.italic ? 'italic ' : '') + fs + 'px Jost, sans-serif';
+        ctx.fillText(ln.t, tx, top + i * lh);
+      });
+    }
+  });
+
+  /* Doors and windows, drawn over the units so they show clearly */
+  openings.forEach((o, i) => {
+    const r = openingRect(o);
+    if (!r) return;
+    const type = OPENING_TYPES[o.kind];
+    const x = X(r.x), y = Y(r.y), w = r.w*s, h = r.h*s;
+    ctx.fillStyle = type.color + '66';
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = type.color;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(x, y, w, h);
+    if (i === selOpen) {
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x - 1.5, y - 1.5, w + 3, h + 3);
+    }
+    if (w > 40 && h > 10) {
+      ctx.fillStyle = '#3d3a35';
+      ctx.font = '10px Jost, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(o.note || type.label, x + w/2, y + h/2);
+    }
+  });
+}
+
+function drawAll(){
+  drawPlan(DC, false);
+  drawPlan(PC, true);
+}
+
+/* ---------- Step 1: drawing the room ---------- */
+
+function updateDrawInfo(msg){
+  let text = msg;
+  if (!text) {
+    if (closed) text = 'Room closed. Tap a wall to change its length.';
+    else if (!pts.length) text = 'Tap to place your first corner.';
+    else text = 'Corner ' + pts.length + ' placed. Type the length of the wall above if you know it, or tap the first corner to close the room.';
+  }
+  document.getElementById('draw-info').textContent = text;
+  document.getElementById('next-1').disabled = !closed;
+  ['open-door', 'open-window'].forEach(id => { document.getElementById(id).disabled = !closed; });
+}
+
+function removeOpening(){
+  if (selOpen < 0) { refreshDraw('Tap a door or window first, then remove it.'); return; }
+  act(() => { openings.splice(selOpen, 1); selOpen = -1; });
+  closeWallEditor();
+  redraw('Removed.');
+}
+
+function refreshDraw(msg){
+  drawAll();
+  updateDrawInfo(msg);
+}
+
+function toMM(cv, e){
+  const r = cv.getBoundingClientRect();
+  const px = (e.clientX - r.left) * (cv.width / r.width);
+  const py = (e.clientY - r.top) * (cv.height / r.height);
+  const {s, ox, oy} = view();
+  return {x: (px - ox) / s, y: (py - oy) / s};
+}
+
+function closeRoom(){
+  const first = pts[0];
+  if (pts.length > 1) {
+    const L = pts[pts.length - 1];
+    if (L.x === first.x && L.y === first.y) pts.pop();
+  }
+  const L = pts[pts.length - 1];
+  if (L.x !== first.x && L.y !== first.y) {
+    const corner = {x: first.x, y: L.y};
+    const prev = pts[pts.length - 2];
+    if (prev && corner.x === prev.x && corner.y === prev.y) {
+      refreshDraw('Come at the first corner from a straight line, or tap one more corner first.');
+      return;
+    }
+    pts.push(corner);
+  }
+  closed = true;
+  cursor = null;
+  closeWallEditor();
+  const dropped = pruneAll();
+  refreshDraw(dropped ? dropped + ' item(s) no longer fitted the room and were removed.' : null);
+}
+
+function startAgain(){
+  act(() => {
+    pts = []; closed = false; cursor = null; selWall = -1;
+    units = []; openings = []; selectedIdx = -1; selOpen = -1;
+  });
+  closeWallEditor();
+  refreshDraw(null);
+}
+
+DC.addEventListener('pointermove', e => {
+  if (drag) { dragTo(toMM(DC, e)); redraw(); return; }
+  if (closed) return;
+  cursor = toMM(DC, e);
+  drawAll();
+});
+DC.addEventListener('pointerleave', () => { cursor = null; if (!closed) drawAll(); });
+
+function drawTap(p){
+  if (closed) {
+    if (openingPick) { placeOpening(p); return; }
+    const w = wallHit(p);
+    if (w >= 0) openWallEditor(w);
+    else closeWallEditor();
+    refreshDraw(null);
+    return;
+  }
+
+  if (!pts.length) {
+    pts.push({x: snap(p.x), y: snap(p.y)});
+    refreshDraw(null);
+    return;
+  }
+
+  const first = pts[0];
+  if (pts.length >= 3 && Math.hypot(p.x - first.x, p.y - first.y) < 22 / view().s) {
+    closeRoom();
+    return;
+  }
+
+  const L = pts[pts.length - 1];
+  const t = orthoTarget(p);
+  if (t.x === L.x && t.y === L.y) return;
+  pts.push(t);
+  cursor = null;
+  /* Offer the wall just drawn for typing its exact length */
+  openWallEditor(pts.length - 2);
+  refreshDraw(null);
+}
+
+DC.addEventListener('pointerdown', e => {
+  const p = toMM(DC, e);
+  /* Once the room is closed, a door or window under the pointer can be dragged along its wall */
+  if (closed && !openingPick) {
+    const k = hitOpening(p);
+    if (k >= 0) {
+      selOpen = k; selectedIdx = -1;
+      closeWallEditor();
+      dragBefore = snapshot();
+      drag = {kind: 'opening', k};
+      DC.setPointerCapture(e.pointerId);
+      redraw('Drag it along the wall, or change its width below.');
+      return;
+    }
+  }
+  act(() => drawTap(p));
+});
+
+/* Wall length editor. Changing a wall moves the corners after it so the shape stays square.
+   On an open outline the last wall is the only one that can change without leaving a gap. */
+function openWallEditor(i){
+  selWall = i;
+  const w = wallList().find(x => x.i === i);
+  if (!w) { closeWallEditor(); return; }
+  document.getElementById('wall-len').value = Math.round(wallLengthMM(w) / 10);
+  document.getElementById('wall-label').textContent = 'Wall ' + (i + 1);
+  document.getElementById('wall-editor').hidden = false;
+}
+
+function closeWallEditor(){
+  selWall = -1;
+  document.getElementById('wall-editor').hidden = true;
+}
+
+function applyWallLength(){
+  const cm = parseInt(document.getElementById('wall-len').value, 10);
+  if (!cm || cm < 10) { refreshDraw('Enter a length of at least 10 cm.'); return; }
+  let dropped = 0;
+  act(() => {
+    const n = pts.length, w = selWall;
+    if (w < 0) return;
+    const p = pts[w], q = pts[(w + 1) % n];
+    const r = (closed || w + 2 < n) ? pts[(w + 2) % n] : null;
+    const horizontal = p.y === q.y;
+    const cur = horizontal ? q.x - p.x : q.y - p.y;
+    if (cur === 0) return;
+    const sign = Math.sign(cur);
+    const target = (horizontal ? p.x : p.y) + sign * cm * 10;
+    const delta = target - (horizontal ? q.x : q.y);
+    if (horizontal) { q.x += delta; if (r) r.x += delta; }
+    else { q.y += delta; if (r) r.y += delta; }
+    if (closed) dropped = pruneAll();
+  });
+  closeWallEditor();
+  refreshDraw(dropped ? dropped + ' item(s) no longer fitted the room and were removed.' : null);
+}
+
+/* ---------- Steps ---------- */
 
 function nextStep(n){
-  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n));
-  document.querySelectorAll('.step').forEach((s,i)=>{s.classList.toggle('active',i===n);s.classList.toggle('done',i<n);});
-  if(n===1){sc.sx=CC.width/RC.width;sc.sy=CC.height/RC.height;drawCab();}
-  if(n===2){buildSummary();}
-  window.scrollTo({top:0,behavior:'smooth'});
+  if (n === 1 && !closed) return;
+  curStep = n;
+  drag = null; dragBefore = null; selectedIdx = -1;
+  document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n));
+  document.querySelectorAll('.step').forEach((s, i) => { s.classList.toggle('active', i === n); s.classList.toggle('done', i < n); });
+  if (n <= 1) placeItemEditor();
+  if (n === 0) { refreshDraw(null); }
+  if (n === 1) { redraw(); }
+  if (n === 2) { buildSummary(); }
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-function gridLines(ctx,W,H){
-  ctx.strokeStyle='#ede9e0';ctx.lineWidth=0.5;
-  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+/* The item editor (notes and widths) sits under the plan of whichever step is showing */
+function placeItemEditor(){
+  const panel = document.getElementById(curStep === 0 ? 'panel-0' : 'panel-1');
+  panel.querySelector('.nav-row').before(document.getElementById('item-editor'));
 }
 
-function drawRoom(){
-  const W=RC.width,H=RC.height;
-  rctx.clearRect(0,0,W,H);rctx.fillStyle='#FAFAF7';rctx.fillRect(0,0,W,H);
-  gridLines(rctx,W,H);
-  if(!roomPts.length)return;
-  rctx.beginPath();rctx.moveTo(roomPts[0].x,roomPts[0].y);
-  roomPts.slice(1).forEach(p=>rctx.lineTo(p.x,p.y));
-  if(roomClosed){rctx.closePath();rctx.fillStyle='rgba(249,246,241,0.9)';rctx.fill();}
-  rctx.strokeStyle='#1c1a17';rctx.lineWidth=2.5;rctx.stroke();
-  if(roomClosed&&roomPts.length>=2){
-    const dx=roomPts[1].x-roomPts[0].x,dy=roomPts[1].y-roomPts[0].y;
-    rctx.fillStyle='#aaa';rctx.font='11px Jost,sans-serif';rctx.textAlign='center';
-    rctx.fillText(Math.round(Math.sqrt(dx*dx+dy*dy)/SCALE/10)+'cm',(roomPts[0].x+roomPts[1].x)/2,(roomPts[0].y+roomPts[1].y)/2-8);
-  }
-  roomPts.forEach((p,i)=>{rctx.beginPath();rctx.arc(p.x,p.y,5,0,Math.PI*2);rctx.fillStyle=i===0?'#8b6f47':'#1c1a17';rctx.fill();});
-  if(!roomClosed&&roomPts.length>2){rctx.beginPath();rctx.arc(roomPts[0].x,roomPts[0].y,15,0,Math.PI*2);rctx.strokeStyle='rgba(139,111,71,0.35)';rctx.lineWidth=1.5;rctx.stroke();}
-}
+/* ---------- Categories, sizes and openings ---------- */
 
-function applyGuide(){
-  const gw=(parseInt(document.getElementById('guide-w').value)||400)*10;
-  const gd=(parseInt(document.getElementById('guide-d').value)||350)*10;
-  const sw=gw*SCALE,sh=gd*SCALE,ox=(RC.width-sw)/2,oy=(RC.height-sh)/2;
-  roomPts=[{x:ox,y:oy},{x:ox+sw,y:oy},{x:ox+sw,y:oy+sh},{x:ox,y:oy+sh}];
-  roomClosed=true;drawRoom();
-  document.getElementById('room-info').textContent='Room set to '+Math.round(gw/10)+'cm × '+Math.round(gd/10)+'cm';
-}
-
-function loadExample(){
-  roomPts=[{x:60,y:60},{x:RC.width-70,y:60},{x:RC.width-70,y:220},{x:330,y:220},{x:330,y:360},{x:60,y:360}];
-  roomClosed=true;drawRoom();
-  document.getElementById('room-info').textContent='L-shaped example loaded';
-}
-
-function finishRoom(){if(roomPts.length<3){alert('Place at least 3 points first');return;}roomClosed=true;drawRoom();document.getElementById('room-info').textContent='Room outline complete';}
-function undoPoint(){if(roomPts.length){roomPts.pop();roomClosed=false;drawRoom();}}
-function clearRoom(){roomPts=[];roomClosed=false;drawRoom();document.getElementById('room-info').textContent='Click the canvas to place room corners';}
-
-RC.addEventListener('click',function(e){
-  if(roomClosed)return;
-  const r=RC.getBoundingClientRect();
-  const x=(e.clientX-r.left)*(RC.width/r.width),y=(e.clientY-r.top)*(RC.height/r.height);
-  if(roomPts.length>2){const dx=x-roomPts[0].x,dy=y-roomPts[0].y;if(Math.sqrt(dx*dx+dy*dy)<18){finishRoom();return;}}
-  roomPts.push({x,y});drawRoom();
-  document.getElementById('room-info').textContent=roomPts.length+' point'+(roomPts.length!==1?'s':'')+' — click the gold dot to close, or use Finish outline';
-});
-
-/* Cabinet canvas */
-function cW(c){return c.type.w*SCALE*sc.sx;}
-function cH(c){return Math.min(c.type.h,700)*SCALE*sc.sy;}
-
-function drawCab(){
-  const W=CC.width,H=CC.height;
-  cctx.clearRect(0,0,W,H);cctx.fillStyle='#FAFAF7';cctx.fillRect(0,0,W,H);
-  gridLines(cctx,W,H);
-  if(roomPts.length>2){
-    cctx.beginPath();cctx.moveTo(roomPts[0].x*sc.sx,roomPts[0].y*sc.sy);
-    roomPts.slice(1).forEach(p=>cctx.lineTo(p.x*sc.sx,p.y*sc.sy));
-    if(roomClosed){cctx.closePath();cctx.fillStyle='rgba(249,246,241,0.8)';cctx.fill();}
-    cctx.strokeStyle='#1c1a17';cctx.lineWidth=2;cctx.stroke();
-  }
-  cabinets.forEach(c=>{
-    const w=cW(c),h=cH(c);
-    cctx.fillStyle=c.type.color+'BB';cctx.fillRect(c.x-w/2,c.y-h/2,w,h);
-    cctx.strokeStyle=c.type.color;cctx.lineWidth=1.5;cctx.strokeRect(c.x-w/2,c.y-h/2,w,h);
-    cctx.fillStyle='#fff';cctx.font=Math.max(8,Math.min(10,w/7))+'px Jost,sans-serif';
-    cctx.textAlign='center';cctx.textBaseline='middle';cctx.fillText(c.type.label,c.x,c.y);
+function buildCats(){
+  const row = document.getElementById('cat-btns');
+  CATEGORIES.forEach(([k, name]) => {
+    const b = document.createElement('button');
+    b.className = 'mode-btn';
+    b.id = 'cat-' + k;
+    b.textContent = name;
+    b.onclick = () => setCat(k);
+    row.appendChild(b);
   });
 }
 
-/* Build cabinet grid */
-(function(){
-  const icons={base:'▭',wall:'▬',tall:'▮',appliance:'⬚',island:'⬜'};
-  const g=document.getElementById('cab-grid');
-  CAB_TYPES.forEach(c=>{
-    const btn=document.createElement('button');
-    btn.className='cab-btn'+(c===selectedCabType?' selected-cab':'');
-    const dim=c.cat==='tall'?c.w+'mm':c.w+'×'+Math.min(c.h,600)+'mm';
-    btn.innerHTML='<span class="cab-icon" style="color:'+c.color+'">'+(icons[c.cat]||'▭')+'</span>'+c.label+'<br><span style="color:#ccc;font-size:9px">'+dim+'</span>';
-    btn.onclick=()=>{selectedCabType=c;document.querySelectorAll('.cab-btn').forEach(b=>b.classList.remove('selected-cab'));btn.classList.add('selected-cab');setMode('add');};
+function setCat(k){
+  activeCat = k;
+  CATEGORIES.forEach(([key]) => document.getElementById('cat-' + key).classList.toggle('active-mode', key === k));
+  const g = document.getElementById('cab-grid');
+  g.innerHTML = '';
+  UNITS.filter(t => t.cat === k).forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'cab-btn' + (t === selectedType && !openingPick ? ' selected-cab' : '');
+    const range = t.sizes
+      ? (t.sizes.length > 1 ? t.sizes[0].w + '–' + t.sizes[t.sizes.length - 1].w + ' mm' : t.sizes[0].w + ' mm')
+      : (t.sizeText || (t.w + ' × ' + t.d + ' mm'));
+    btn.innerHTML = '<span class="cab-icon" style="color:' + iconColor(t) + '">' + iconFor(t) + '</span>' +
+      t.label + '<br><span style="color:#999;font-size:9px">' + range + '</span>';
+    btn.onclick = () => pickUnit(t);
     g.appendChild(btn);
   });
-})();
-
-function setMode(m){
-  mode=m;
-  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active-mode'));
-  const el=document.getElementById('mode-'+m);if(el)el.classList.add('active-mode');
-  const h={add:'Select a cabinet below then click in the room to place it.',move:'Click and drag a cabinet to reposition it.',delete:'Click a cabinet to remove it.'};
-  document.getElementById('mode-hint').textContent=h[m]||'';
-  CC.style.cursor=m==='move'?'grab':m==='delete'?'not-allowed':'crosshair';
+  renderSizes();
 }
 
-function getXY(canvas,e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};}
-function findCab(x,y){for(let i=cabinets.length-1;i>=0;i--){const c=cabinets[i],w=cW(c),h=cH(c);if(x>=c.x-w/2&&x<=c.x+w/2&&y>=c.y-h/2&&y<=c.y+h/2)return i;}return -1;}
+/* Widths for the selected unit. A hob's list depends on what it sits on. */
+function sizesFor(t){
+  if (!t) return [];
+  if (t.sits && selectedOn === 'drawers' && t.sizesDrawers) return t.sizesDrawers;
+  return t.sizes || [];
+}
 
-CC.addEventListener('mousedown',function(e){
-  const {x,y}=getXY(CC,e);
-  if(mode==='add'){cabinets.push({type:selectedCabType,x,y});drawCab();document.getElementById('cab-info').textContent=cabinets.length+' cabinet'+(cabinets.length!==1?'s':'')+' placed';}
-  else if(mode==='delete'){const i=findCab(x,y);if(i>=0){cabinets.splice(i,1);drawCab();}}
-  else if(mode==='move'){const i=findCab(x,y);if(i>=0){dragging=i;dragOX=x-cabinets[i].x;dragOY=y-cabinets[i].y;CC.style.cursor='grabbing';}}
+/* Step 3 of the units page: choose a width (if the unit has more than one) */
+function renderSizes(){
+  const row = document.getElementById('size-row'), onRow = document.getElementById('on-row');
+  const onLabel = document.getElementById('on-label'), hint = document.getElementById('width-hint');
+  const depthRow = document.getElementById('depth-row'), depthLabel = document.getElementById('depth-label');
+  const t = selectedType;
+  document.getElementById('custom-hint').hidden = !(t && t.label === 'Island' && t.cat === activeCat);
+  row.innerHTML = '';
+  onRow.innerHTML = '';
+  depthRow.innerHTML = '';
+  onRow.hidden = true; onLabel.hidden = true;
+  depthRow.hidden = true; depthLabel.hidden = true;
+  if (!t || t.cat !== activeCat) {
+    hint.textContent = 'Choose a unit in step 2 first.';
+    return;
+  }
+  const sizes = sizesFor(t);
+  if (!sizes.find(sz => selectedChip && sz.w === selectedChip.w)) selectedChip = sizes.find(sz => sz.w === t.w) || sizes[0] || null;
+  if (sizes.length > 1) {
+    hint.textContent = t.depths ? 'Tap a width, then a depth.' : 'Tap a width.';
+    sizes.forEach(sz => {
+      const b = document.createElement('button');
+      b.className = 'mode-btn' + (selectedChip && selectedChip.w === sz.w ? ' active-mode' : '');
+      b.textContent = sz.label;
+      b.onclick = () => { selectedChip = sz; renderSizes(); };
+      row.appendChild(b);
+    });
+  } else {
+    hint.textContent = 'Only one width: ' + (t.sizeText || (t.w + ' mm')) + '.';
+  }
+  if (t.depths) {
+    depthLabel.hidden = false;
+    depthRow.hidden = false;
+    if (!selectedDepth) selectedDepth = t.d;
+    t.depths.forEach(dp => {
+      const b = document.createElement('button');
+      b.className = 'mode-btn' + (selectedDepth === dp ? ' active-mode' : '');
+      b.textContent = dp + ' mm deep';
+      b.onclick = () => { selectedDepth = dp; renderSizes(); };
+      depthRow.appendChild(b);
+    });
+  }
+  if (t.sits) {
+    onLabel.hidden = false;
+    onRow.hidden = false;
+    [[null, 'On base unit'], ['drawers', 'On drawers']].forEach(([k, l]) => {
+      const b = document.createElement('button');
+      b.className = 'mode-btn' + (selectedOn === k ? ' active-mode' : '');
+      b.textContent = l;
+      b.onclick = () => { selectedOn = k; renderSizes(); };
+      onRow.appendChild(b);
+    });
+  }
+}
+
+/* Small symbols for the unit cards. Each draws the unit as it looks from the front, or from above for corners. */
+function svgIcon(inner){
+  return '<svg viewBox="0 0 40 28" width="40" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+}
+const ICON_SVG = {
+  /* Base */
+  'Base unit': '<rect x="4" y="5" width="32" height="20"/><line x1="20" y1="5" x2="20" y2="25"/><line x1="16" y1="12" x2="16" y2="18"/><line x1="24" y1="12" x2="24" y2="18"/>',
+  'Corner base': '<rect x="4" y="5" width="32" height="20"/><line x1="36" y1="5" x2="14" y2="25"/><line x1="10" y1="12" x2="10" y2="18"/>',
+  'L-shaped corner base': '<path d="M4 4 H24 V14 H14 V26 H4 Z"/><line x1="24" y1="8" x2="10" y2="8"/>',
+  'Wine rack': '<rect x="4" y="6" width="32" height="18"/><circle cx="12" cy="16" r="3.5"/><circle cx="20" cy="16" r="3.5"/><circle cx="28" cy="16" r="3.5"/><line x1="12" y1="10" x2="12" y2="12.5"/><line x1="20" y1="10" x2="20" y2="12.5"/><line x1="28" y1="10" x2="28" y2="12.5"/>',
+  'Hob': '<rect x="4" y="6" width="32" height="16" rx="2"/><circle cx="12" cy="11" r="2.5"/><circle cx="28" cy="11" r="2.5"/><circle cx="12" cy="17" r="2.5"/><circle cx="28" cy="17" r="2.5"/>',
+  'Sink': '<path d="M20 2 V7 H25"/><rect x="4" y="9" width="32" height="15" rx="2"/><rect x="9" y="12" width="22" height="9" rx="3"/>',
+  'Dishwasher': '<rect x="6" y="4" width="28" height="22" rx="1"/><line x1="6" y1="9" x2="34" y2="9"/><line x1="12" y1="15" x2="28" y2="15"/>',
+  'Washing machine': '<rect x="6" y="4" width="28" height="22" rx="1"/><circle cx="20" cy="16" r="6.5"/><circle cx="11" cy="9" r="1"/><circle cx="16" cy="9" r="1"/>',
+  /* Drawers */
+  'Drawers': '<rect x="6" y="3" width="28" height="7"/><rect x="6" y="10.5" width="28" height="7"/><rect x="6" y="18" width="28" height="7"/><line x1="16" y1="6.5" x2="24" y2="6.5"/><line x1="16" y1="14" x2="24" y2="14"/><line x1="16" y1="21.5" x2="24" y2="21.5"/>',
+  /* Wall */
+  'Wall unit': '<line x1="2" y1="4" x2="38" y2="4" stroke-dasharray="2 2"/><rect x="4" y="7" width="32" height="18"/><line x1="20" y1="7" x2="20" y2="25"/>',
+  'Corner wall': '<line x1="2" y1="4" x2="38" y2="4" stroke-dasharray="2 2"/><rect x="4" y="7" width="32" height="18"/><line x1="36" y1="7" x2="14" y2="25"/>',
+  'L-shaped corner wall': '<path d="M4 4 H24 V11 H12 V26 H4 Z"/><line x1="24" y1="7" x2="12" y2="7"/>',
+  'Boiler housing': '<rect x="10" y="7" width="20" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="7"/><line x1="24" y1="2" x2="24" y2="7"/><circle cx="20" cy="16" r="3"/>',
+  'Extractor hood': '<path d="M3 22 L10 6 H30 L37 22 Z"/><line x1="8" y1="26" x2="32" y2="26"/><line x1="14" y1="14" x2="26" y2="14"/>',
+  /* Tall */
+  'Larder': '<rect x="10" y="2" width="20" height="24" rx="1"/><line x1="10" y1="12" x2="30" y2="12"/><line x1="17" y1="6" x2="17" y2="8"/><line x1="17" y1="16" x2="17" y2="19"/>',
+  'Oven housing': '<rect x="8" y="2" width="24" height="24" rx="1"/><rect x="12" y="11" width="16" height="10" rx="1"/><line x1="12" y1="6" x2="28" y2="6"/>',
+  'Fridge freezer': '<rect x="10" y="2" width="20" height="24" rx="1"/><line x1="10" y1="10" x2="30" y2="10"/><line x1="26" y1="5" x2="26" y2="7"/><line x1="26" y1="14" x2="26" y2="18"/>',
+  /* Island */
+  'Island': '<rect x="6" y="6" width="28" height="13" rx="1"/><circle cx="10" cy="25" r="2"/><circle cx="20" cy="25" r="2"/><circle cx="30" cy="25" r="2"/>'
+};
+/* Corner cards show the L's arms as a plan, the others as a front view */
+function iconFor(t){
+  const inner = ICON_SVG[t.label] || '<rect x="4" y="6" width="32" height="16"/>';
+  return svgIcon(inner);
+}
+/* Darker yellow for tall-unit symbols so they show on white */
+function iconColor(t){ return t.cat === 'tall' ? '#B8921E' : t.color; }
+
+function highlightGrid(){ setCat(activeCat); }
+
+function pickUnit(t){
+  selectedType = t;
+  selectedOn = null;
+  selectedDepth = t.depths ? t.d : null;
+  const sizes = sizesFor(t);
+  selectedChip = sizes.length ? (sizes.find(sz => sz.w === t.w) || sizes[0]) : null;
+  selectedIdx = -1; selOpen = -1;
+  setMode('add');
+  setCat(t.cat);
+  redraw('Choose a width if you need one, then tap the room to place the ' + t.label.toLowerCase() + '.');
+}
+
+function pickOpening(kind){
+  setMode('add');
+  openingPick = kind;
+  selectedIdx = -1; selOpen = -1;
+  highlightGrid();
+  setOpeningButtons();
+  redraw('Tap the ' + OPENING_TYPES[kind].label.toLowerCase() + "'s wall to place it.");
+}
+
+function setOpeningButtons(){
+  ['door', 'window'].forEach(k => document.getElementById('open-' + k).classList.toggle('active-mode', openingPick === k));
+}
+
+function setMode(m){
+  mode = m;
+  if (m !== 'add') openingPick = null;
+  ['add', 'move', 'delete'].forEach(k => document.getElementById('mode-' + k).classList.toggle('active-mode', k === m));
+  setOpeningButtons();
+  document.getElementById('mode-hint').textContent = HINTS[m];
+  PC.style.cursor = m === 'add' ? 'crosshair' : m === 'move' ? 'grab' : 'pointer';
+}
+
+/* ---------- Plan updates ---------- */
+
+function parseMM(id){
+  const v = parseInt(document.getElementById(id).value, 10);
+  if (!v || v < 100 || v > 3000) return null;
+  return v;
+}
+
+function showItemEditor(){
+  const ed = document.getElementById('item-editor');
+  const wW = document.getElementById('size-w-wrap'), wD = document.getElementById('size-d-wrap');
+  if (selectedIdx >= 0 && units[selectedIdx]) {
+    const u = units[selectedIdx], {W, D} = dimsOf(u);
+    ed.hidden = false;
+    document.getElementById('item-label').textContent = displayName(u);
+    document.getElementById('item-note').value = u.note || '';
+    wW.style.display = u.type.editable.includes('w') ? '' : 'none';
+    wD.style.display = u.type.editable.includes('d') ? '' : 'none';
+    document.getElementById('item-w').value = W;
+    document.getElementById('item-d').value = D;
+  } else if (selOpen >= 0 && openings[selOpen]) {
+    const o = openings[selOpen];
+    ed.hidden = false;
+    document.getElementById('item-label').textContent = OPENING_TYPES[o.kind].label;
+    document.getElementById('item-note').value = o.note || '';
+    wW.style.display = '';
+    wD.style.display = 'none';
+    document.getElementById('item-w').value = o.w;
+  } else {
+    ed.hidden = true;
+  }
+}
+
+function applyItemEdit(){
+  const note = document.getElementById('item-note').value.trim().slice(0, 24);
+  let msg = null;
+  act(() => {
+    if (selectedIdx >= 0 && units[selectedIdx]) {
+      const u = units[selectedIdx];
+      u.note = note;
+      const W = parseMM('item-w'), D = parseMM('item-d');
+      const oldW = u.w, oldD = u.d;
+      if (u.type.editable.includes('w') && W) u.w = W;
+      if (u.type.editable.includes('d') && D) u.d = D;
+      if (!valid(unitRect(u), selectedIdx)) {
+        u.w = oldW; u.d = oldD;
+        msg = 'NOSPACE';
+      }
+    } else if (selOpen >= 0 && openings[selOpen]) {
+      const o = openings[selOpen];
+      o.note = note;
+      const W = parseMM('item-w');
+      if (W && W !== o.w) {
+        if (openingFits({kind: o.kind, wall: o.wall, at: o.at, w: W}, selOpen)) o.w = W;
+        else msg = 'NOSPACE';
+      }
+    }
+  });
+  redraw(msg === 'NOSPACE' ? undefined : msg);
+  if (msg === 'NOSPACE') showPopup('Not enough space');
+}
+
+function showPopup(msg){
+  document.getElementById('popup-msg').textContent = msg || 'Not enough space';
+  document.getElementById('popup').hidden = false;
+  document.getElementById('popup-ok').focus();
+}
+function closePopup(){ document.getElementById('popup').hidden = true; }
+
+function placeUnit(p){
+  const t = selectedType;
+  if (!t) { redraw('Choose a unit first.'); return; }
+  const w = selectedChip ? selectedChip.w : t.w;
+  const d = selectedDepth || t.d;
+  const r = settle({x: p.x - w/2, y: p.y - d/2, w, h: d, wall: t.layer === 'wall'}, -1);
+  if (!r) { redraw(); showPopup('Not enough space'); return; }
+  const u = {type: t, rot: 0, x: r.x, y: r.y, note: '', w, d};
+  if (selectedChip && sizesFor(t).length > 1) u.sizeName = selectedChip.name;
+  if (t.sits && selectedOn) u.on = selectedOn;
+  units.push(u);
+  selectedIdx = units.length - 1;
+  selOpen = -1;
+  setMode('move');
+  redraw('Placed. Drag it into position, or tap it to add a note.');
+}
+
+function placeOpening(p){
+  const kind = openingPick, def = OPENING_TYPES[kind];
+  const tol = 20 / view().s;
+  let best = null, bestD = tol;
+  wallList().forEach(w => { const d = distSeg(p, w.a, w.b); if (d < bestD) { bestD = d; best = w; } });
+  if (!best) { redraw('Tap closer to a wall to place the ' + def.label.toLowerCase() + '.'); return; }
+  const L = wallLengthMM(best);
+  if (L < def.w) { redraw(); showPopup('Not enough space'); return; }
+  const ux = (best.b.x - best.a.x) / L, uy = (best.b.y - best.a.y) / L;
+  const t = (p.x - best.a.x) * ux + (p.y - best.a.y) * uy;
+  let at = Math.round((t - def.w / 2) / GRID) * GRID;
+  at = Math.max(0, Math.min(at, L - def.w));
+  const o = {kind, wall: best.i, at, w: def.w, note: ''};
+  if (!openingFits(o, -1)) { redraw(); showPopup('Not enough space'); return; }
+  openings.push(o);
+  selOpen = openings.length - 1;
+  selectedIdx = -1;
+  setMode('move');
+  redraw('Placed. Drag it along the wall, or tap it to change its width or add a note.');
+}
+
+function rotateSelected(){
+  if (selectedIdx < 0) return;
+  let ok = false;
+  act(() => {
+    const u = units[selectedIdx];
+    const oldRot = u.rot, oldX = u.x, oldY = u.y;
+    u.rot = (u.rot + 1) % 4;
+    const cur = unitRect(u);
+    /* Try the turned spot first, then nearby spots, before giving up */
+    const tries = [[0, 0], [100, 0], [-100, 0], [0, 100], [0, -100], [100, 100], [-100, -100], [100, -100], [-100, 100]];
+    for (const [dx, dy] of tries) {
+      const r = settle({x: cur.x + dx, y: cur.y + dy, w: cur.w, h: cur.h, wall: cur.wall}, selectedIdx);
+      if (r) { u.x = r.x; u.y = r.y; ok = true; break; }
+    }
+    if (!ok) { u.rot = oldRot; u.x = oldX; u.y = oldY; }
+  });
+  redraw(ok ? null : undefined);
+  if (!ok) showPopup('Not enough space');
+}
+
+function redraw(msg){
+  drawAll();
+  if (curStep === 0 && msg) document.getElementById('draw-info').textContent = msg;
+  document.getElementById('rotate-btn').disabled = selectedIdx < 0;
+  let text = msg;
+  if (!text) {
+    text = units.length + (units.length === 1 ? ' unit' : ' units') + ' placed';
+    if (openings.length) text += ', ' + openings.length + (openings.length === 1 ? ' opening' : ' openings');
+    if (selectedIdx >= 0) text += ' · ' + displayName(units[selectedIdx]) + ' selected';
+    if (selOpen >= 0) text += ' · ' + OPENING_TYPES[openings[selOpen].kind].label + ' selected';
+  }
+  document.getElementById('cab-info').textContent = text;
+  showItemEditor();
+}
+
+/* The plan as a picture, without the selection outline */
+function layoutCanvas(){
+  const off = document.createElement('canvas');
+  off.width = PLAN_W; off.height = PLAN_H;
+  const keep = [selectedIdx, selOpen];
+  selectedIdx = -1; selOpen = -1;
+  drawPlan(off, true);
+  selectedIdx = keep[0]; selOpen = keep[1];
+  return off;
+}
+
+function saveLayoutImage(){
+  layoutCanvas().toBlob(blob => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'kitchen-layout.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }, 'image/png');
+}
+
+function deleteAt(p){
+  const k = hitOpening(p);
+  if (k >= 0) { openings.splice(k, 1); selOpen = -1; return 'Opening removed.'; }
+  const i = hitTest(p);
+  if (i >= 0) { units.splice(i, 1); selectedIdx = -1; return 'Unit removed.'; }
+  return null;
+}
+
+/* ---------- Pointer input on the plan (mouse, touch and pen) ---------- */
+
+PC.addEventListener('pointerdown', e => {
+  const p = toMM(PC, e);
+  if (mode === 'add') {
+    act(() => { if (openingPick) placeOpening(p); else placeUnit(p); });
+    return;
+  }
+  if (mode === 'delete') {
+    let msg = null;
+    act(() => { msg = deleteAt(p); });
+    redraw(msg);
+    return;
+  }
+
+  /* Move mode: openings first (they are small strips on the walls), then units */
+  dragBefore = snapshot();
+  const k = hitOpening(p);
+  if (k >= 0) {
+    selectedIdx = -1; selOpen = k;
+    drag = {kind: 'opening', k};
+    PC.setPointerCapture(e.pointerId);
+    PC.style.cursor = 'grabbing';
+  } else {
+    const i = hitTest(p);
+    selOpen = -1; selectedIdx = i;
+    if (i >= 0) {
+      const o = unitRect(units[i]);
+      drag = {kind: 'unit', i, dx: p.x - o.x, dy: p.y - o.y};
+      PC.setPointerCapture(e.pointerId);
+      PC.style.cursor = 'grabbing';
+    } else {
+      /* Empty space in Move mode places another of the chosen unit, so the card does not need choosing again */
+      dragBefore = null;
+      if (selectedType) { act(() => placeUnit(p)); return; }
+    }
+  }
+  redraw();
 });
-CC.addEventListener('mousemove',function(e){if(dragging===null)return;const {x,y}=getXY(CC,e);cabinets[dragging].x=x-dragOX;cabinets[dragging].y=y-dragOY;drawCab();});
-CC.addEventListener('mouseup',()=>{dragging=null;if(mode==='move')CC.style.cursor='grab';});
 
-/* Summary */
+function dragTo(p){
+  if (drag.kind === 'unit') {
+    const u = units[drag.i];
+    const o = unitRect(u);
+    const next = settle({x: p.x - drag.dx, y: p.y - drag.dy, w: o.w, h: o.h, wall: o.wall}, drag.i);
+    if (next) { u.x = next.x; u.y = next.y; }
+  } else {
+    const o = openings[drag.k];
+    const w = wallList().find(x => x.i === o.wall);
+    if (!w) return;
+    const L = wallLengthMM(w);
+    const ux = (w.b.x - w.a.x) / L, uy = (w.b.y - w.a.y) / L;
+    const t = (p.x - w.a.x) * ux + (p.y - w.a.y) * uy;
+    let at = Math.round((t - o.w / 2) / GRID) * GRID;
+    at = Math.max(0, Math.min(at, L - o.w));
+    if (openingFits({kind: o.kind, wall: o.wall, at, w: o.w}, drag.k)) { o.at = at; }
+  }
+}
+
+PC.addEventListener('pointermove', e => {
+  if (!drag) return;
+  dragTo(toMM(PC, e));
+  redraw();
+});
+function endDrag(){
+  /* Count the whole drag as one undo step */
+  if (dragBefore !== null && snapshot() !== dragBefore) {
+    undoStack.push(dragBefore);
+    if (undoStack.length > 100) undoStack.shift();
+  }
+  dragBefore = null;
+  drag = null;
+  PC.style.cursor = mode === 'move' ? 'grab' : PC.style.cursor;
+}
+PC.addEventListener('pointerup', endDrag);
+PC.addEventListener('pointercancel', endDrag);
+DC.addEventListener('pointerup', endDrag);
+DC.addEventListener('pointercancel', endDrag);
+
+/* ---------- Summary and submit ---------- */
+
 function buildSummary(){
-  const counts={};cabinets.forEach(c=>{counts[c.type.label]=(counts[c.type.label]||0)+1;});
-  const el=document.getElementById('summary-content');
-  el.innerHTML=Object.keys(counts).length
-    ?Object.entries(counts).map(([k,v])=>'<div class="summary-row"><span>'+k+'</span><span>&times;'+v+'</span></div>').join('')
-    :'<div class="summary-row"><span>No cabinets placed — we can discuss the layout in person.</span></div>';
-  document.getElementById('hidden-layout').value=Object.entries(counts).map(([k,v])=>k+' \xd7'+v).join(', ')||'None';
-  document.getElementById('hidden-dims').value=document.getElementById('guide-w').value+'cm \xd7 '+document.getElementById('guide-d').value+'cm';
+  const counts = {};
+  units.forEach(u => {
+    const key = displayName(u) + (u.on ? ' ' + ON_LABEL[u.on] : '') + (u.note ? ' (' + u.note + ')' : '');
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  let layout = Object.entries(counts).map(([k, v]) => k + ' ×' + v).join(', ') || 'None';
+  if (openings.length) {
+    layout += ' | Openings: ' + openings.map(o => OPENING_TYPES[o.kind].label + (o.note ? ' (' + o.note + ')' : '') + ' on wall ' + (o.wall + 1) + ' at ' + Math.round(o.at / 10) + ' cm, ' + Math.round(o.w / 10) + ' cm wide').join('; ');
+  }
+  document.getElementById('hidden-layout').value = layout;
+  const walls = wallList().map(w => Math.round(wallLengthMM(w) / 10));
+  document.getElementById('hidden-dims').value = 'Walls (cm): ' + walls.join(', ');
 }
 
 /* Formspree submit */
-document.getElementById('quote-form').addEventListener('submit',async function(e){
+document.getElementById('quote-form').addEventListener('submit', async function(e){
   e.preventDefault();
-  const btn=document.getElementById('submit-btn'),err=document.getElementById('form-error');
-  err.style.display='none';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Sending\u2026';
-  try{
-    const res=await fetch(this.action,{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}});
-    if(res.ok){nextStep(3);}else{throw new Error();}
-  }catch{
-    err.textContent='Something went wrong \u2014 please try again or call us on 0161 437 8899.';
-    err.style.display='block';btn.disabled=false;btn.textContent='Request a free consultation';
+  const btn = document.getElementById('submit-btn'), err = document.getElementById('form-error');
+  err.style.display = 'none'; btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Sending…';
+  try {
+    const fd = new FormData(this);
+    const blob = await new Promise(resolve => layoutCanvas().toBlob(resolve, 'image/png'));
+    if (blob) fd.append('layout_image', blob, 'kitchen-layout.png');
+    const res = await fetch(this.action, {method: 'POST', body: fd, headers: {'Accept': 'application/json'}});
+    if (res.ok) { nextStep(3); } else { throw new Error(); }
+  } catch {
+    err.textContent = 'Something went wrong — please try again or call us on 0161 437 8899.';
+    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Get in touch';
   }
 });
 
 /* Mobile nav */
-const burger=document.getElementById('navBurger'),navLinks=document.querySelector('.nav-links');
-if(burger&&navLinks){
-  burger.addEventListener('click',()=>{burger.classList.toggle('open');navLinks.classList.toggle('open');});
-  navLinks.querySelectorAll('a').forEach(a=>{a.addEventListener('click',()=>{if(!a.parentElement.classList.contains('nav-dropdown')){burger.classList.remove('open');navLinks.classList.remove('open');}});});
-  const dd=document.querySelector('.nav-dropdown');
-  if(dd&&window.innerWidth<=800){dd.querySelector('a').addEventListener('click',e=>{e.preventDefault();dd.classList.toggle('mobile-open');});}
+const burger = document.getElementById('navBurger'), navLinks = document.querySelector('.nav-links');
+if (burger && navLinks) {
+  burger.addEventListener('click', () => { burger.classList.toggle('open'); navLinks.classList.toggle('open'); });
+  navLinks.querySelectorAll('a').forEach(a => { a.addEventListener('click', () => { if (!a.parentElement.classList.contains('nav-dropdown')) { burger.classList.remove('open'); navLinks.classList.remove('open'); } }); });
+  const dd = document.querySelector('.nav-dropdown');
+  if (dd && window.innerWidth <= 800) { dd.querySelector('a').addEventListener('click', e => { e.preventDefault(); dd.classList.toggle('mobile-open'); }); }
 }
 
 /* Init */
-sc.sx=CC.width/RC.width;sc.sy=CC.height/RC.height;
-applyGuide();
-drawCab();
+buildCats();
+setCat('base');
+setMode('add');
+refreshDraw(null);
+redraw('Pick a category, then a unit.');
+placeItemEditor();
 </script>
 </body>
 </html>
