@@ -590,7 +590,6 @@ canvas {
     <div class="legend">
       <div class="leg-item"><div class="leg-swatch" style="background:#4A7C59"></div>Base</div>
       <div class="leg-item"><div class="leg-swatch" style="background:#3F6E4E"></div>Drawers</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#7A4E8C"></div>Wine racks</div>
       <div class="leg-item"><div class="leg-swatch" style="background:#4A6FA5"></div>Wall</div>
       <div class="leg-item"><div class="leg-swatch" style="background:#8B5E3C"></div>Tall</div>
       <div class="leg-item"><div class="leg-swatch" style="background:#B85C5C"></div>Appliances</div>
@@ -619,8 +618,8 @@ canvas {
   <div class="panel" id="panel-2">
 
     <div class="soft-intro">
-      <h3>Let a professional help</h3>
-      <p>This planner is here to give you a rough idea of how your kitchen could work. Why not let one of our team help you turn it into a plan you can work from? Send us your details and we&rsquo;ll get in touch to talk it through. Your layout picture comes with your message.</p>
+      <h3>Why not let Mark help?</h3>
+      <p>This basic planner is there to give you a bit of an idea. But why not let Mark help you with your plan, as a reference point? Send your details and he&rsquo;ll get in touch to talk it through. Your layout picture comes with your message.</p>
     </div>
 
     <div class="trust-bar">
@@ -654,16 +653,6 @@ canvas {
         <div class="form-row">
           <label>Postcode</label>
           <input type="text" name="postcode" id="f-post" placeholder="SK8, M20...">
-        </div>
-        <div class="form-row">
-          <label>Rough budget</label>
-          <select name="budget">
-            <option value="">Prefer not to say</option>
-            <option>Under £5,000</option>
-            <option>£5,000 – £10,000</option>
-            <option>£10,000 – £20,000</option>
-            <option>£20,000+</option>
-          </select>
         </div>
       </div>
 
@@ -717,29 +706,37 @@ const VIEW_SCALE = 0.16, VIEW_X0 = -200, VIEW_Y0 = -200;
    only collides with other wall-layer items and windows; 'floor' items collide with
    floor items and doors. Corner units are drawn as one rectangle along the wall. */
 const CATEGORIES = [
-  ['base', 'Base'], ['drawers', 'Drawers'], ['wine', 'Wine racks'], ['wall', 'Wall'],
+  ['base', 'Base'], ['drawers', 'Drawers'], ['wall', 'Wall'],
   ['tall', 'Tall'], ['appliance', 'Appliances'], ['island', 'Island']
 ];
-const CAT_COLOR = {base:'#4A7C59', drawers:'#3F6E4E', wine:'#7A4E8C', wall:'#4A6FA5', tall:'#8B5E3C', appliance:'#B85C5C', island:'#6B6B8A'};
+const CAT_COLOR = {base:'#4A7C59', drawers:'#3F6E4E', wall:'#4A6FA5', tall:'#8B5E3C', appliance:'#B85C5C', island:'#6B6B8A'};
 const UNITS = [];
 function addUnit(cat, label, w, d, extra){
   UNITS.push(Object.assign({cat, label, w, d, layer: 'floor', color: CAT_COLOR[cat], editable: []}, extra || {}));
 }
-/* Base units, 580 deep */
+/* Base units, 580 deep: the usual widths */
 [150, 300, 500, 600, 700, 800, 900, 1000, 1200].forEach(w => addUnit('base', 'Base ' + w, w, 580));
 addUnit('base', 'Base 600 (under oven)', 600, 580);
 addUnit('base', 'Corner base 1000', 1000, 580, {corner: true});
 addUnit('base', 'Corner base 1200', 1200, 580, {corner: true});
 addUnit('base', 'L-shaped corner base', 900, 900, {corner: true, shape: 'L', arm: 580, short: 'L corner', sizeText: '900 × 900 mm, 580 deep'});
+/* Wine racks sit in the base line */
+addUnit('base', 'Wine rack 150', 150, 580);
+addUnit('base', 'Wine rack 300', 300, 580);
+/* Hob and sinks, 580 deep */
+addUnit('base', 'Hob 600', 600, 580);
+addUnit('base', 'Hob 750', 750, 580);
+addUnit('base', 'Sink 600', 600, 580);
+addUnit('base', 'Sink 800', 800, 580);
+addUnit('base', 'Sink 1000', 1000, 580);
+addUnit('base', 'Sink 1200', 1200, 580);
 /* Drawers, 580 deep */
 [400, 500, 600, 700, 800, 900, 1000, 1100, 1200].forEach(w => addUnit('drawers', 'Drawers ' + w, w, 580));
-/* Wine racks, 580 deep */
-addUnit('wine', 'Wine rack base 150', 150, 580);
-addUnit('wine', 'Wine rack base 300', 300, 580);
 /* Wall units, 300 deep, wall layer */
 [150, 600, 700, 800, 900, 1000, 1200].forEach(w => addUnit('wall', 'Wall ' + w, w, 300, {layer: 'wall'}));
 addUnit('wall', 'Corner wall 1000', 1000, 300, {layer: 'wall', corner: true});
 addUnit('wall', 'Corner wall 1200', 1200, 300, {layer: 'wall', corner: true});
+addUnit('wall', 'L-shaped corner wall', 900, 900, {layer: 'wall', corner: true, shape: 'L', arm: 300, short: 'L corner', sizeText: '900 × 900 mm, 300 deep'});
 /* Boiler housing sits in the wall-unit line */
 addUnit('wall', 'Boiler housing', 500, 400, {layer: 'wall', sizeText: '500 wide × 400 deep × 900 high'});
 /* Tall units, 600 deep */
@@ -749,10 +746,10 @@ addUnit('tall', 'Larder 600', 600, 600);
 addUnit('tall', 'Oven housing 600', 600, 600);
 addUnit('tall', 'Larder 1200', 1200, 600);
 addUnit('tall', 'Fridge freezer 600', 600, 600);
-/* Appliances, added as a sense check: the usual kitchen appliances people ask about */
+/* Appliances */
 addUnit('appliance', 'Dishwasher 600', 600, 580);
+addUnit('appliance', 'Slimline dishwasher 450', 450, 580);
 addUnit('appliance', 'Washing machine 600', 600, 580);
-addUnit('appliance', 'Hob 600 (on base)', 600, 580);
 addUnit('appliance', 'Extractor hood 600', 600, 500, {layer: 'wall'});
 /* Island: default size, editable */
 addUnit('island', 'Island', 1200, 900, {editable: ['w', 'd']});
@@ -1199,21 +1196,23 @@ function drawPlan(cv, withUnits){
     }
     if (w > 40 && h > 14) {
       ctx.fillStyle = '#ffffff';
-      ctx.font = Math.max(9, Math.min(12, w/8)) + 'px Jost, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const note = u.note || '';
-      /* On an L the label sits in the solid corner square, not the notch */
       const onL = u.type.shape === 'L' && arm;
       const tx = onL ? (fx ? x + w - arm/2 : x + arm/2) : x + w/2;
       const ty = onL ? (fy ? y + h - arm/2 : y + arm/2) : y + h/2;
-      if (note && h > 30) {
-        ctx.fillText(u.type.short || u.type.label, tx, ty - 7);
-        ctx.font = 'italic ' + Math.max(9, Math.min(11, w/9)) + 'px Jost, sans-serif';
-        ctx.fillText(note, tx, ty + 8);
-      } else {
-        ctx.fillText(note || u.type.short || u.type.label, tx, ty);
-      }
+      /* Narrow units stack the name one word per line, so the text runs underneath rather than across */
+      const name = u.type.short || u.type.label;
+      const lines = (w < 130 ? name.split(' ') : [name]).map(t => ({t, italic: false}));
+      if (note) lines.push({t: note, italic: true});
+      const fs = Math.max(8, Math.min(12, w / 8));
+      const lh = fs + 2;
+      const top = ty - (lines.length * lh) / 2 + lh / 2;
+      lines.forEach((ln, i) => {
+        ctx.font = (ln.italic ? 'italic ' : '') + fs + 'px Jost, sans-serif';
+        ctx.fillText(ln.t, tx, top + i * lh);
+      });
     }
   });
 
