@@ -15,6 +15,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kitchen Planner | Gatley Kitchens &amp; Bedrooms</title>
+  <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="Plan your new kitchen with our free interactive room planner. Draw your space, place cabinets, and and get in touch with the team at Gatley Kitchens.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -519,7 +520,6 @@ canvas {
     <li><a href="gatley-kitchens-worktops.html">Worktops</a></li>
     <li><a href="gatley-kitchens-blog.html">Blog</a></li>
     <li><a href="gatley-kitchens-about.html">About</a></li>
-    <li><a href="kitchen-planner.html" style="color:var(--accent);font-weight:600;">Kitchen Planner</a></li>
     <li><a href="gatley-kitchens-quote.html" class="nav-cta">Get a Free Quote</a></li>
   </ul>
   <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -618,10 +618,10 @@ canvas {
     </div>
 
     <div class="legend">
-      <div class="leg-item"><div class="leg-swatch" style="background:#4A7C59"></div>Base</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#4A6FA5"></div>Drawers</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#E08A2E"></div>Wall</div>
-      <div class="leg-item"><div class="leg-swatch" style="background:#E3C04A"></div>Tall</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#4A7C59"></div>Base Units</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#4A6FA5"></div>Drawer Packs</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#E08A2E"></div>Wall Units</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:#E3C04A"></div>Tall Units</div>
       <div class="leg-item"><div class="leg-swatch" style="background:#7B4E9A"></div>Island</div>
       <div class="leg-item"><div class="leg-swatch" style="background:repeating-linear-gradient(45deg,#4A7C59 0 3px,#ffffff 3px 5px)"></div>Corner unit</div>
     </div>
@@ -738,8 +738,8 @@ const VIEW_SCALE = 0.16, VIEW_X0 = -200, VIEW_Y0 = -200;
    only collides with other wall-layer items and windows; 'floor' items collide with
    floor items and doors. Corner units are drawn as one rectangle along the wall. */
 const CATEGORIES = [
-  ['base', 'Base'], ['drawers', 'Drawers'], ['wall', 'Wall'],
-  ['tall', 'Tall'], ['island', 'Island']
+  ['base', 'Base Units'], ['drawers', 'Drawer Packs'], ['wall', 'Wall Units'],
+  ['tall', 'Tall Units'], ['island', 'Island']
 ];
 const CAT_COLOR = {base:'#4A7C59', drawers:'#4A6FA5', wall:'#E08A2E', tall:'#E3C04A', island:'#7B4E9A'};
 /* Label colour on each unit: dark on the light yellow of tall units */
