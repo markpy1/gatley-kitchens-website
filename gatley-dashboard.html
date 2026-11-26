@@ -416,7 +416,11 @@ var db = {leads:[],manualJobs:[],nextLeadId:36,nextJobId:1};
 var activeTab='pipeline', lFilter='all', lSearch='';
 var expandedL=null, expandedJ=null;
 var editingLead=null, editingJob=null;
-var revYear=new Date().getFullYear();
+var FYM=['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+function fyStart(d){ return d.getMonth()>=3?d.getFullYear():d.getFullYear()-1; }
+function fyIdx(d){ return (d.getMonth()+9)%12; }
+function fyLabel(y){ return 'FY '+y+'/'+String(y+1).slice(2); }
+var revYear=fyStart(new Date());
 
 // UTILS
 function fm(v){ return (v!==''&&v!==null&&v!==undefined&&!isNaN(Number(v))&&Number(v)!==0) ? '£'+Number(v).toLocaleString() : '—'; }
@@ -643,10 +647,11 @@ function renderRevenue(){
 
   // ---- Year list ----
   var years=[];
-  actualJobs.forEach(function(j){ var y=new Date(j.startDate||j.statementDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
-  expectedJobs.forEach(function(j){ var y=new Date(j.startDate).getFullYear(); if(!isNaN(y)&&years.indexOf(y)<0) years.push(y); });
-  if(years.indexOf(now.getFullYear())<0) years.push(now.getFullYear());
-  if(years.indexOf(now.getFullYear()+1)<0) years.push(now.getFullYear()+1);
+  function addFY(d){ if(!isNaN(d)){ var y=fyStart(d); if(years.indexOf(y)<0) years.push(y); } }
+  actualJobs.forEach(function(j){ addFY(new Date(j.startDate||j.statementDate)); });
+  expectedJobs.forEach(function(j){ addFY(new Date(j.startDate)); });
+  if(years.indexOf(fyStart(now))<0) years.push(fyStart(now));
+  if(years.indexOf(fyStart(now)+1)<0) years.push(fyStart(now)+1);
   years.sort(function(a,b){ return b-a; });
   if(years.indexOf(revYear)<0) revYear=years[0];
 
@@ -654,7 +659,7 @@ function renderRevenue(){
   var yrEl=document.getElementById('yearBtns'); yrEl.innerHTML='';
   years.forEach(function(y){
     var btn=document.createElement('button'); btn.className='yr-btn'+(y===revYear?' active':'');
-    btn.textContent=y; btn.onclick=function(){ revYear=y; renderRevenue(); };
+    btn.textContent=fyLabel(y); btn.onclick=function(){ revYear=y; renderRevenue(); };
     yrEl.appendChild(btn);
   });
 
@@ -663,24 +668,24 @@ function renderRevenue(){
   for(var i=0;i<12;i++){ actByMonth[i]={total:0,jobs:[]}; expByMonth[i]={total:0,jobs:[]}; }
 
   actualJobs.forEach(function(j){
-    var d=new Date(j.startDate||j.statementDate); if(isNaN(d)||d.getFullYear()!==revYear) return;
-    var mi=d.getMonth(); actByMonth[mi].total+=Number(j.finalProfit)||0; actByMonth[mi].jobs.push(j);
+    var d=new Date(j.startDate||j.statementDate); if(isNaN(d)||fyStart(d)!==revYear) return;
+    var mi=fyIdx(d); actByMonth[mi].total+=Number(j.finalProfit)||0; actByMonth[mi].jobs.push(j);
   });
   expectedJobs.forEach(function(j){
-    var d=new Date(j.startDate); if(isNaN(d)||d.getFullYear()!==revYear) return;
-    var mi=d.getMonth(); expByMonth[mi].total+=Number(j.expectedProfit)||0; expByMonth[mi].jobs.push(j);
+    var d=new Date(j.startDate); if(isNaN(d)||fyStart(d)!==revYear) return;
+    var mi=fyIdx(d); expByMonth[mi].total+=Number(j.expectedProfit)||0; expByMonth[mi].jobs.push(j);
   });
   // Auto leads — use lead date, 50% margin
   autoExpLeads.forEach(function(l){
-    var d=new Date(l.date); if(isNaN(d)||d.getFullYear()!==revYear) return;
-    var mi=d.getMonth(); var ep=Number(l.expectedProfit)||0;
+    var d=new Date(l.date); if(isNaN(d)||fyStart(d)!==revYear) return;
+    var mi=fyIdx(d); var ep=Number(l.expectedProfit)||0;
     expByMonth[mi].total+=ep; expByMonth[mi].jobs.push({name:l.name,expectedProfit:ep,startDate:l.date,_autoLead:true});
   });
 
   // ---- Summary figures ----
   var ytdActual=0, totalExpected=0;
   for(var i=0;i<12;i++){ ytdActual+=actByMonth[i].total; totalExpected+=expByMonth[i].total; }
-  var totalJobs=actualJobs.filter(function(j){ return new Date(j.startDate||j.statementDate).getFullYear()===revYear; }).length;
+  var totalJobs=actualJobs.filter(function(j){ return fyStart(new Date(j.startDate||j.statementDate))===revYear; }).length;
   var gap=Math.max(0,TARGET-(ytdActual+totalExpected));
 
   // ---- Summary tiles ----
@@ -690,7 +695,7 @@ function renderRevenue(){
     ['YTD Invoiced', ytdActual>0?fm(ytdActual):'—', '#6ec87a'],
     ['Expected / Booked', totalExpected>0?fm(totalExpected):'—', '#7ab8e8'],
     ['Jobs Invoiced', totalJobs, '#e8b96a'],
-    ['Gap to £102k', (ytdActual+totalExpected)>0?(gap>0?fm(gap):'✓ Hit!'):'Log jobs', gap===0?'#6ec87a':'#e07070']
+    ['Gap to £102k', (ytdActual+totalExpected)>0?(gap>0?fm(gap):'✓ Hit · '+fm(ytdActual+totalExpected)):'Log jobs', gap===0?'#6ec87a':'#e07070']
   ].forEach(function(t){
     var div=document.createElement('div'); div.className='rev-tile';
     div.innerHTML='<div class="rtv" style="color:'+t[2]+'">'+t[1]+'</div><div class="rtl">'+t[0]+'</div>';
@@ -705,7 +710,7 @@ function renderRevenue(){
   for(var mi=0;mi<12;mi++){
     var expTotal=expByMonth[mi].total;
     var actTotal=actByMonth[mi].total;
-    var isCurrent=mi===now.getMonth()&&revYear===now.getFullYear();
+    var isCurrent=mi===fyIdx(now)&&revYear===fyStart(now);
     if(expTotal>0||actTotal>0||isCurrent){
       var card=document.createElement('div'); card.className='next3-card';
       if(isCurrent) card.style.borderColor='#c8922a';
@@ -719,7 +724,7 @@ function renderRevenue(){
       else if(hasAct) subText='Invoiced';
       else if(hasExp) subText=expByMonth[mi].jobs.length+' job'+(expByMonth[mi].jobs.length!==1?'s':'')+' booked';
       else subText='Current month';
-      card.innerHTML='<div class="n3m" style="color:'+(isCurrent?'#c8922a':'#7ab8e8')+'">'+MONTHS[mi]+(isCurrent?' ●':'')+'</div>'
+      card.innerHTML='<div class="n3m" style="color:'+(isCurrent?'#c8922a':'#7ab8e8')+'">'+FYM[mi]+(isCurrent?' ●':'')+'</div>'
         +'<div class="n3v" style="color:'+displayColor+'">'+displayVal+'</div>'
         +'<div class="n3sub">'+subText+'</div>';
       next3El.appendChild(card); shown++;
@@ -728,7 +733,7 @@ function renderRevenue(){
   if(shown===0){ next3El.innerHTML='<div style="font-size:11px;color:#8a7d72;font-style:italic">No jobs logged yet. Add Expected Profit + Start Date to job cards.</div>'; }
 
   // ---- Bar chart ----
-  document.getElementById('chartLabel').textContent='Monthly Profit — '+revYear;
+  document.getElementById('chartLabel').textContent='Monthly Profit — '+fyLabel(revYear);
   var maxVal=1;
   for(var i=0;i<12;i++){ var combined=actByMonth[i].total+expByMonth[i].total; if(combined>maxVal) maxVal=combined; }
   var barEl=document.getElementById('barChart'); barEl.innerHTML='';
@@ -738,7 +743,7 @@ function renderRevenue(){
     var totalH=total>0?Math.max(8,Math.round((total/maxVal)*120)):2;
     var actH=total>0?Math.round((act/total)*totalH):0;
     var expH=totalH-actH;
-    var isCurrent=i===now.getMonth()&&revYear===now.getFullYear();
+    var isCurrent=i===fyIdx(now)&&revYear===fyStart(now);
     var col=document.createElement('div'); col.className='bar-col';
     col.innerHTML='<div class="bar-val">'+(total>0?fm(total).replace('£',''):'')+'</div>'
       +'<div class="bar-stack" style="height:'+totalH+'px;border:'+(isCurrent?'1px solid #c8922a':'none')+'">'
@@ -746,7 +751,7 @@ function renderRevenue(){
       +(exp>0?'<div class="bar-seg" style="height:'+expH+'px;background:#2e5a8b"></div>':'')
       +(total===0?'<div style="width:100%;height:2px;background:#2a2520"></div>':'')
       +'</div>'
-      +'<div class="bar-mon" style="color:'+(isCurrent?'#c8922a':'#8a7d72')+'">'+MONTHS[i]+'</div>';
+      +'<div class="bar-mon" style="color:'+(isCurrent?'#c8922a':'#8a7d72')+'">'+FYM[i]+'</div>';
     barEl.appendChild(col);
   }
 
@@ -765,7 +770,7 @@ function renderRevenue(){
       var total=act+exp;
       cum+=total;
       var row=document.createElement('div'); row.className='rev-row';
-      row.innerHTML='<div class="rn">'+MONTHS[i]+'</div>'
+      row.innerHTML='<div class="rn">'+FYM[i]+'</div>'
         +'<div style="display:flex;gap:12px;align-items:center">'
         +(act>0?'<div class="rp" style="color:#6ec87a">'+fm(act)+'</div>':'')
         +(exp>0?'<div class="rp" style="color:#7ab8e8">'+fm(exp)+'</div>':'')
@@ -816,7 +821,7 @@ function renderRevenue(){
       var row=document.createElement('div'); row.className='rev-row';
       row.innerHTML='<div class="rn">'+h(j.name)
         +(j._autoLead?'<span class="rtag" style="border-color:#2e5a8b;color:#7ab8e8;margin-left:4px">pipeline</span>':'')
-        +'<small>'+MONTHS[item.month]+(j.startDate?' · '+fd(j.startDate):'')+'</small></div>'
+        +'<small>'+FYM[item.month]+(j.startDate?' · '+fd(j.startDate):'')+'</small></div>'
         +'<div class="rp" style="color:#7ab8e8">'+fm(j.expectedProfit)+'</div>';
       expEl.appendChild(row);
     });
@@ -828,7 +833,7 @@ function renderRevenue(){
   // ---- Statements jobs list ----
   document.getElementById('invoicedLabel').textContent='Statements Jobs — '+revYear;
   var invEl=document.getElementById('invoicedList'); invEl.innerHTML='';
-  var invJobs=actualJobs.filter(function(j){ return new Date(j.statementDate).getFullYear()===revYear; })
+  var invJobs=actualJobs.filter(function(j){ return fyStart(new Date(j.statementDate))===revYear; })
     .sort(function(a,b){ return new Date(b.statementDate)-new Date(a.statementDate); });
   if(invJobs.length===0){
     invEl.innerHTML='<div class="rev-empty">No invoiced jobs for '+revYear+' yet.</div>';
